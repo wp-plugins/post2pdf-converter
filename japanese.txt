@@ -1,0 +1,176 @@
+はじめに
+
+「POST2PDF Converter」は、訪問者が投稿や固定ページをPDFファイルとして簡単にダウンロード出来るようにします。
+
+また、管理者は、投稿や固定ベージの先頭または後ろにダウンロード用リンクを簡単に追加出来ます。
+
+特徴
+・PDFの作成のためにTCPDF（http://www.tcpdf.org/）を使用。
+・投稿や固定ベージの先頭または後ろにダウンロード用リンクを簡単に追加できる。
+・簡単な設定。
+・管理画面やメッセージは、英語と日本語(UTF-8)に対応。
+
+
+1.動作環境
+
+・WordPress バージョン2.8 以上
+・PHP 5
+
+
+2.インストール
+
+・ダウンロードしたファイルを解凍し、「post2pdf-converter」フォルダごと、WordPressのプラグインディレクトリ（wp-content/plugins/）にアップロードします。
+・WordPressの管理画面の「プラグイン」で、このプラグインを有効化します。
+・WordPressの管理画面の「設定」の中の「POST2PDF Converter」という項目で設定を行います。
+
+
+3.アップデート
+
+WordPressの管理画面で、「POST2PDF Converter」を停止し、インストールの要領でファイルをサーバーにアップロード、上書きした後、再度、有効化する。
+
+
+4.アンインストール
+
+WordPressの管理画面で、まずプラグインを停止し、削除を実行する。
+
+
+5.フォント
+
+5-1.日本語フォント
+
+このプラグインは、次の日本語フォントを搭載しています。
+
+フォント名：cid0jp、kozgopromedium、kozminproregular
+
+TCPDFにバンドルされた日本語フォントでは、完全な日本語PDFを作成出来ません。
+しかし、この問題は、より良いTCPDF用の日本語フォントをインストールすることで解決されます。
+
+TCPDF用日本語フォント：http://www.near-mint.com/blog/software/rcjfont-for-tcpdf
+
+・「/wp-content/plugins/post2pdf-converter/tcpdf/fonts」ディレクトリに、*.php、*.z、*.ctg.zという名前のファイルを全てアップロードします。
+・WordPressの管理画面の「設定」の中の「POST2PDF Converter」に移動します。
+・「PDFの設定」の「フォント」オプションを有効にして、フォント名を入力します。
+・PDFを受け取った相手が同じフォントを持っていなくともPDFを編集出来るようにするなら、「Font subsetting」を無効にします。
+
+※フォントファイルが「xxxx.z」なら、フォント名は、「xxxx」です。
+
+下記のサイトでも、TCPDF用の日本語フォントをダウンロードできます。
+
+http://www.monzen.org/Refdoc/tcpdf_freefontj/
+
+注意：プラグインを更新すると、追加したフォントは削除されます。
+
+
+5-2.ラテン文字、ギリシャ文字、キリル文字のためのフォント
+
+このプラグインは、次のラテン文字のフォントを搭載しています。
+
+フォント名：courier、helvetica、times
+
+次のフォントを使用することも出来ますが、PDFを受け取った相手が同じフォントを持っていなくともPDFを編集出来るようにするなら、「Font subsetting」を無効にする必要があります。
+
+フォント名: pdfacourier、pdfahelvetica、pdfatimes
+
+"FreeFont"や"DejaVu fonts"を使用することも出来ますが、PDFを受け取った相手が同じフォントを持っていなくともPDFを編集出来るようにするなら、「Font subsetting」を無効にする必要があります。
+
+
+5-3.簡体中国語のためのフォント
+
+このプラグインは、次の簡体中国語フォントを搭載しています。
+
+フォント名：cid0cs、stsongstdlight
+
+
+5-4.繁体中国語のためのフォント
+
+このプラグインは、次の繁体中国語フォントを搭載しています。
+
+フォント名：cid0ct、msungstdlight
+
+
+5-5.ハングルのためのフォント
+
+このプラグインは、次のハングルフォントを搭載しています。
+
+フォント名：cid0kr、hysmyeongjostdmedium
+
+
+5-6.アラビア語のためのフォント
+
+このプラグインは、次のアラビア語フォントを搭載しています。
+
+フォント名：aealarabiya、aefurat
+
+"FreeFont"を使用することも出来ますが、PDFを受け取った相手が同じフォントを持っていなくともPDFを編集出来るようにするなら、「Font subsetting」を無効にする必要があります。
+
+
+5-7.ヘブライ語、アルメニア語、グルジア語、エチオピア語、タイ語のためのフォント
+
+"FreeFont"を使用することが出来ますが、PDFを受け取った相手が同じフォントを持っていなくともPDFを編集出来るようにするなら、「Font subsetting」を無効にする必要があります。
+
+
+5-8.DejaVu fonts
+
+このプラグインは、次の「DejaVu fonts」を搭載していますが、これらを使用し、PDFを受け取った相手が同じフォントを持っていなくともPDFを編集出来るようにするなら、「Font subsetting」を無効にする必要があります。
+
+フォント名：dejavusans、dejavusanscondensed、dejavusansextralight、dejavusansmono、dejavuserif、dejavuserifcondensed
+
+「DejaVu fonts」は、ラテン文字、ギリシャ文字、キリル文字をサポートしています。
+
+
+5-9.FreeFont
+
+このプラグインは、次の「FreeFont」を搭載していますが、これらを使用し、PDFを受け取った相手が同じフォントを持っていなくともPDFを編集出来るようにするなら、「Font subsetting」を無効にする必要があります。
+
+フォント名：freemono、freesans、freeserif
+
+「FreeFont」は、国際音声記号、アラビア語、ヘブライ語、アルメニア語、グルジア語、エチオピア語、タイ語をサポートしています。
+
+
+6.フォントの追加
+
+新しいフォントを追加することが出来ます。ただし、インストールするフォントは、TCPDF用に変換されたフォントである必要があります。
+
+5-1.フォントの変換
+
+下記のサイトにフォントの変換方法が書かれています。
+
+http://www.tcpdf.org/fonts.php
+
+
+5-2.フォントのアップロード
+
+1.「/wp-content/plugins/post2pdf-converter/tcpdf/fonts」ディレクトリに、*.php、*.z、*.ctg.zという名前のファイルを全てアップロードします。
+
+
+5-3.フォントを使う
+
+・WordPressの管理画面の「設定」の中の「POST2PDF Converter」に移動します。
+・「PDFの設定」の「フォント」オプションを有効にして、フォント名を入力します。
+・PDFを受け取った相手が同じフォントを持っていなくともPDFを編集出来るようにするなら、「Font subsetting」を無効にします。
+
+※フォントファイルが「xxxx.z」なら、フォント名は、「xxxx」です。
+
+注意：プラグインを更新すると、追加したフォントは削除されます。
+
+
+7.ライセンス
+
+GPL v2
+
+
+8.このプラグインが気に入ったら
+
+プラグインの開発のサポートをお願いしております。
+
+http://www.near-mint.com/blog/donate
+
+
+9.履歴
+
+2011/12/27　バージョン 0.1 リリース
+
+
+Redcocker
+URL: http://www.near-mint.com/blog/
+POST2PDF Converter: http://www.near-mint.com/blog/software/post2pdf-converter
