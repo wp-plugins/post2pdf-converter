@@ -3,14 +3,14 @@
 Plugin Name: POST2PDF Converter
 Plugin URI: http://www.near-mint.com/blog/software/post2pdf-converter
 Description: This plugin converts your post/page to PDF for visitors and visitors can download it easily.
-Version: 0.1
+Version: 0.1.3
 Author: redcocker
 Author URI: http://www.near-mint.com/blog/
 Text Domain: post2pdf_conv
 Domain Path: /languages
 */
 /*
-Last modified: 2011/12/27
+Last modified: 2011/12/28
 License: GPL v2(Except "TCPDF" libraries)
 */
 /*  Copyright 2011 M. Sumitomo
@@ -38,7 +38,7 @@ TCPDF is licensed under the LGPL 3.
 class POST2PDF_Converter {
 
 	var $post2pdf_conv_plugin_url;
-	var $post2pdf_conv_db_ver = "0.1";
+	var $post2pdf_conv_db_ver = "0.1.3";
 	var $post2pdf_conv_setting_opt;
 
 	function __construct() {
@@ -48,9 +48,9 @@ class POST2PDF_Converter {
 		$this->post2pdf_conv_setting_opt = get_option('post2pdf_conv_setting_opt');
 		add_action('plugins_loaded', array(&$this, 'post2pdf_conv_check_db_ver'));
 		add_action('admin_menu', array(&$this, 'post2pdf_conv_register_menu_item'));
-		add_filter( 'plugin_action_links', array(&$this, 'post2pdf_conv_setting_link'), 10, 2);
-		add_filter( 'the_content', array(&$this, 'post2pdf_conv_add_download_lnk'));
-		add_filter( 'wp_head', array(&$this, 'post2pdf_conv_add_style'));
+		add_filter('plugin_action_links', array(&$this, 'post2pdf_conv_setting_link'), 10, 2);
+		add_filter('the_content', array(&$this, 'post2pdf_conv_add_download_lnk'));
+		add_filter('wp_head', array(&$this, 'post2pdf_conv_add_style'));
 	}
 
 	// Create settings array
@@ -68,11 +68,14 @@ class POST2PDF_Converter {
 			"destination" => 'D',
 			"access" => 'referrer',
 			"lang" => 'eng',
-			"enable_font" => 0,
+			"file" => 'title',
 			"font" => 'helvetica',
+			"monospaced_font" => 'courier',
+			"font_path" => 0,
 			"font_size" => '12',
 			"font_subsetting" => 1,
 			"shortcode_handling" => 'parse',
+			"add_to_font_family" => 0,
 			);
 
 		// Re-define setting value
@@ -352,20 +355,22 @@ class POST2PDF_Converter {
 		$current_checkver_stamp = get_option('post2pdf_conv_checkver_stamp');
 		if (!$current_checkver_stamp || version_compare($current_checkver_stamp, $this->post2pdf_conv_db_ver, "!=")) {
 			$updated_count = 0;
-			// For new installation, update from ver. 0.6 or older
+			// For new installation
 			if (!$current_checkver_stamp) {
 				// Register array
 				$this->post2pdf_conv_setting_array();
+
 				$updated_count = $updated_count + 1;
 			}
-			// For update from older version.
-			if ($current_checkver_stamp && version_compare($current_checkver_stamp, $this->post2pdf_conv_db_ver, "!=")) {
-				// Delete old setting array
-				if (is_array($this->post2pdf_conv_setting_opt)){
-					include_once('uninstall.php');
-				}
-				// Register array
-				$this->post2pdf_conv_setting_array();
+			// For update from ver.0.1.
+			if ($current_checkver_stamp && version_compare($current_checkver_stamp, "0.1", "<=")) {
+				$this->post2pdf_conv_setting_opt['file'] = "title";
+				$this->post2pdf_conv_setting_opt['monospaced_font'] = "courier";
+				$this->post2pdf_conv_setting_opt['font_path'] = 0;
+				$this->post2pdf_conv_setting_opt['add_to_font_family'] = 0;
+				unset($this->post2pdf_conv_setting_opt['enable_font']);
+				update_option('post2pdf_conv_setting_opt', $this->post2pdf_conv_setting_opt);
+
 				$updated_count = $updated_count + 1;
 			}
 			update_option('post2pdf_conv_checkver_stamp', $this->post2pdf_conv_db_ver);
@@ -424,6 +429,10 @@ class POST2PDF_Converter {
 			$link = '<div id="downloadpdf"><a href="'.$this->post2pdf_conv_plugin_url.'post2pdf-converter-pdf-maker.php?id='.$post->ID.'"><img src="'.$this->post2pdf_conv_plugin_url.'img/pdf'.$this->post2pdf_conv_setting_opt['icon_size'].'.png" alt="download as a pdf file" /> '.$this->post2pdf_conv_setting_opt['link_text'].'</a></div>';
 		}
 
+		if ($this->post2pdf_conv_setting_opt['access'] == "login" && !is_user_logged_in()) {
+			$link = "";
+		}
+
 		if (($this->post2pdf_conv_setting_opt['post'] == 1 && is_single()) || ($this->post2pdf_conv_setting_opt['page'] == 1 && is_page())) {
 			if ($this->post2pdf_conv_setting_opt['position'] == "before") {
 				return $link.$content;
@@ -457,7 +466,14 @@ class POST2PDF_Converter {
 #downloadpdf a {text-decoration: none;}
 </style>
 <!-- POST2PDF Converter CSS End -->\n";
-		echo $css;
+
+		if (!($this->post2pdf_conv_setting_opt['access'] == "login" && !is_user_logged_in())) {
+			if (($this->post2pdf_conv_setting_opt['post'] == 1 && is_single()) || ($this->post2pdf_conv_setting_opt['page'] == 1 && is_page())) {
+				echo $css;
+			} else {
+				return;
+			}
+		}
 	}
 
 	// Setting panel
@@ -495,12 +511,14 @@ class POST2PDF_Converter {
 			$post2pdf_conv_setting_opt['destination'] = $_POST['destination'];
 			$post2pdf_conv_setting_opt['access'] = $_POST['access'];
 			$post2pdf_conv_setting_opt['lang'] = $_POST['lang'];
-			if ($_POST['enable_font'] == 1) {
-				$post2pdf_conv_setting_opt['enable_font'] = 1;
-			} else {
-				$post2pdf_conv_setting_opt['enable_font'] = 0;
-			}
+			$post2pdf_conv_setting_opt['file'] = $_POST['file'];
 			$post2pdf_conv_setting_opt['font'] = stripslashes($_POST['font']);
+			$post2pdf_conv_setting_opt['monospaced_font'] = stripslashes($_POST['monospaced_font']);
+			if ($_POST['font_path'] == 1) {
+				$post2pdf_conv_setting_opt['font_path'] = 1;
+			} else {
+				$post2pdf_conv_setting_opt['font_path'] = 0;
+			}
 			$post2pdf_conv_setting_opt['font_size'] = $_POST['font_size'];
 			if ($_POST['font_subsetting'] == 1) {
 				$post2pdf_conv_setting_opt['font_subsetting'] = 1;
@@ -508,6 +526,11 @@ class POST2PDF_Converter {
 				$post2pdf_conv_setting_opt['font_subsetting'] = 0;
 			}
 			$post2pdf_conv_setting_opt['shortcode_handling'] = $_POST['shortcode_handling'];
+			if ($_POST['add_to_font_family'] == 1) {
+				$post2pdf_conv_setting_opt['add_to_font_family'] = 1;
+			} else {
+				$post2pdf_conv_setting_opt['add_to_font_family'] = 0;
+			}
 			// Transforming
 			$post2pdf_conv_setting_opt['link_text'] = strip_tags($post2pdf_conv_setting_opt['link_text']);
 			$post2pdf_conv_setting_opt['margin_top']  = intval($post2pdf_conv_setting_opt['margin_top']);
@@ -698,12 +721,35 @@ class POST2PDF_Converter {
 					<p><small><?php _e("Choose content language.", "post2pdf_conv") ?></small></p>
 				</td>
 			</tr>
-
+			<tr valign="top">
+				<th scope="row"><?php _e("File name", "post2pdf_conv") ?></th> 
+				<td>
+					<select name="file">
+						<option value="title" <?php if ($post2pdf_conv_setting_opt['file'] == "title") {echo 'selected="selected"';} ?>><?php _e("Title", "post2pdf_conv") ?></option>
+						<option value="id" <?php if ($post2pdf_conv_setting_opt['file'] == "id") {echo 'selected="selected"';} ?>><?php _e("Post id", "post2pdf_conv") ?></option>
+					</select>
+					<p><small><?php _e("Define PDF file name.<br />You can choose title-based filename or post id-based filename.", "post2pdf_conv") ?></small></p>
+				</td>
+			</tr>
 			<tr valign="top">
 				<th scope="row"><?php _e('Font', 'post2pdf_conv') ?></th>
 				<td>
-					<input type="checkbox" name="enable_font" value="1" <?php if($post2pdf_conv_setting_opt['enable_font'] == 1){echo 'checked="checked" ';} ?>/><?php _e("Use specified font", "post2pdf_conv") ?> <input type="text" name="font" value="<?php echo esc_html($post2pdf_conv_setting_opt['font']); ?>" /><br />
-					<p><small><?php _e("When this option is disabled, the default font is determined by setting of 'Language' option.<br />If you want to use another font, enable this option and enter font name.", "post2pdf_conv") ?></small></p>
+					<input type="text" name="font" value="<?php echo esc_html($post2pdf_conv_setting_opt['font']); ?>" /><br />
+					<p><small><?php _e("This plugin choose the best suited font and set it as the default font automatically.<br />You can also enter another font name to change font.", "post2pdf_conv") ?></small></p>
+				</td>
+			</tr>
+			<tr valign="top">
+				<th scope="row"><?php _e('Monospaced font', 'post2pdf_conv') ?></th>
+				<td>
+					<input type="text" name="monospaced_font" value="<?php echo esc_html($post2pdf_conv_setting_opt['monospaced_font']); ?>" /><br />
+					<p><small><?php _e("Set default monospaced font.", "post2pdf_conv") ?></small></p>
+				</td>
+			</tr>
+			<tr valign="top">
+				<th scope="row"><?php _e('Safe fonts directory', 'post2pdf_conv') ?></th>
+				<td>
+					<input type="checkbox" name="font_path" value="1" <?php if($post2pdf_conv_setting_opt['font_path'] == 1){echo 'checked="checked" ';} ?>/><?php _e("Place font files in /wp-content/tcpdf-fonts", "post2pdf_conv") ?><br />
+					<p><small><?php _e("This plugin allow you to place font files in /wp-content/tcpdf-fonts.<br />Once you enable this option, after automatic updating, your fonts will never be removed.<br />If you adds your own fonts, you should enable this option.<br />Note: Before this option is enabled, you must make /wp-content/tcpdf-fonts/ directory manually.<br />Next, upload/move fonts to new directory and enable this option.<br />Orignal fonts: Unzip a plugin zip file and you can find orignal fonts in /post2pdf-converter/tcpdf/fonts.<br />Original fonts directory: /YOUR PLUGIN DIRECTORY/post2pdf-converter/tcpdf/fonts<br />Now you can remove original fonts directory.", "post2pdf_conv") ?></small></p>
 				</td>
 			</tr>
 			<tr valign="top">
@@ -742,7 +788,13 @@ class POST2PDF_Converter {
 					<p><small><?php _e("Choose shortcode handling.", "post2pdf_conv") ?></small></p>
 				</td>
 			</tr>
-
+			<tr valign="top">
+				<th scope="row"><?php _e('Add default font to font-family', 'post2pdf_conv') ?></th>
+				<td>
+					<input type="checkbox" name="add_to_font_family" value="1" <?php if($post2pdf_conv_setting_opt['add_to_font_family'] == 1){echo 'checked="checked" ';} ?>/><br />
+					<p><small><?php _e("If a PDF file has garbled characters, try to enable this option.", "post2pdf_conv") ?></small></p>
+				</td>
+			</tr>
 		</table>
 		<p class="submit">
 		<input type="submit" name="POST2PDF_Converter_Setting_Submit" value="<?php _e("Save Changes", "post2pdf_conv") ?>" />

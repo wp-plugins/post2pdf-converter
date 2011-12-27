@@ -2,7 +2,7 @@
 //============================================================+
 // File name   : tcpdf_config.php
 // Begin       : 2004-06-11
-// Last Update : 2011-12-27
+// Last Update : 2011-04-15
 //
 // Description : Configuration file for TCPDF.
 //
@@ -25,10 +25,6 @@
  * @version 4.9.005
  * @since 2004-10-27
  */
-
-// Deny access to this file directly Add by redcocker 2011/12/27
-if (!empty($_SERVER['SCRIPT_FILENAME']) && 'tcpdf_config.php' == basename($_SERVER['SCRIPT_FILENAME']))
-	wp_die(__("You are not allowed to access this file.", "post2pdf_conv"));
 
 // If you define the constant K_TCPDF_EXTERNAL_CONFIG, the following settings will be ignored.
 
@@ -80,12 +76,7 @@ if (!defined('K_TCPDF_EXTERNAL_CONFIG')) {
 	 * path for PDF fonts
 	 * use K_PATH_MAIN.'fonts/old/' for old non-UTF8 fonts
 	 */
-	// Modified by redcocker 2011/12/27
-	if (!defined('K_PATH_FONTS') && $this->post2pdf_conv_setting_opt['font_path'] == 1) {
-		define('K_PATH_FONTS', WP_CONTENT_DIR.'/tcpdf-fonts/');
-	} else {
-		define ('K_PATH_FONTS', K_PATH_MAIN.'fonts/');
-	}
+	define ('K_PATH_FONTS', K_PATH_MAIN.'fonts/');
 
 	/**
 	 * cache directory for temporary files (full path)

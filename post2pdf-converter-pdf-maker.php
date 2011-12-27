@@ -1,7 +1,7 @@
 <?php
 /*
 by Redcocker
-Last modified: 2011/12/26
+Last modified: 2011/12/28
 License: GPL v2
 http://www.near-mint.com/blog/
 */
@@ -39,7 +39,13 @@ class POST2PDF_Converter_PDF_Maker {
 		}
 
 		$title = $post_data->post_title;
+		if (mb_strlen($title, 'UTF-8') < 42) {
+			$header_title = strip_tags($title);
+		} else {
+			$header_title = mb_substr(strip_tags($title), 0, 42, 'UTF-8')."...";
+		}
 		$permalink = get_permalink($post_data->ID);
+
 		$author_data = get_userdata($post_data->post_author);
 		if ($author_data->display_name) {
 			$author = $author_data->display_name;
@@ -57,23 +63,15 @@ class POST2PDF_Converter_PDF_Maker {
 		}
 		$content = $post_data->post_content;
 		$config_lang = substr($this->post2pdf_conv_setting_opt['lang'], 0, 3);
-		if ($this->post2pdf_conv_setting_opt['enable_font'] == 0) {
-			if ($config_lang == "jpn") {
-				$font = "cid0jp";
-			} else if ($config_lang == "zho") {
-				$font = "cid0ct";
-			} else if ($config_lang == "chi") {
-				$font = "cid0cs";
-			} else if ($config_lang == "kor") {
-				$font = "cid0kr";
-			} else {
-				$font = "helvetica";
-			}
-		} else if ($this->post2pdf_conv_setting_opt['enable_font'] == 1) {
-			$font = $this->post2pdf_conv_setting_opt['font'];
-		}
-
+		$font = $this->post2pdf_conv_setting_opt['font'];
+		$monospaced_font = $this->post2pdf_conv_setting_opt['monospaced_font'];
 		$font_size = $this->post2pdf_conv_setting_opt['font_size'];
+
+		if ($this->post2pdf_conv_setting_opt['file'] == "title") {
+			$filename = $post_data->post_title;
+		} else {
+			$filename = $post_id;
+		}
 
 		// Include TCPDF
 		require_once('tcpdf/config/lang/'.$config_lang.'.php');
@@ -90,14 +88,14 @@ class POST2PDF_Converter_PDF_Maker {
 		$pdf->SetKeywords($tags);
 
 		// set header data
-		$pdf->SetHeaderData(PDF_HEADER_LOGO, PDF_HEADER_LOGO_WIDTH, $title, "by " .$author. " - ". $permalink);
+		$pdf->SetHeaderData(PDF_HEADER_LOGO, PDF_HEADER_LOGO_WIDTH, $header_title, "by " .$author. " - ". $permalink);
 
 		// set header and footer fonts
 		$pdf->setHeaderFont(Array($font, '', PDF_FONT_SIZE_MAIN));
 		$pdf->setFooterFont(Array($font, '', PDF_FONT_SIZE_DATA));
 
 		// set default monospaced font
-		$pdf->SetDefaultMonospacedFont($font);
+		$pdf->SetDefaultMonospacedFont($monospaced_font);
 
 		//set margins
 		$pdf->SetMargins(PDF_MARGIN_LEFT, PDF_MARGIN_TOP, PDF_MARGIN_RIGHT);
@@ -142,7 +140,9 @@ class POST2PDF_Converter_PDF_Maker {
 
 		$formatted_title = '<h1 style="text-align:center;">' . $title . '</h1>';
 		$formatted_post = $formatted_title . '<br/><br/>' . $filterd_content;
-
+		if ($this->post2pdf_conv_setting_opt['add_to_font_family'] == 1) {
+			$formatted_post = preg_replace('/font-family:([^;]*?);/is', "font-family:".$font.",$1;", $formatted_post);
+		}
 		// Print post
 		$pdf->writeHTMLCell($w = 0, $h = 0, $x = '', $y = '', $formatted_post, $border = 0, $ln = 1, $fill = 0, $reseth = true, $align = '', $autopadding = true);
 
@@ -151,7 +151,7 @@ class POST2PDF_Converter_PDF_Maker {
 		$pdf->setCellPaddings(5, 5, 0, 0);
 
 		// Output pdf document
-		$pdf->Output($post_data->post_name . '.pdf', $this->post2pdf_conv_setting_opt['destination']);
+		$pdf->Output(substr($filename, 0 ,255).'.pdf', $this->post2pdf_conv_setting_opt['destination']);
 
 	}
 
