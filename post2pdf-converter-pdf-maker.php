@@ -67,6 +67,9 @@ class POST2PDF_Converter_PDF_Maker {
 		$monospaced_font = $this->post2pdf_conv_setting_opt['monospaced_font'];
 		$font_size = $this->post2pdf_conv_setting_opt['font_size'];
 
+		$logo_file = $this->post2pdf_conv_setting_opt['logo_file'];
+		$logo_width = $this->post2pdf_conv_setting_opt['logo_width'];
+
 		if ($this->post2pdf_conv_setting_opt['file'] == "title") {
 			$filename = $post_data->post_title;
 		} else {
@@ -76,6 +79,7 @@ class POST2PDF_Converter_PDF_Maker {
 		// Include TCPDF
 		require_once('tcpdf/config/lang/'.$config_lang.'.php');
 		require_once('tcpdf/tcpdf.php');
+		//$logo_file_path = validate_file($logo_file_path);
 
 		// Create a new object
 		$pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false, false);
@@ -88,7 +92,11 @@ class POST2PDF_Converter_PDF_Maker {
 		$pdf->SetKeywords($tags);
 
 		// set header data
-		$pdf->SetHeaderData(PDF_HEADER_LOGO, PDF_HEADER_LOGO_WIDTH, $header_title, "by " .$author. " - ". $permalink);
+		if ($this->post2pdf_conv_setting_opt['logo_enable'] == 1 && $logo_file) {
+			$pdf->SetHeaderData($logo_file, $logo_width, $header_title, "by " .$author. " - ". $permalink);
+		} else {
+			$pdf->SetHeaderData('', 0, $header_title, "by " .$author. " - ". $permalink);
+		}
 
 		// set header and footer fonts
 		$pdf->setHeaderFont(Array($font, '', PDF_FONT_SIZE_MAIN));
@@ -141,7 +149,7 @@ class POST2PDF_Converter_PDF_Maker {
 		$formatted_title = '<h1 style="text-align:center;">' . $title . '</h1>';
 		$formatted_post = $formatted_title . '<br/><br/>' . $filterd_content;
 		if ($this->post2pdf_conv_setting_opt['add_to_font_family'] == 1) {
-			$formatted_post = preg_replace('/font-family:([^;]*?);/is', "font-family:".$font.",$1;", $formatted_post);
+			$formatted_post = preg_replace('/(<[^>]*?font-family[^:]*?:)([^;]*?;[^>]*?>)/is', "$1".$font.",$2", $formatted_post);
 		}
 		// Print post
 		$pdf->writeHTMLCell($w = 0, $h = 0, $x = '', $y = '', $formatted_post, $border = 0, $ln = 1, $fill = 0, $reseth = true, $align = '', $autopadding = true);

@@ -100,7 +100,12 @@ if (!defined('K_TCPDF_EXTERNAL_CONFIG')) {
 	/**
 	 *images directory
 	 */
-	define ('K_PATH_IMAGES', K_PATH_MAIN.'images/');
+	// Modified by redcocker 2011/12/28
+	if (file_exists(WP_CONTENT_DIR.'/tcpdf-images/')) {
+		define ('K_PATH_IMAGES', WP_CONTENT_DIR.'/tcpdf-images/');
+	} else {
+		define ('K_PATH_IMAGES', K_PATH_MAIN.'images/');
+	}
 
 	/**
 	 * blank image

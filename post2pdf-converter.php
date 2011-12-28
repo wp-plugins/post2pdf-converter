@@ -3,7 +3,7 @@
 Plugin Name: POST2PDF Converter
 Plugin URI: http://www.near-mint.com/blog/software/post2pdf-converter
 Description: This plugin converts your post/page to PDF for visitors and visitors can download it easily.
-Version: 0.1.3
+Version: 0.1.5
 Author: redcocker
 Author URI: http://www.near-mint.com/blog/
 Text Domain: post2pdf_conv
@@ -38,7 +38,7 @@ TCPDF is licensed under the LGPL 3.
 class POST2PDF_Converter {
 
 	var $post2pdf_conv_plugin_url;
-	var $post2pdf_conv_db_ver = "0.1.3";
+	var $post2pdf_conv_db_ver = "0.1.5";
 	var $post2pdf_conv_setting_opt;
 
 	function __construct() {
@@ -74,6 +74,9 @@ class POST2PDF_Converter {
 			"font_path" => 0,
 			"font_size" => '12',
 			"font_subsetting" => 1,
+			"logo_enable" => 1,
+			"logo_file" => 'tcpdf_logo.jpg',
+			"logo_width" => '30',
 			"shortcode_handling" => 'parse',
 			"add_to_font_family" => 0,
 			);
@@ -269,6 +272,7 @@ class POST2PDF_Converter {
 				break;
 			case 'pl_PL':
 				$post2pdf_conv_setting_opt['lang'] = "pol";
+				$post2pdf_conv_setting_opt['font'] = "dejavusans";
 				break;
 			case 'pt_PT':
 				$post2pdf_conv_setting_opt['lang'] = "por";
@@ -362,13 +366,22 @@ class POST2PDF_Converter {
 
 				$updated_count = $updated_count + 1;
 			}
-			// For update from ver.0.1.
+			// For update from ver.0.1
 			if ($current_checkver_stamp && version_compare($current_checkver_stamp, "0.1", "<=")) {
 				$this->post2pdf_conv_setting_opt['file'] = "title";
 				$this->post2pdf_conv_setting_opt['monospaced_font'] = "courier";
 				$this->post2pdf_conv_setting_opt['font_path'] = 0;
 				$this->post2pdf_conv_setting_opt['add_to_font_family'] = 0;
 				unset($this->post2pdf_conv_setting_opt['enable_font']);
+				update_option('post2pdf_conv_setting_opt', $this->post2pdf_conv_setting_opt);
+
+				$updated_count = $updated_count + 1;
+			}
+			// For update from ver.0.1.3 or older
+			if ($current_checkver_stamp && version_compare($current_checkver_stamp, "0.1.3", "<=")) {
+				$this->post2pdf_conv_setting_opt['logo_enable'] = 1;
+				$this->post2pdf_conv_setting_opt['logo_file'] = "tcpdf_logo.jpg";
+				$this->post2pdf_conv_setting_opt['logo_width'] = "30";
 				update_option('post2pdf_conv_setting_opt', $this->post2pdf_conv_setting_opt);
 
 				$updated_count = $updated_count + 1;
@@ -525,6 +538,13 @@ class POST2PDF_Converter {
 			} else {
 				$post2pdf_conv_setting_opt['font_subsetting'] = 0;
 			}
+			if ($_POST['logo_enable'] == 1) {
+				$post2pdf_conv_setting_opt['logo_enable'] = 1;
+			} else {
+				$post2pdf_conv_setting_opt['logo_enable'] = 0;
+			}
+			$post2pdf_conv_setting_opt['logo_file'] = stripslashes($_POST['logo_file']);
+			$post2pdf_conv_setting_opt['logo_width'] = stripslashes($_POST['logo_width']);
 			$post2pdf_conv_setting_opt['shortcode_handling'] = $_POST['shortcode_handling'];
 			if ($_POST['add_to_font_family'] == 1) {
 				$post2pdf_conv_setting_opt['add_to_font_family'] = 1;
@@ -536,6 +556,13 @@ class POST2PDF_Converter {
 			$post2pdf_conv_setting_opt['margin_top']  = intval($post2pdf_conv_setting_opt['margin_top']);
 			$post2pdf_conv_setting_opt['margin_bottom']  = intval($post2pdf_conv_setting_opt['margin_bottom']);
 			$post2pdf_conv_setting_opt['font'] = strip_tags($post2pdf_conv_setting_opt['font']);
+			if (preg_match('/^[^\.].+?\.(jpg|jpeg|png|gif)$/i', $post2pdf_conv_setting_opt['logo_file'])) {
+				$post2pdf_conv_setting_opt['logo_file'] = $post2pdf_conv_setting_opt['logo_file'];
+			} else {
+				$post2pdf_conv_setting_opt['logo_file'] = "";
+			}
+			$post2pdf_conv_setting_opt['logo_width']  = intval($post2pdf_conv_setting_opt['logo_width']);
+
 			// Store in DB
 			update_option('post2pdf_conv_setting_opt', $post2pdf_conv_setting_opt);
 			update_option('post2pdf_conv_updated', 'false');
@@ -702,9 +729,9 @@ class POST2PDF_Converter {
 					<select name="access">
 						<option value="unrestraint" <?php if ($post2pdf_conv_setting_opt['access'] == "unrestraint") {echo 'selected="selected"';} ?>><?php _e("Unrestraint", "post2pdf_conv") ?></option>
 						<option value="referrer" <?php if ($post2pdf_conv_setting_opt['access'] == "referrer") {echo 'selected="selected"';} ?>><?php _e("Deny any access with the download URL directly", "post2pdf_conv") ?></option>
-						<option value="login" <?php if ($post2pdf_conv_setting_opt['access'] == "login") {echo 'selected="selected"';} ?>><?php _e("Allow only log-in users", "post2pdf_conv") ?></option>
+						<option value="login" <?php if ($post2pdf_conv_setting_opt['access'] == "login") {echo 'selected="selected"';} ?>><?php _e("Allow only registered users", "post2pdf_conv") ?></option>
 					</select>
-					<p><small><?php _e("You can restrict access to the download link.<br/>When 'Deny any access with the download URL directly' is chosen, HTTP referrer must contain your WordPress URL.<br />When 'Allow only log-in users' is chosen, Only log-in users can download a PDF.", "post2pdf_conv") ?></small></p>
+					<p><small><?php _e("You can restrict access to the download link.<br/>When 'Deny any access with the download URL directly' is chosen, HTTP referrer must contain your WordPress URL.<br />When 'Allow only registered users' is chosen, Only registered users can download a PDF.", "post2pdf_conv") ?></small></p>
 				</td>
 			</tr>
 		</table>
@@ -749,7 +776,7 @@ class POST2PDF_Converter {
 				<th scope="row"><?php _e('Safe fonts directory', 'post2pdf_conv') ?></th>
 				<td>
 					<input type="checkbox" name="font_path" value="1" <?php if($post2pdf_conv_setting_opt['font_path'] == 1){echo 'checked="checked" ';} ?>/><?php _e("Place font files in /wp-content/tcpdf-fonts", "post2pdf_conv") ?><br />
-					<p><small><?php _e("This plugin allow you to place font files in /wp-content/tcpdf-fonts.<br />Once you enable this option, after automatic updating, your fonts will never be removed.<br />If you adds your own fonts, you should enable this option.<br />Note: Before this option is enabled, you must make /wp-content/tcpdf-fonts/ directory manually.<br />Next, upload/move fonts to new directory and enable this option.<br />Orignal fonts: Unzip a plugin zip file and you can find orignal fonts in /post2pdf-converter/tcpdf/fonts.<br />Original fonts directory: /YOUR PLUGIN DIRECTORY/post2pdf-converter/tcpdf/fonts<br />Now you can remove original fonts directory.", "post2pdf_conv") ?></small></p>
+					<p><small><?php _e("This plugin allow you to place font files in /wp-content/tcpdf-fonts.<br />Once you enable this option, after automatic updating, your fonts will never be removed.<br />If you adds your own fonts, you should enable this option.<br />Note: Before this option is enabled, you must create /wp-content/tcpdf-fonts/ directory manually.<br />Next, upload/move fonts to new directory and enable this option.<br />Orignal fonts: Unzip a plugin zip file and you can find orignal fonts in /post2pdf-converter/tcpdf/fonts.<br />Original fonts directory: /YOUR PLUGIN DIRECTORY/post2pdf-converter/tcpdf/fonts<br />Now you can remove original fonts directory.", "post2pdf_conv") ?></small></p>
 				</td>
 			</tr>
 			<tr valign="top">
@@ -776,6 +803,13 @@ class POST2PDF_Converter {
 				<td>
 					<input type="checkbox" name="font_subsetting" value="1" <?php if($post2pdf_conv_setting_opt['font_subsetting'] == 1){echo 'checked="checked" ';} ?>/><?php _e("enable", "post2pdf_conv") ?><br />
 					<p><small><?php _e("Enable/Disable 'Font subsetting' to reduce the size of documents using large unicode font files.<br />If this option is diseabled, the whole font will be embeded in the PDF file and file size will become enlarged.<br />Note: there are some fonts that can not be embedded.(e.g. Courier, Helvetica, Times New Roman etc.)", "post2pdf_conv") ?></small></p>
+				</td>
+			</tr>
+			<tr valign="top">
+				<th scope="row"><?php _e('Header logo', 'post2pdf_conv') ?></th>
+				<td>
+					<input type="checkbox" name="logo_enable" value="1" <?php if($post2pdf_conv_setting_opt['logo_enable'] == 1){echo 'checked="checked" ';} ?>/><?php _e("Show a logo on the header", "post2pdf_conv") ?><br /><?php _e("Image file", "post2pdf_conv") ?> <input type="text" name="logo_file" size="15" value="<?php echo esc_html($post2pdf_conv_setting_opt['logo_file']); ?>" /> <?php _e("Logo width", "post2pdf_conv") ?> <input type="text" name="logo_width" size="2" value="<?php echo esc_html($post2pdf_conv_setting_opt['logo_width']); ?>" />mm<br />
+					<p><small><?php _e("You can set your own logo on the header.<br />First, create /wp-content/tcpdf-images/ directory manually.<br />Next, upload iamge file(jpeg, jpg, png or gif) there and enter your image file name.<br />You can also upload your image to /YOUR PLUGIN DIRECTORY/post2pdf-converter/tcpdf/images directory.", "post2pdf_conv") ?></small></p>
 				</td>
 			</tr>
 			<tr valign="top">
