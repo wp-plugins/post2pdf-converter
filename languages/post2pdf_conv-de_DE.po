@@ -18,7 +18,7 @@ msgstr ""
 
 #: ../post2pdf-converter-bootstrap.php:30
 msgid "Could not find wp-load.php"
-msgstr "Datei \"wp-load.php\" nicht gefunden"
+msgstr "Die Datei \"wp-load.php\" wurde nicht gefunden"
 
 #: ../post2pdf-converter-pdf-maker.php:13
 #: ../post2pdf-converter-pdf-maker.php:26
@@ -31,11 +31,11 @@ msgstr "Dieser Beitrag existiert nicht"
 
 #: ../post2pdf-converter.php:62
 msgid "Download this page in PDF format"
-msgstr "Download als PDF file"
+msgstr "Download als PDF File"
 
 #: ../post2pdf-converter.php:393
 msgid "POST2PDF Converter has successfully created new DB table.<br />If you upgraded to this version, some setting options may be added or reset to the default values.<br />Go to the <a href=\"options-general.php?page=post2pdf-converter-options\">setting panel</a> and configure POST2PDF Converter now. Once you save your settings, this message will be cleared."
-msgstr "Es wurden von POST2PDFC neue Datenbank Tabellen erfolgreich erzeugt.<br />Falls Sie ein Upgrade durchgeführt haben, wurden einige Einstellungen möglicherweise auf Standardwerte zurückgesetzt.<br />Gehen Sie auf <a href=\"options-general.php?page=post2pdf-converter-options\">Einstellungen</a> und konfigurieren Sie POST2PDF Converter gegebenenfalls neu. Diese Meldung wird danach nicht mehr angezeigt. "
+msgstr "Die erforderlichen Datenbank Tabellen wurden erfolgreich erzeugt.<br />Falls Sie ein Upgrade durchgeführt haben, wurden einige Einstellungen möglicherweise auf Standardwerte zurückgesetzt.<br />Gehen Sie auf <a href=\"options-general.php?page=post2pdf-converter-options\">Einstellungen</a> und konfigurieren Sie POST2PDF Converter gegebenenfalls neu. Diese Meldung wird danach nicht mehr angezeigt. "
 
 #: ../post2pdf-converter.php:407
 msgid "Settings"
@@ -51,7 +51,7 @@ msgstr "Einstellungen gespeichert"
 
 #: ../post2pdf-converter.php:528
 msgid "All settings were reset. Please <a href=\"options-general.php?page=post2pdf-converter-options\">reload the page</a>."
-msgstr "RESET. Alle Einstellungen wurden auf ihre Ausgangswerte zurückgesetzt. <a href=\"options-general.php?page=post2pdf-converter-options\">Hier klicken, um die Seite neu zu laden</a>."
+msgstr "RESET. Alle Einstellungen wurden zurückgesetzt. <a href=\"options-general.php?page=post2pdf-converter-options\">Hier klicken</a>, um die Seite neu zu laden."
 
 #: ../post2pdf-converter.php:533
 msgid "Afrikaans"
@@ -83,11 +83,11 @@ msgstr "Portugiesisch (br)"
 
 #: ../post2pdf-converter.php:540
 msgid "Catalan"
-msgstr "Catalanisch"
+msgstr "Katalanisch"
 
 #: ../post2pdf-converter.php:541
 msgid "Chinese(Simplified)"
-msgstr "Chinesisch (simple)"
+msgstr "Chinesisch (vereinfacht)"
 
 #: ../post2pdf-converter.php:542
 msgid "Chinese(Traditional)"
@@ -143,7 +143,7 @@ msgstr "Georgisch"
 
 #: ../post2pdf-converter.php:555
 msgid "Haitian Creole"
-msgstr "Haiti (creolisch)"
+msgstr "Haiti (kreolisch)"
 
 #: ../post2pdf-converter.php:556
 msgid "Hebrew"
@@ -179,7 +179,7 @@ msgstr "Mazedonisch"
 
 #: ../post2pdf-converter.php:564
 msgid "Malay"
-msgstr "Malaiisch"
+msgstr "Malaysisch"
 
 #: ../post2pdf-converter.php:565
 msgid "Maltese"
@@ -187,11 +187,11 @@ msgstr "Maltesisch"
 
 #: ../post2pdf-converter.php:566
 msgid "Moldavian"
-msgstr "Moldawianisch"
+msgstr "Moldawisch"
 
 #: ../post2pdf-converter.php:567
 msgid "Moldovan"
-msgstr "Moldovanisch"
+msgstr "Moldawisch"
 
 #: ../post2pdf-converter.php:568
 msgid "Norwegian Bokmål"
@@ -219,7 +219,7 @@ msgstr "Serbisch"
 
 #: ../post2pdf-converter.php:574
 msgid "Slovenian"
-msgstr "Slovenisch"
+msgstr "Slowenisch"
 
 #: ../post2pdf-converter.php:575
 msgid "Spanish"
@@ -227,7 +227,7 @@ msgstr "Spanisch"
 
 #: ../post2pdf-converter.php:576
 msgid "Swahili"
-msgstr "Kisuhaeli"
+msgstr "Kisuaheli"
 
 #: ../post2pdf-converter.php:577
 msgid "Swedish"
@@ -296,7 +296,7 @@ msgstr "Font Größe"
 
 #: ../post2pdf-converter.php:639
 msgid "Choose font size for the link text."
-msgstr "Font Größe für verlinkten Text "
+msgstr "Font Größe des verlinkten Texts "
 
 #: ../post2pdf-converter.php:643
 msgid "Position"
@@ -304,11 +304,11 @@ msgstr "Position"
 
 #: ../post2pdf-converter.php:646
 msgid "Before the post/page content block"
-msgstr "vor dem Beitrag/Seiten Inhalt "
+msgstr "Vor dem Inhalt "
 
 #: ../post2pdf-converter.php:647
 msgid "After the post/page content block"
-msgstr "nach dem Beitrag/Seiten Inhalt "
+msgstr "Nach dem Inhalt "
 
 #: ../post2pdf-converter.php:649
 msgid "Choose display position of the download link."
@@ -316,7 +316,7 @@ msgstr "Anordnung des Download Links"
 
 #: ../post2pdf-converter.php:653
 msgid "Margin"
-msgstr "Margin/Rand"
+msgstr "Rand"
 
 #: ../post2pdf-converter.php:655
 msgid "Top margin"
@@ -332,7 +332,7 @@ msgstr "Unterer Rand"
 
 #: ../post2pdf-converter.php:656
 msgid "Set margin for the download link block."
-msgstr "Rand Definition des Download Link Containers"
+msgstr "Rand Größe des Download Link Containers"
 
 #: ../post2pdf-converter.php:660
 msgid "Right justification"
@@ -340,7 +340,7 @@ msgstr "Ausrichtung rechts"
 
 #: ../post2pdf-converter.php:663
 msgid "Justify the download link block to the right."
-msgstr "Den Download Link rechts ausrichten"
+msgstr "Den Download Link Container rechts ausrichten"
 
 #: ../post2pdf-converter.php:667
 msgid "Link action"
@@ -356,11 +356,11 @@ msgstr "Im Browser öffnen"
 
 #: ../post2pdf-converter.php:673
 msgid "When 'Open with the browser' is chosen, This plugin will output PDF to the browser."
-msgstr "Falls \"Im Browser öffnen\" gewählt ist, wird dies ausgeführt"
+msgstr "Falls \"Im Browser öffnen\" gewählt ist, wird die PDF Datei dort ausgegeben. "
 
 #: ../post2pdf-converter.php:677
 msgid "Access"
-msgstr "Zugang"
+msgstr "Zugriff"
 
 #: ../post2pdf-converter.php:680
 msgid "Unrestraint"
@@ -368,15 +368,15 @@ msgstr "Uneingeschränkt"
 
 #: ../post2pdf-converter.php:681
 msgid "Deny any access with the download URL directly"
-msgstr "Verweigere den direkten Zugang über eine Download URL"
+msgstr "Kein direkter Zugriff über Download URL's"
 
 #: ../post2pdf-converter.php:682
 msgid "Allow only registered users"
-msgstr "Erlaube den Download nur für registrierte Nutzer "
+msgstr "Zugriff nur für registrierte Nutzer "
 
 #: ../post2pdf-converter.php:684
 msgid "You can restrict access to the download link.<br/>When 'Deny any access with the download URL directly' is chosen, HTTP referrer must contain your WordPress URL.<br />When 'Allow only registered users' is chosen, Only registered users can download a PDF."
-msgstr "Zugriffe auf Download Links können eingeschränkt werden.<br/>Wenn der direkte Zugang über einen Downloadlink deaktiviert ist, muss der HTTP referrer contain your WordPress URL.<br />Wenn der Zugriff nur für registrierte Nutzer erlaubt ist, Only registered users can download a PDF."
+msgstr "Zugriffe auf Download Links können eingeschränkt werden.<br/>Wenn der Button \"Kein direkter Zugriff über Download URL's\" aktiviert ist, muss der HTTP Referrer Ihre WordPress URL enthalten.<br />Wenn der \"Zugriff nur für registrierte Nutzer \" konfiguriert ist, können nur eingeloggte Nutzer ein PDF File downloaden."
 
 #: ../post2pdf-converter.php:688
 msgid "2. PDF Settings"
@@ -400,7 +400,7 @@ msgstr "Benutze eigenen Font"
 
 #: ../post2pdf-converter.php:706
 msgid "When this option is disabled, the default font is determined by setting of 'Language' option.<br />If you want to use another font, enable this option and enter font name."
-msgstr "Falls diese Option nicht genutzt wird, wird ein Font gemäß der Einstellungen in den Sprach Optionen angezeigt.<br />Zum Ändern aktivieren sie diese Option und treffen eine Auswahl"
+msgstr "Falls diese Option nicht genutzt wird, wird ein Font gemäß den Einstellungen in den Sprach Optionen angezeigt.<br />Zum Ändern aktivieren sie diese Option und geben Sie einen Font Namen ein."
 
 #: ../post2pdf-converter.php:725
 msgid "Choose font size."
@@ -416,7 +416,7 @@ msgstr "ermögliche"
 
 #: ../post2pdf-converter.php:732
 msgid "Enable/Disable 'Font subsetting' to reduce the size of documents using large unicode font files.<br />If this option is diseabled, the whole font will be embeded in the PDF file and file size will become enlarged.<br />Note: there are some fonts that can not be embedded.(e.g. Courier, Helvetica, Times New Roman etc.)"
-msgstr "\"Weitere Font Einstellungen\"  Ein/Aus. Reduziert die Dokumet Größe durch Verwendung großer Font Sätze.<br />Der Schalter \"AUS\" bewirkt große PDF Files durch Einbettung von Fonts in das Dokument.<br />Einige Standard Fonts können nicht eingebettet werden (bspw.: Courier, Helvetica, Times New Roman)"
+msgstr "\"Weitere Font Einstellungen\"  Ein/Aus. Reduziert die Dokument Größe durch Verwendung großer Unicode Font Sätze.<br />Der Schalter \"AUS\" erzeugt große PDF Files durch Einbettung von Fonts in das Dokument.<br />Einige Standard Fonts können nicht eingebettet werden (bspw.: Courier, Helvetica, Times New Roman)"
 
 #: ../post2pdf-converter.php:736
 msgid "Shortcode handling"
@@ -432,7 +432,7 @@ msgstr "Entfernen"
 
 #: ../post2pdf-converter.php:742
 msgid "Choose shortcode handling."
-msgstr "Kurzbefehl Bearbeitung beenden"
+msgstr "Kurzbefehl Bearbeitung wählen "
 
 #: ../post2pdf-converter.php:748
 msgid "Save Changes"
@@ -440,7 +440,7 @@ msgstr "Änderungen speichern"
 
 #: ../post2pdf-converter.php:751
 msgid "3. Restore all settings to default"
-msgstr "3. Standard Einstellungen wiederherstellen"
+msgstr "3. Alle Standard Einstellungen wiederherstellen"
 
 #: ../post2pdf-converter.php:756
 msgid "Reset All Settings"
@@ -448,7 +448,7 @@ msgstr "Alle Einstellungen zurück setzen"
 
 #: ../post2pdf-converter.php:759
 msgid "4. Your System Info"
-msgstr "4. Sstem Informationen"
+msgstr "4. System Informationen"
 
 #: ../post2pdf-converter.php:762
 msgid "Server OS:"
@@ -480,11 +480,11 @@ msgstr "WordPress Sprache: "
 
 #: ../post2pdf-converter.php:769
 msgid "WordPress character set:"
-msgstr "WordPress character set: "
+msgstr "WordPress Zeichenkodierung: "
 
 #: ../post2pdf-converter.php:770
 msgid "WordPress theme:"
-msgstr "WordPress active Theme: "
+msgstr "Aktives WordPress Theme: "
 
 #: ../post2pdf-converter.php:771
 msgid "POST2PDF Converter version:"

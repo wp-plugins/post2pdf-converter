@@ -1,7 +1,7 @@
 <?php
 /*
 by Redcocker
-Last modified: 2011/12/28
+Last modified: 2011/12/29
 License: GPL v2
 http://www.near-mint.com/blog/
 */

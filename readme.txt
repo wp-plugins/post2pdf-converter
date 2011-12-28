@@ -4,7 +4,7 @@ Donate link: http://www.near-mint.com/blog/donate
 Tags: pdf, post, page, convert, download, tcpdf
 Requires at least: 2.8
 Tested up to: 3.3
-Stable tag: 0.1.3
+Stable tag: 0.1.5
 
 This plugin converts your post/page to PDF for visitors and visitor can download it easily.
 
@@ -21,7 +21,11 @@ Note: This plugin requires PHP 5.
 * Base on "[TCPDF](http://www.tcpdf.org/ "TCPDF")".
 * Easy to add a download link into every posts/pages.
 * Easy to configure.
-* Localization: English(Default), 日本語(Japanese, UTF-8).
+
+= Localization =
+
+* 日本語(Japanese) by redcocker
+* Deutsch(German) by Uli Sobers([Free Templates](http://www.free-templates-sobers.de/ "Free Templates"), [IQ137](http://www.iq137.de/ "IQ137"))
 
 == Installation ==
 
@@ -157,7 +161,7 @@ However, after automatic updating, fonts in the new directory will never be upda
 
 = Q. Created PDF file has garbled characters. =
 
-A. Go to the setting panel and enable "Add default font to font-family" option.
+A. Go to the setting panel and enter `freesans` or `dejavusans`, `stsongstdlight`, `msungstdlight`, `hysmyeongjostdmedium` into "Font" option. When this solves the problem, please give me details, I may need to change the default font for your language. If you still can't solve the problem, Go to the setting panel and enable "Add default font to font-family" option.
 
 == Screenshots ==
 
@@ -165,6 +169,13 @@ A. Go to the setting panel and enable "Add default font to font-family" option.
 2. This is setting panel.
 
 == Changelog ==
+
+= 0.1.5 =
+* Added new setting option to change the header logo.
+* Added German translation. Thanks Uli Sobers.
+* Changed the default font size.
+* Changed the default font for Polosh.
+* Better regular expression for "Add default font to font-family" option.
 
 = 0.1.3 =
 * Added new setting option to define PDF file name.
@@ -181,6 +192,9 @@ A. Go to the setting panel and enable "Add default font to font-family" option.
 * This is the initial release.
 
 == Upgrade Notice ==
+
+= 0.1.5 =
+This version has new features and changes.
 
 = 0.1.3 =
 This version has new features, changes and bug fixes.

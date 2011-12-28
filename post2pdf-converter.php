@@ -10,7 +10,7 @@ Text Domain: post2pdf_conv
 Domain Path: /languages
 */
 /*
-Last modified: 2011/12/28
+Last modified: 2011/12/29
 License: GPL v2(Except "TCPDF" libraries)
 */
 /*  Copyright 2011 M. Sumitomo
@@ -72,7 +72,7 @@ class POST2PDF_Converter {
 			"font" => 'helvetica',
 			"monospaced_font" => 'courier',
 			"font_path" => 0,
-			"font_size" => '12',
+			"font_size" => '10',
 			"font_subsetting" => 1,
 			"logo_enable" => 1,
 			"logo_file" => 'tcpdf_logo.jpg',
@@ -674,6 +674,8 @@ class POST2PDF_Converter {
 				<th scope="row"><?php _e("Font size", "post2pdf_conv") ?></th> 
 				<td>
 					<select name="link_text_size">
+						<option value="6" <?php if ($post2pdf_conv_setting_opt['link_text_size'] == "6") {echo 'selected="selected"';} ?>>6 px</option>
+						<option value="7" <?php if ($post2pdf_conv_setting_opt['link_text_size'] == "7") {echo 'selected="selected"';} ?>>7 px</option>
 						<option value="8" <?php if ($post2pdf_conv_setting_opt['link_text_size'] == "8") {echo 'selected="selected"';} ?>>8 px</option>
 						<option value="9" <?php if ($post2pdf_conv_setting_opt['link_text_size'] == "9") {echo 'selected="selected"';} ?>>9 px</option>
 						<option value="10" <?php if ($post2pdf_conv_setting_opt['link_text_size'] == "10") {echo 'selected="selected"';} ?>>10 px</option>
@@ -783,6 +785,8 @@ class POST2PDF_Converter {
 				<th scope="row"><?php _e("Font size", "post2pdf_conv") ?></th> 
 				<td>
 					<select name="font_size">
+						<option value="6" <?php if ($post2pdf_conv_setting_opt['font_size'] == "6") {echo 'selected="selected"';} ?>>6 px</option>
+						<option value="7" <?php if ($post2pdf_conv_setting_opt['font_size'] == "7") {echo 'selected="selected"';} ?>>7 px</option>
 						<option value="8" <?php if ($post2pdf_conv_setting_opt['font_size'] == "8") {echo 'selected="selected"';} ?>>8 px</option>
 						<option value="9" <?php if ($post2pdf_conv_setting_opt['font_size'] == "9") {echo 'selected="selected"';} ?>>9 px</option>
 						<option value="10" <?php if ($post2pdf_conv_setting_opt['font_size'] == "10") {echo 'selected="selected"';} ?>>10 px</option>
