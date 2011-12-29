@@ -3,14 +3,14 @@
 Plugin Name: POST2PDF Converter
 Plugin URI: http://www.near-mint.com/blog/software/post2pdf-converter
 Description: This plugin converts your post/page to PDF for visitors and visitors can download it easily.
-Version: 0.1.5
+Version: 0.1.6
 Author: redcocker
 Author URI: http://www.near-mint.com/blog/
 Text Domain: post2pdf_conv
 Domain Path: /languages
 */
 /*
-Last modified: 2011/12/29
+Last modified: 2011/12/30
 License: GPL v2(Except "TCPDF" libraries)
 */
 /*  Copyright 2011 M. Sumitomo
@@ -38,7 +38,7 @@ TCPDF is licensed under the LGPL 3.
 class POST2PDF_Converter {
 
 	var $post2pdf_conv_plugin_url;
-	var $post2pdf_conv_db_ver = "0.1.5";
+	var $post2pdf_conv_db_ver = "0.1.6";
 	var $post2pdf_conv_setting_opt;
 
 	function __construct() {
@@ -74,6 +74,7 @@ class POST2PDF_Converter {
 			"font_path" => 0,
 			"font_size" => '10',
 			"font_subsetting" => 1,
+			"image_ratio" => '1.25',
 			"logo_enable" => 1,
 			"logo_file" => 'tcpdf_logo.jpg',
 			"logo_width" => '30',
@@ -386,6 +387,13 @@ class POST2PDF_Converter {
 
 				$updated_count = $updated_count + 1;
 			}
+			// For update from ver.0.1.5 or older
+			if ($current_checkver_stamp && version_compare($current_checkver_stamp, "0.1.5", "<=")) {
+				$this->post2pdf_conv_setting_opt['image_ratio'] = "1.25";
+				update_option('post2pdf_conv_setting_opt', $this->post2pdf_conv_setting_opt);
+
+				$updated_count = $updated_count + 1;
+			}
 			update_option('post2pdf_conv_checkver_stamp', $this->post2pdf_conv_db_ver);
 			// Stamp for showing messages
 			if ($updated_count != 0) {
@@ -451,6 +459,10 @@ class POST2PDF_Converter {
 				return $link.$content;
 			} else if ($this->post2pdf_conv_setting_opt['position'] == "after") {
 				return $content.$link;
+			} else if ($this->post2pdf_conv_setting_opt['position'] == "both") {
+				return $link.$content.$link;
+			} else {
+				return $content;
 			}
 		} else {
 			return $content;
@@ -538,6 +550,7 @@ class POST2PDF_Converter {
 			} else {
 				$post2pdf_conv_setting_opt['font_subsetting'] = 0;
 			}
+			$post2pdf_conv_setting_opt['image_ratio'] = $_POST['image_ratio'];
 			if ($_POST['logo_enable'] == 1) {
 				$post2pdf_conv_setting_opt['logo_enable'] = 1;
 			} else {
@@ -697,6 +710,7 @@ class POST2PDF_Converter {
 					<select name="position">
 						<option value="before" <?php if ($post2pdf_conv_setting_opt['position'] == "before") {echo 'selected="selected"';} ?>><?php _e("Before the post/page content block", "post2pdf_conv") ?></option>
 						<option value="after" <?php if ($post2pdf_conv_setting_opt['position'] == "after") {echo 'selected="selected"';} ?>><?php _e("After the post/page content block", "post2pdf_conv") ?></option>
+						<option value="both" <?php if ($post2pdf_conv_setting_opt['position'] == "both") {echo 'selected="selected"';} ?>><?php _e("Before and After the post/page content block", "post2pdf_conv") ?></option>
 					</select>
 					<p><small><?php _e("Choose display position of the download link.", "post2pdf_conv") ?></small></p>
 				</td>
@@ -810,6 +824,25 @@ class POST2PDF_Converter {
 				</td>
 			</tr>
 			<tr valign="top">
+				<th scope="row"><?php _e("Image ratio", "post2pdf_conv") ?></th> 
+				<td>
+					<select name="image_ratio">
+						<option value="1.0" <?php if ($post2pdf_conv_setting_opt['image_ratio'] == "1.0") {echo 'selected="selected"';} ?>>1.0</option>
+						<option value="1.05" <?php if ($post2pdf_conv_setting_opt['image_ratio'] == "1.05") {echo 'selected="selected"';} ?>>1.05</option>
+						<option value="1.1" <?php if ($post2pdf_conv_setting_opt['image_ratio'] == "1.1") {echo 'selected="selected"';} ?>>1.1</option>
+						<option value="1.15" <?php if ($post2pdf_conv_setting_opt['image_ratio'] == "1.15") {echo 'selected="selected"';} ?>>1.15</option>
+						<option value="1.2" <?php if ($post2pdf_conv_setting_opt['image_ratio'] == "1.2") {echo 'selected="selected"';} ?>>1.2</option>
+						<option value="1.25" <?php if ($post2pdf_conv_setting_opt['image_ratio'] == "1.25") {echo 'selected="selected"';} ?>>1.25</option>
+						<option value="1.3" <?php if ($post2pdf_conv_setting_opt['image_ratio'] == "1.3") {echo 'selected="selected"';} ?>>1.3</option>
+						<option value="1.35" <?php if ($post2pdf_conv_setting_opt['image_ratio'] == "1.35") {echo 'selected="selected"';} ?>>1.35</option>
+						<option value="1.4" <?php if ($post2pdf_conv_setting_opt['image_ratio'] == "1.4") {echo 'selected="selected"';} ?>>1.4</option>
+						<option value="1.45" <?php if ($post2pdf_conv_setting_opt['image_ratio'] == "1.45") {echo 'selected="selected"';} ?>>1.45</option>
+						<option value="1.5" <?php if ($post2pdf_conv_setting_opt['image_ratio'] == "1.5") {echo 'selected="selected"';} ?>>1.5</option>
+					</select>
+					<p><small><?php _e("Set image ratio.<br />Note: With increasing numerical value, you will get smaller images.", "post2pdf_conv") ?></small></p>
+				</td>
+			</tr>
+			<tr valign="top">
 				<th scope="row"><?php _e('Header logo', 'post2pdf_conv') ?></th>
 				<td>
 					<input type="checkbox" name="logo_enable" value="1" <?php if($post2pdf_conv_setting_opt['logo_enable'] == 1){echo 'checked="checked" ';} ?>/><?php _e("Show a logo on the header", "post2pdf_conv") ?><br /><?php _e("Image file", "post2pdf_conv") ?> <input type="text" name="logo_file" size="15" value="<?php echo esc_html($post2pdf_conv_setting_opt['logo_file']); ?>" /> <?php _e("Logo width", "post2pdf_conv") ?> <input type="text" name="logo_width" size="2" value="<?php echo esc_html($post2pdf_conv_setting_opt['logo_width']); ?>" />mm<br />
@@ -830,7 +863,7 @@ class POST2PDF_Converter {
 				<th scope="row"><?php _e('Add default font to font-family', 'post2pdf_conv') ?></th>
 				<td>
 					<input type="checkbox" name="add_to_font_family" value="1" <?php if($post2pdf_conv_setting_opt['add_to_font_family'] == 1){echo 'checked="checked" ';} ?>/><br />
-					<p><small><?php _e("If a PDF file has garbled characters, try to enable this option.", "post2pdf_conv") ?></small></p>
+					<p><small><?php _e("If a PDF file has garbled characters, try to enable this option.<br />When enabled, if your post has 'font-family' properties in 'style' attributes,<br />this plugin will add the default font for PDF to them.", "post2pdf_conv") ?></small></p>
 				</td>
 			</tr>
 		</table>

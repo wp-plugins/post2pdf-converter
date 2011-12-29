@@ -59,7 +59,7 @@ class POST2PDF_Converter_PDF_Maker {
 			foreach ($tags_data as $val) {
 				$tag[] = $val->name;
 			}
-			$tags = implode(',', $tag);
+			$tags = implode(' ', $tag);
 		}
 		$content = $post_data->post_content;
 		$config_lang = substr($this->post2pdf_conv_setting_opt['lang'], 0, 3);
@@ -88,7 +88,7 @@ class POST2PDF_Converter_PDF_Maker {
 		$pdf->SetCreator(PDF_CREATOR);
 		$pdf->SetAuthor($author);
 		$pdf->SetTitle($title . get_option('blogname'));
-		$pdf->SetSubject(get_the_category_list(',', '', $post_id));
+		$pdf->SetSubject(strip_tags(get_the_category_list(',', '', $post_id)));
 		$pdf->SetKeywords($tags);
 
 		// set header data

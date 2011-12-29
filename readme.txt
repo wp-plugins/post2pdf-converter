@@ -4,7 +4,7 @@ Donate link: http://www.near-mint.com/blog/donate
 Tags: pdf, post, page, convert, download, tcpdf
 Requires at least: 2.8
 Tested up to: 3.3
-Stable tag: 0.1.5
+Stable tag: 0.1.6
 
 This plugin converts your post/page to PDF for visitors and visitor can download it easily.
 
@@ -170,6 +170,12 @@ A. Go to the setting panel and enter `freesans` or `dejavusans`, `stsongstdlight
 
 == Changelog ==
 
+= 0.1.6 =
+* Added new setting option to change image size.
+* Added "Before and After the post/page content block" option to "Position".
+* Cahnged separating character for Keywords.
+* Fix a bug: Subject is not plain text but HTML with tags.
+
 = 0.1.5 =
 * Added new setting option to change the header logo.
 * Added German translation. Thanks Uli Sobers.
@@ -192,6 +198,9 @@ A. Go to the setting panel and enter `freesans` or `dejavusans`, `stsongstdlight
 * This is the initial release.
 
 == Upgrade Notice ==
+
+= 0.1.6 =
+This version has a new feature, change and bug fix.
 
 = 0.1.5 =
 This version has new features and changes.
