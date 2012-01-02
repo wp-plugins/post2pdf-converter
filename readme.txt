@@ -35,6 +35,15 @@ Note: This plugin requires PHP 5.
 1. Activate the plugin through the "Plugins" menu in WordPress.
 1. Go to "Settings" -> "POST2PDF Converter" to configure.
 
+= Change the default font =
+
+1. Go to "Settings" -> "POST2PDF Converter" to configure.
+1. Enter new font name to "Font" and "Monospaced font" option in "PDF Settings" section.
+1. If you allow visitors who receive a PDF to make changes to it even if they don't have the same font, disable "Font subsetting" option.
+
+* If your font file is xxxx.z, font name is xxxx.
+* Don't apply a proportional font to "Monospaced font" option.
+
 = Fonts for Japanese =
 
 This plugin includes following Japanese fonts.
@@ -51,10 +60,11 @@ If your contents are written in Japanese, please install one of these fonts. You
 
 1. Upload all *.php, *.z, *.ctg.z files to `/wp-content/plugins/post2pdf-converter/tcpdf/fonts` directory.
 1. Go to "Settings" -> "POST2PDF Converter" to configure.
-1. Enter font name to "Font" option in "PDF Settings" section.
+1. Enter font name to "Font" and "Monospaced font" option in "PDF Settings" section.
 1. If you allow visitors who receive a PDF to make changes to it even if they don't have the same font, disable "Font subsetting" option.
 
 * If your font file is xxxx.z, font name is xxxx.
+* Don't apply a proportional font to "Monospaced font" option.
 
 You can also use following fonts.
 
@@ -128,6 +138,8 @@ You can add new fonts.
 
 **How to convert a font**
 
+Convert a TrueType font(*.ttf) to font files for TCPDF.
+
 1. Read [TCPDF Fonts](http://www.tcpdf.org/fonts.php "TCPDF Fonts").
 
 **How to install a font**
@@ -137,10 +149,11 @@ You can add new fonts.
 **How to use the added font**
 
 1. Go to "Settings" -> "POST2PDF Converter" to configure.
-1. Enter font name to "Font" option in "PDF Settings" section.
+1. Enter font name to "Font" and "Monospaced font" option in "PDF Settings" section.
 1. If you allow visitors who receive a PDF to make changes to it even if they don't have the same font, disable "Font subsetting" option.
 
 * If your font file is xxxx.z, font name is xxxx.
+* Don't apply a proportional font to "Monospaced font" option.
 
 = Safe fonts directory =
 
