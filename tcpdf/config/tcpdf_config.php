@@ -2,7 +2,7 @@
 //============================================================+
 // File name   : tcpdf_config.php
 // Begin       : 2004-06-11
-// Last Update : 2011-12-29
+// Last Update : 2011-12-31 by redcocker
 //
 // Description : Configuration file for TCPDF.
 //
@@ -215,8 +215,7 @@ if (!defined('K_TCPDF_EXTERNAL_CONFIG')) {
 	/**
 	 * ratio used to adjust the conversion of pixels to user units
 	 */
-	// Modified by redcocker 2011/12/29
-	define ('PDF_IMAGE_SCALE_RATIO', $this->post2pdf_conv_setting_opt['image_ratio']);
+	define ('PDF_IMAGE_SCALE_RATIO', 1.25);
 
 	/**
 	 * magnification factor for titles

@@ -1,7 +1,7 @@
 <?php
 /*
 by Redcocker
-Last modified: 2011/12/29
+Last modified: 2012/1/2
 License: GPL v2
 http://www.near-mint.com/blog/
 */
@@ -16,10 +16,13 @@ class POST2PDF_Converter_PDF_Maker {
 
 	var $post2pdf_conv_plugin_url;
 	var $post2pdf_conv_setting_opt;
+	var $post2pdf_conv_sig;
 
 	function __construct() {
 		$this->post2pdf_conv_plugin_url = plugin_dir_url(__FILE__);
 		$this->post2pdf_conv_setting_opt = get_option('post2pdf_conv_setting_opt');
+		$this->post2pdf_conv_sig = get_option('post2pdf_conv_sig');
+
 		if (($this->post2pdf_conv_setting_opt['access'] == "referrer" && strpos($_SERVER['HTTP_REFERER'], site_url()) === false) ||
 			($this->post2pdf_conv_setting_opt['access'] == "login" && !is_user_logged_in())
 		) {
@@ -32,26 +35,27 @@ class POST2PDF_Converter_PDF_Maker {
 	function post2pdf_conv_post_to_pdf() {
 		$post_id = 0;
 		$post_id = intval($_GET['id']);
+		if (!empty($_GET['id'])) {
+			$post_id = intval($_GET['id']);
+		}
+
 		$post_data = get_post($post_id);
 
 		if (!$post_data) {
 			wp_die(__('Post does not exists.', 'post2pdf_conv'));
 		}
 
-		$title = $post_data->post_title;
-		if (mb_strlen($title, 'UTF-8') < 42) {
-			$header_title = strip_tags($title);
-		} else {
-			$header_title = mb_substr(strip_tags($title), 0, 42, 'UTF-8')."...";
-		}
-		$permalink = get_permalink($post_data->ID);
+		$title = strip_tags($post_data->post_title);
 
+		$permalink = get_permalink($post_data->ID);
 		$author_data = get_userdata($post_data->post_author);
+
 		if ($author_data->display_name) {
 			$author = $author_data->display_name;
 		} else {
 			$author = $author_data->user_nicename;
 		}
+
 		$tag = array();
 		$tags = '';
 		$tags_data = wp_get_post_tags($post_data->ID);
@@ -61,70 +65,194 @@ class POST2PDF_Converter_PDF_Maker {
 			}
 			$tags = implode(' ', $tag);
 		}
+
 		$content = $post_data->post_content;
-		$config_lang = substr($this->post2pdf_conv_setting_opt['lang'], 0, 3);
-		$font = $this->post2pdf_conv_setting_opt['font'];
-		$monospaced_font = $this->post2pdf_conv_setting_opt['monospaced_font'];
-		$font_size = $this->post2pdf_conv_setting_opt['font_size'];
 
-		$logo_file = $this->post2pdf_conv_setting_opt['logo_file'];
-		$logo_width = $this->post2pdf_conv_setting_opt['logo_width'];
+		if (!empty($_GET['lang'])) {
+			$config_lang = substr(esc_html($_GET['lang']), 0, 3);
+		} else {
+			$config_lang = substr($this->post2pdf_conv_setting_opt['lang'], 0, 3);
+		}
 
-		if ($this->post2pdf_conv_setting_opt['file'] == "title") {
+		if (!empty($_GET['file'])) {
+			$filename_type = $_GET['file'];
+		} else {
+			$filename_type = $this->post2pdf_conv_setting_opt['file'];
+		}
+		if ($filename_type == "title") {
 			$filename = $post_data->post_title;
 		} else {
 			$filename = $post_id;
 		}
 
+		if (!empty($_GET['font'])) {
+			$font = esc_html($_GET['font']);
+		} else {
+			$font = $this->post2pdf_conv_setting_opt['font'];
+		}
+
+		if (!empty($_GET['monospaced'])) {
+			$monospaced_font = esc_html($_GET['monospaced']);
+		} else {
+			$monospaced_font = $this->post2pdf_conv_setting_opt['monospaced_font'];
+		}
+
+		if (!empty($_GET['fontsize'])) {
+			$font_size = intval($_GET['fontsize']);
+		} else {
+			$font_size = $this->post2pdf_conv_setting_opt['font_size'];
+		}
+
+		if (!empty($_GET['subsetting']) && ($_GET['subsetting'] == 1 || $_GET['subsetting'] == 0)) {
+			$subsetting_enable = $_GET['subsetting'];
+		} else {
+			$subsetting_enable = $this->post2pdf_conv_setting_opt['font_subsetting'];
+		}
+
+		if ($subsetting_enable == 1) {
+			$subsetting = "true";
+		} else {
+			$subsetting = "false";
+		}
+
+		if (!empty($_GET['ratio'])) {
+			$ratio = floatval($_GET['ratio']);
+		} else {
+			$ratio = $this->post2pdf_conv_setting_opt['image_ratio'];
+		}
+
+		if (!empty($_GET['header'])) {
+			$header_enable = $_GET['header'];
+		} else {
+			$header_enable = $this->post2pdf_conv_setting_opt['header'];
+		}
+
+		if (!empty($_GET['logo'])) {
+			$logo_enable = $_GET['logo'];
+		} else {
+			$logo_enable = $this->post2pdf_conv_setting_opt['logo_enable'];
+		}
+
+		if (!empty($_GET['logo_file'])) {
+			$logo_file = esc_html($_GET['logo_file']);
+		} else {
+			$logo_file = $this->post2pdf_conv_setting_opt['logo_file'];
+		}
+
+		if (!empty($_GET['logo_width'])) {
+			$logo_width = intval($_GET['logo_width']);
+		} else {
+			$logo_width = $this->post2pdf_conv_setting_opt['logo_width'];
+		}
+
+		if (!empty($_GET['wrap_title'])) {
+			$wrap_title = $_GET['wrap_title'];
+		} else {
+			$wrap_title = $this->post2pdf_conv_setting_opt['wrap_title'];
+		}
+
+		if (!empty($_GET['footer'])) {
+			$footer_enable = $_GET['footer'];
+		} else {
+			$footer_enable = $this->post2pdf_conv_setting_opt['footer'];
+		}
+
+		if (!empty($_GET['filters'])) {
+			$filters = $_GET['filters'];
+		} else {
+			$filters = $this->post2pdf_conv_setting_opt['filters'];
+		}
+
+		if (!empty($_GET['shortcode'])) {
+			$shortcode = esc_html($_GET['shortcode']);
+		} else {
+			$shortcode = $this->post2pdf_conv_setting_opt['shortcode_handling'];
+		}
+
+		// Apply default filters to title and content
+		if ($filters == 1) {
+			$title = wptexturize($title);
+			$title = convert_chars($title);
+			$title = trim($title);
+			$title = capital_P_dangit($title);
+
+			$content = wptexturize($content);
+			$content = convert_smilies($content);
+			$content = convert_chars($content);
+			$content = wpautop($content);
+			$content = shortcode_unautop($content);
+			$content = prepend_attachment($content);
+			$content = capital_P_dangit($content);
+		}
+
 		// Include TCPDF
 		require_once('tcpdf/config/lang/'.$config_lang.'.php');
 		require_once('tcpdf/tcpdf.php');
-		//$logo_file_path = validate_file($logo_file_path);
 
 		// Create a new object
 		$pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false, false);
 
-		// set document information
+		// Set document information
 		$pdf->SetCreator(PDF_CREATOR);
 		$pdf->SetAuthor($author);
 		$pdf->SetTitle($title . get_option('blogname'));
 		$pdf->SetSubject(strip_tags(get_the_category_list(',', '', $post_id)));
 		$pdf->SetKeywords($tags);
 
-		// set header data
-		if ($this->post2pdf_conv_setting_opt['logo_enable'] == 1 && $logo_file) {
-			$pdf->SetHeaderData($logo_file, $logo_width, $header_title, "by " .$author. " - ". $permalink);
+		// Set header data
+		if (mb_strlen($title, 'UTF-8') < 42) {
+			$header_title = $title;
 		} else {
-			$pdf->SetHeaderData('', 0, $header_title, "by " .$author. " - ". $permalink);
+			$header_title = mb_substr($title, 0, 42, 'UTF-8')."...";
 		}
 
-		// set header and footer fonts
-		$pdf->setHeaderFont(Array($font, '', PDF_FONT_SIZE_MAIN));
-		$pdf->setFooterFont(Array($font, '', PDF_FONT_SIZE_DATA));
+		if ($header_enable == 1) {
+			if ($logo_enable == 1 && $logo_file) {
+				$pdf->SetHeaderData($logo_file, $logo_width, $header_title, "by " .$author. " - ". $permalink);
+			} else {
+				$pdf->SetHeaderData('', 0, $header_title, "by " .$author. " - ". $permalink);
+			}
+		}
 
-		// set default monospaced font
+		// Set header and footer fonts
+		if ($header_enable == 1) {
+			$pdf->setHeaderFont(Array($font, '', PDF_FONT_SIZE_MAIN));
+		}
+		if ($footer_enable == 1) {
+			$pdf->setFooterFont(Array($font, '', PDF_FONT_SIZE_DATA));
+		}
+
+		// Remove header/footer
+		if ($header_enable == 0) {
+			$pdf->setPrintHeader(false);
+		}
+		if ($header_enable == 0) {
+			$pdf->setPrintFooter(false);
+		}
+
+		// Set default monospaced font
 		$pdf->SetDefaultMonospacedFont($monospaced_font);
 
-		//set margins
+		// Set margins
 		$pdf->SetMargins(PDF_MARGIN_LEFT, PDF_MARGIN_TOP, PDF_MARGIN_RIGHT);
-		$pdf->SetHeaderMargin(PDF_MARGIN_HEADER);
-		$pdf->SetFooterMargin(PDF_MARGIN_FOOTER);
+		if ($header_enable == 1) {
+			$pdf->SetHeaderMargin(PDF_MARGIN_HEADER);
+		}
+		if ($footer_enable == 1) {
+			$pdf->SetFooterMargin(PDF_MARGIN_FOOTER);
+		}
 
-		//set auto page breaks
+		// Set auto page breaks
 		$pdf->SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
 
-		//set image scale factor
-		$pdf->setImageScale(PDF_IMAGE_SCALE_RATIO);
+		// Set image scale factor
+		$pdf->setImageScale($ratio);
 
-		//set some language-dependent strings
+		// Set some language-dependent strings
 		$pdf->setLanguageArray($l);
 
 		// Set fontsubsetting mode
-		if ($this->post2pdf_conv_setting_opt['font_subsetting'] == 1) {
-			$pdf->setFontSubsetting(true);
-		} else if ($this->post2pdf_conv_setting_opt['font_subsetting'] == 0) {
-			$pdf->setFontSubsetting(false);
-		}
+		$pdf->setFontSubsetting($subsetting);
 
 		// Set font
 		$pdf->SetFont($font, '', $font_size, true);
@@ -133,30 +261,66 @@ class POST2PDF_Converter_PDF_Maker {
 		$pdf->AddPage();
 
 		// Create post content to print
-		if ($this->post2pdf_conv_setting_opt['shortcode_handling'] == "parse") {
+		if ($wrap_title == 1) {
+			if (mb_strlen($title, 'UTF-8') < 33) {
+				$title = $title;
+			} else {
+				$title = mb_substr($title, 0, 33, 'UTF-8')."<br />".mb_substr($title, 33, 222, 'UTF-8');
+			}
+		}
+
+		if ($shortcode == "parse") {
 			if (function_exists('wp_sh_do_shortcode')) {
 				$content = wp_sh_do_shortcode($content);
 			}
-			$pre_filterd_content = do_shortcode($content);
+			$content = do_shortcode($content);
 		} else if ($this->post2pdf_conv_setting_opt['shortcode_handling'] == "remove") {
-			$pre_filterd_content = strip_shortcodes($content);
-		} else {
-			$pre_filterd_content = $content;
+			$content = strip_shortcodes($content);
 		}
 
-		$filterd_content = wpautop($pre_filterd_content);
+		// For SyntaxHighlighter
+		$content = preg_replace("/<pre[^>]*?brush:[^>]*?>(.*?)<\/pre>/is", "<pre style=\"word-wrap:break-word; color: #406040; background-color: #F1F1F1; border: 1px solid #9F9F9F;\">$1</pre>", $content);
+		$content = preg_replace("/<script[^>]*?type=['\"]syntaxhighlighter['\"][^>]*?>(.*?)<\/script>/is", "<pre style=\"word-wrap:break-word; color: #406040; background-color: #F1F1F1; border: 1px solid #9F9F9F;\">$1</pre>", $content);
+		$content = preg_replace("/<pre[^>]*?name=['\"][^>]*?>(.*?)<\/pre>/is", "<pre style=\"word-wrap:break-word; color: #406040; background-color: #F1F1F1; border: 1px solid #9F9F9F;\">$1</pre>", $content);
+		$content = preg_replace("/<textarea[^>]*?name=['\"][^>]*?>(.*?)<\/textarea>/is", "<pre style=\"word-wrap:break-word; color: #406040; background-color: #F1F1F1; border: 1px solid #9F9F9F;\">$1</pre>", $content);
+		// For GeSHi(WP-Syntax, CodeColorer, WP-CodeBox, WP-SynHighlight etc)
+		$content = preg_replace("/<pre[^>]*?lang=['\"][^>]*?>(.*?)<\/pre>/is", "<pre style=\"word-wrap:break-word; color: #406040; background-color: #F1F1F1; border: 1px solid #9F9F9F;\">$1</pre>", $content);
+		$content = preg_replace("/<code[^>]*?lang=['\"][^>]*?>(.*?)<\/code>/is", "<pre style=\"word-wrap:break-word; color: #406040; background-color: #F1F1F1; border: 1px solid #9F9F9F;\">$1</pre>", $content);
+		// For blockquote
+		$content = preg_replace("/<blockquote[^>]*?>(.*?)<\/blockquote>/is", "<pre style=\"word-wrap:break-word; color: #406040; background-color: #F1F1F1; border: 1px solid #9F9F9F;\">$1</pre>", $content);
 
 		$formatted_title = '<h1 style="text-align:center;">' . $title . '</h1>';
-		$formatted_post = $formatted_title . '<br/><br/>' . $filterd_content;
+		$formatted_post = $formatted_title . '<br/><br/>' . $content;
+
 		if ($this->post2pdf_conv_setting_opt['add_to_font_family'] == 1) {
 			$formatted_post = preg_replace('/(<[^>]*?font-family[^:]*?:)([^;]*?;[^>]*?>)/is', "$1".$font.",$2", $formatted_post);
 		}
+
+		if ($this->post2pdf_conv_setting_opt['sig_enable'] == 1) {
+			$formatted_post = $formatted_post."<br />";
+		}
+
 		// Print post
 		$pdf->writeHTMLCell($w = 0, $h = 0, $x = '', $y = '', $formatted_post, $border = 0, $ln = 1, $fill = 0, $reseth = true, $align = '', $autopadding = true);
 
 		// Set background
 		$pdf->SetFillColor(255, 255, 127);
 		$pdf->setCellPaddings(5, 5, 0, 0);
+
+		// Print signature
+		if ($this->post2pdf_conv_setting_opt['sig_enable'] == 1) {
+			if ($this->post2pdf_conv_setting_opt['sig_border'] == 1) {
+				$border = "1";
+			} else {
+				$border = "0";
+			}
+			if ($this->post2pdf_conv_setting_opt['sig_fill'] == 1) {
+				$fill = "1";
+			} else {
+				$fill = "0";
+			}
+			$pdf->MultiCell(0, 0, $this->post2pdf_conv_sig."<br />", $border, 'L', $fill, 2, '', '', true, 0, true, true, 0, 'T', false);
+		}
 
 		// Output pdf document
 		$pdf->Output(substr($filename, 0 ,255).'.pdf', $this->post2pdf_conv_setting_opt['destination']);

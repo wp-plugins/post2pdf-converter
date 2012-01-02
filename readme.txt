@@ -4,7 +4,7 @@ Donate link: http://www.near-mint.com/blog/donate
 Tags: pdf, post, page, convert, download, tcpdf
 Requires at least: 2.8
 Tested up to: 3.3
-Stable tag: 0.1.6
+Stable tag: 0.2
 
 This plugin converts your post/page to PDF for visitors and visitor can download it easily.
 
@@ -157,6 +157,97 @@ Now you can remove original fonts directory.
 
 However, after automatic updating, fonts in the new directory will never be updated. You must maintain the new fonts directory by yourself.
 
+= Shortcode =
+
+You can insert the download link to your posts/pages using shortcode.
+
+Note: Before you use shortcode, go to the setting panel and ebable "Shortcode" option.
+
+`[pdf]Click here to get a PDF[/pdf]`
+
+This plugin allows you to set some attributes.
+
+`[pdf id="1643" lang="jpn" file="id" font="cid0jp" monospaced="cid0jp" fontsize="11" subsetting="1" ratio="1.35" header="1" logo="1" logo_file="my_logo.png" logo_width="45" wrap_title="1" footer="1" filters="1" shortcode="parse" ffamily="0"]Click here to get a PDF[/pdf]`
+
+You can apply different font, image ratio, header logo on each posts/pages.
+
+You can also make the download link for other posts/pages using "id" attribute.
+
+**Available attributes**
+
+* id: set post id  by numbers. e.g. 1245
+* lang: Set your language by language code. see "Available languages" below. e.g. eng
+* file: Set filename type to `title` or `id`.
+* font: Set default font by font name. e.g. helvetica
+* monospaced: Set default monospaced font by font name. e.g. courier
+* fontsize: Set font size by numbers. e.g. 12
+* subsetting: Set to `1` or `0` to enable/disable Font subsetting.
+* ratio: Set image ratio by numbers. e.g. 1.25
+* header: Set to `1` or `0` to show/hide header.
+* logo: Set to `1` or `0` to show/hide logo image.
+* logo_file: Set logo file name. e.g. tcpdf_logo.jpg
+* logo_width: Set logo width in millimeters. e.g. 30
+* wrap_title: Set to `1` or `0`. When set to `1`, long title will be wrapped.
+* filters: Set to `1` or `0`. When set to `1`, WordPress default filtes will be applied to the title/content.
+* footer: Set to `1` or `0` to show/hide footer.
+* shortcode: Set to `parse` or `remove` to parse/remove shortcode.
+* ffamily: If a PDF file has garbled characters, set to `1`.
+
+Note: When `id` is omitted, current post id will be set to. When other attribures are omitted, current setting value will be set to.
+
+**Available languages**
+
+afr: Afrikaans
+sqi: Albanian
+ara: Arabic
+aze: Azerbaijanian
+eus: Basque
+bel: Belarusian
+bra: Portuguese(Brazil)
+cat: Catalan
+chi: Chinese(Simplified)
+zho: Chinese(Traditional)
+hrv: Croatian
+ces: Czech
+dan: Danish
+nld: Dutch
+eng: English
+est: Estonian
+far: Farsi
+fra: French
+ger: German
+gle: Irish
+glg: Galician
+kat: Georgian
+hat: Haitian Creole
+heb: Hebrew
+hun: Hungarian
+hye: Armenian
+ind: Indonesian
+ita: Italian
+jpn: Japanese
+kor: Korean
+mkd: Macedonian
+msa: Malay
+mlt: Maltese
+ron2: Moldavian
+ron3: Moldovan
+nob: Norwegian Bokmål
+pol: Polish
+por: Portuguese
+ron1: Romanian
+rus: Russian
+srp: Serbian
+slv: Slovenian
+spa: Spanish
+swa: Swahili
+swe: Swedish
+urd: Urdu
+cym: Welsh
+yid: Yiddish
+ltr: Other(Text direction: Left to Right)
+rtl: Other(Text direction: Right to Left)
+
 == Frequently Asked Questions ==
 
 = Q. Created PDF file has garbled characters. =
@@ -169,6 +260,19 @@ A. Go to the setting panel and enter `freesans` or `dejavusans`, `stsongstdlight
 2. This is setting panel.
 
 == Changelog ==
+
+= 0.2 =
+* TCPDF is updated to 5.9.142.
+* Support shortcode to insert the download link.
+* Add new filter to format sourcecode.
+* Added new setting option to show/hide header.
+* Added new setting option to show/hide footer.
+* Added new setting option to wrap the long title.
+* Added new setting option to show/hide signature.
+* Added new setting option to apply WordPress filters.
+* Added some filters for content.
+* Changed the default font for some languages.
+* Fix a bug: The mix two character encoding in tcpdf.php.
 
 = 0.1.6 =
 * Added new setting option to change image size.
@@ -198,6 +302,9 @@ A. Go to the setting panel and enter `freesans` or `dejavusans`, `stsongstdlight
 * This is the initial release.
 
 == Upgrade Notice ==
+
+= 0.2 =
+This version has new features, change and bug fix.
 
 = 0.1.6 =
 This version has a new feature, change and bug fix.
