@@ -210,56 +210,56 @@ Note: When `id` is omitted, current post id will be set to. When other attribure
 
 **Available languages**
 
-afr: Afrikaans
-sqi: Albanian
-ara: Arabic
-aze: Azerbaijanian
-eus: Basque
-bel: Belarusian
-bra: Portuguese(Brazil)
-cat: Catalan
-chi: Chinese(Simplified)
-zho: Chinese(Traditional)
-hrv: Croatian
-ces: Czech
-dan: Danish
-nld: Dutch
-eng: English
-est: Estonian
-far: Farsi
-fra: French
-ger: German
-gle: Irish
-glg: Galician
-kat: Georgian
-hat: Haitian Creole
-heb: Hebrew
-hun: Hungarian
-hye: Armenian
-ind: Indonesian
-ita: Italian
-jpn: Japanese
-kor: Korean
-mkd: Macedonian
-msa: Malay
-mlt: Maltese
-ron2: Moldavian
-ron3: Moldovan
-nob: Norwegian Bokmål
-pol: Polish
-por: Portuguese
-ron1: Romanian
-rus: Russian
-srp: Serbian
-slv: Slovenian
-spa: Spanish
-swa: Swahili
-swe: Swedish
-urd: Urdu
-cym: Welsh
-yid: Yiddish
-ltr: Other(Text direction: Left to Right)
-rtl: Other(Text direction: Right to Left)
+* afr: Afrikaans
+* sqi: Albanian
+* ara: Arabic
+* aze: Azerbaijanian
+* eus: Basque
+* bel: Belarusian
+* bra: Portuguese(Brazil)
+* cat: Catalan
+* chi: Chinese(Simplified)
+* zho: Chinese(Traditional)
+* hrv: Croatian
+* ces: Czech
+* dan: Danish
+* nld: Dutch
+* eng: English
+* est: Estonian
+* far: Farsi
+* fra: French
+* ger: German
+* gle: Irish
+* glg: Galician
+* kat: Georgian
+* hat: Haitian Creole
+* heb: Hebrew
+* hun: Hungarian
+* hye: Armenian
+* ind: Indonesian
+* ita: Italian
+* jpn: Japanese
+* kor: Korean
+* mkd: Macedonian
+* msa: Malay
+* mlt: Maltese
+* ron2: Moldavian
+* ron3: Moldovan
+* nob: Norwegian Bokmål
+* pol: Polish
+* por: Portuguese
+* ron1: Romanian
+* rus: Russian
+* srp: Serbian
+* slv: Slovenian
+* spa: Spanish
+* swa: Swahili
+* swe: Swedish
+* urd: Urdu
+* cym: Welsh
+* yid: Yiddish
+* ltr: Other(Text direction: Left to Right)
+* rtl: Other(Text direction: Right to Left)
 
 == Frequently Asked Questions ==
 
