@@ -3,7 +3,7 @@
 // File name   : tcpdf.php
 // Version     : 5.9.142
 // Begin       : 2002-08-03
-// Last Update : 2011-12-31 by redcocker
+// Last Update : 2012-1-4 by redcocker
 // Author      : Nicola Asuni - Tecnick.com LTD - Manor Coach House, Church Hill, Aldershot, Hants, GU12 4RQ, UK - www.tecnick.com - info@tecnick.com
 // License     : http://www.tecnick.com/pagefiles/tcpdf/LICENSE.TXT GNU-LGPLv3 + YOU CAN'T REMOVE ANY TCPDF COPYRIGHT NOTICE OR LINK FROM THE GENERATED PDF DOCUMENTS.
 // -------------------------------------------------------------------
@@ -7541,7 +7541,11 @@ class TCPDF {
 					curl_setopt($cs, CURLOPT_BINARYTRANSFER, true);
 					curl_setopt($cs, CURLOPT_FAILONERROR, true);
 					curl_setopt($cs, CURLOPT_RETURNTRANSFER, true);
-					curl_setopt($cs, CURLOPT_FOLLOWLOCATION, true);
+					// Modified by redcocker This code is provided by Michael Starke
+					//curl_setopt($cs, CURLOPT_FOLLOWLOCATION, true);
+					if(!ini_get('safe_mode') && !ini_get("open_basedir")) { 
+						curl_setopt($cs, CURLOPT_FOLLOWLOCATION, true); 
+					}
 					curl_setopt($cs, CURLOPT_CONNECTTIMEOUT, 5);
 					curl_setopt($cs, CURLOPT_TIMEOUT, 30);
 					curl_setopt($cs, CURLOPT_SSL_VERIFYPEER, false);
@@ -13621,7 +13625,9 @@ class TCPDF {
 		}
 		$seed .= uniqid('', true);
 		$seed .= rand();
-		$seed .= getmypid();
+		// Modified by redcocker This code is provided by Michael Starke
+		// $seed .= getmypid();
+		$seed .= uniqid('', true);
 		$seed .= __FILE__;
 		$seed .= $this->bufferlen;
 		if (isset($_SERVER['REMOTE_ADDR'])) {

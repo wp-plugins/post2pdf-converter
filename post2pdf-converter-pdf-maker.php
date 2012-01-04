@@ -1,7 +1,7 @@
 <?php
 /*
 by Redcocker
-Last modified: 2012/1/2
+Last modified: 2012/1/3
 License: GPL v2
 http://www.near-mint.com/blog/
 */
@@ -171,18 +171,40 @@ class POST2PDF_Converter_PDF_Maker {
 
 		// Apply default filters to title and content
 		if ($filters == 1) {
-			$title = wptexturize($title);
-			$title = convert_chars($title);
-			$title = trim($title);
-			$title = capital_P_dangit($title);
+			if (has_filter('the_title', 'wptexturize')) {
+				$title = wptexturize($title);
+			}
+			if (has_filter('the_title', 'convert_chars')) {
+				$title = convert_chars($title);
+			}
+			if (has_filter('the_title', 'trim')) {
+				$title = trim($title);
+			}
+			if (has_filter('the_title', 'capital_P_dangit')) {
+				$title = capital_P_dangit($title);
+			}
 
-			$content = wptexturize($content);
-			$content = convert_smilies($content);
-			$content = convert_chars($content);
-			$content = wpautop($content);
-			$content = shortcode_unautop($content);
-			$content = prepend_attachment($content);
-			$content = capital_P_dangit($content);
+			if (has_filter('the_content', 'wptexturize')) {
+				$content = wptexturize($content);
+			}
+			if (has_filter('the_content', 'convert_smilies')) {
+				$content = convert_smilies($content);
+			}
+			if (has_filter('the_content', 'convert_chars')) {
+				$content = convert_chars($content);
+			}
+			if (has_filter('the_content', 'wpautop')) {
+				$content = wpautop($content);
+			}
+			if (has_filter('the_content', 'shortcode_unautop')) {
+				$content = shortcode_unautop($content);
+			}
+			if (has_filter('the_content', 'prepend_attachment')) {
+				$content = prepend_attachment($content);
+			}
+			if (has_filter('the_content', 'capital_P_dangit')) {
+				$content = capital_P_dangit($content);
+			}
 		}
 
 		// Include TCPDF
@@ -286,6 +308,8 @@ class POST2PDF_Converter_PDF_Maker {
 		// For GeSHi(WP-Syntax, CodeColorer, WP-CodeBox, WP-SynHighlight etc)
 		$content = preg_replace("/<pre[^>]*?lang=['\"][^>]*?>(.*?)<\/pre>/is", "<pre style=\"word-wrap:break-word; color: #406040; background-color: #F1F1F1; border: 1px solid #9F9F9F;\">$1</pre>", $content);
 		$content = preg_replace("/<code[^>]*?lang=['\"][^>]*?>(.*?)<\/code>/is", "<pre style=\"word-wrap:break-word; color: #406040; background-color: #F1F1F1; border: 1px solid #9F9F9F;\">$1</pre>", $content);
+		// For other sourcecode
+		$content = preg_replace("/<pre[^>]*?><code[^>]*?>(.*?)<\/code><\/pre>/is", "<pre style=\"word-wrap:break-word; color: #406040; background-color: #F1F1F1; border: 1px solid #9F9F9F;\">$1</pre>", $content);
 		// For blockquote
 		$content = preg_replace("/<blockquote[^>]*?>(.*?)<\/blockquote>/is", "<pre style=\"word-wrap:break-word; color: #406040; background-color: #F1F1F1; border: 1px solid #9F9F9F;\">$1</pre>", $content);
 

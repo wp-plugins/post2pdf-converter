@@ -3,8 +3,8 @@ Contributors: redcocker
 Donate link: http://www.near-mint.com/blog/donate
 Tags: pdf, post, page, convert, download, tcpdf
 Requires at least: 2.8
-Tested up to: 3.3
-Stable tag: 0.2
+Tested up to: 3.3.1
+Stable tag: 0.2.1
 
 This plugin converts your post/page to PDF for visitors and visitor can download it easily.
 
@@ -122,6 +122,8 @@ This plugin inclues "DejaVu fonts". However, If you allow visitors who receive a
 
 Font name: dejavusans, dejavusanscondensed, dejavusansextralight, dejavusansmono, dejavuserif, dejavuserifcondensed
 
+Note: "dejavusansmono" is a monospaced font.
+
 "DejaVu fonts" support Latin, Greek and Cyrillic characters.
 
 = FreeFont =
@@ -129,6 +131,8 @@ Font name: dejavusans, dejavusanscondensed, dejavusansextralight, dejavusansmono
 This plugin inclues "FreeFont". However, If you allow visitors who receive a PDF to make changes to it even if they don't have the same font, you had better disable "Font subsetting" option.
 
 Font name: freemono, freesans, freeserif
+
+Note: "freemono" is a monospaced font.
 
 "FreeFont" supports Latin, Greek, Cyrillic, Arabic, Hebrew, Armenian, Georgian, Ethiopian and Thai characters.
 
@@ -265,7 +269,34 @@ Note: When `id` is omitted, current post id will be set to. When other attribure
 
 = Q. Created PDF file has garbled characters. =
 
-A. Go to the setting panel and enter `freesans` or `dejavusans`, `stsongstdlight`, `msungstdlight`, `hysmyeongjostdmedium` into "Font" option. When this solves the problem, please give me details, I may need to change the default font for your language. If you still can't solve the problem, Go to the setting panel and enable "Add default font to font-family" option.
+A. Go to the setting panel and enter following font names to "Font" and "Monospaced font" option.
+
+* Font: `freesans`, Monospaced font: `freemono` (For Latin, Greek, Cyrillic, Hebrew, Armenian, Georgian, Ethiopian and Thai etc.)
+* Font: `dejavusans`, Monospaced font: `dejavusansmono` (For Latin, Greek and Cyrillic etc.)
+* Font: `aefurat`, Monospaced font: `aefurat` (For Arabic)
+* Font: `stsongstdlight`, Monospaced font: `stsongstdlight` (For Simplified Chinese)
+* Font: `msungstdlight`, Monospaced font: `msungstdlight` (For Traditional Chinese)
+* Font: `hysmyeongjostdmedium`, Monospaced font: `hysmyeongjostdmedium` (For Korean)
+
+**When this solves the problem, please give me details(your language, font, monospaced font), I may need to change the default font for your language.**
+
+You can also add new font for your language. For details, read "Add new fonts" section in this document.
+
+If you still can't solve the problem, Go to the setting panel and enable "Add default font to font-family" option.
+
+For detailed information about Japanese font, read "Fonts for Japanese" section in this document.
+
+= Q. Created PDF contains images with wrong size. =
+
+Adjust width and height attributes in `<img>` tag or width and height properties in style attribute  in `<img>` tag or other elements.
+
+= Q. Created PDF contains no images. =
+
+If large size images are placed in same row, the images may disappear in PDF.
+
+Adjust width and height attributes in `<img>` tag or width and height properties in style attribute  in `<img>` tag or other elements.
+
+Or place `<br />` tags after each image blocks.
 
 == Screenshots ==
 
@@ -273,6 +304,10 @@ A. Go to the setting panel and enter `freesans` or `dejavusans`, `stsongstdlight
 2. This is setting panel.
 
 == Changelog ==
+
+= 0.2.1 =
+* Modified filters to format sourcecode.
+* Fix a bug: A problem in PHP safe mode. Thanks Michael Starke.
 
 = 0.2 =
 * TCPDF is updated to 5.9.142.
@@ -315,6 +350,9 @@ A. Go to the setting panel and enter `freesans` or `dejavusans`, `stsongstdlight
 * This is the initial release.
 
 == Upgrade Notice ==
+
+= 0.2.1 =
+This version has a change and bug fix.
 
 = 0.2 =
 This version has new features, change and bug fix.
