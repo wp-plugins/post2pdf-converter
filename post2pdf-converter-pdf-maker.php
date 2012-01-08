@@ -1,7 +1,7 @@
 <?php
 /*
 by Redcocker
-Last modified: 2012/1/3
+Last modified: 2012/1/8
 License: GPL v2
 http://www.near-mint.com/blog/
 */
@@ -347,6 +347,8 @@ class POST2PDF_Converter_PDF_Maker {
 		}
 
 		// Output pdf document
+		// Clean the output buffer
+		ob_clean();
 		$pdf->Output(substr($filename, 0 ,255).'.pdf', $this->post2pdf_conv_setting_opt['destination']);
 
 	}
