@@ -4,7 +4,7 @@ Donate link: http://www.near-mint.com/blog/donate
 Tags: pdf, post, page, convert, download, tcpdf
 Requires at least: 2.8
 Tested up to: 3.3.1
-Stable tag: 0.2.1
+Stable tag: 0.2.2
 
 This plugin converts your post/page to PDF for visitors and visitor can download it easily.
 
@@ -286,13 +286,17 @@ If you still can't solve the problem, Go to the setting panel and enable "Add de
 
 For detailed information about Japanese font, read "Fonts for Japanese" section in this document.
 
+= Q. Created PDF file name becomes garbled. =
+
+A. Go to the setting panel and set "File name" option to "Post id" in "2. PDF Settings" section.
+
 = Q. Created PDF contains images with wrong size. =
 
-Adjust width and height attributes in `<img>` tag or width and height properties in style attribute  in `<img>` tag or other elements.
+A. Adjust width and height attributes in `<img>` tag or width and height properties in style attribute  in `<img>` tag or other elements.
 
 = Q. Created PDF contains no images. =
 
-If large size images are placed in same row, the images may disappear in PDF.
+A. If large size images are placed in same row, the images may disappear in PDF.
 
 Adjust width and height attributes in `<img>` tag or width and height properties in style attribute  in `<img>` tag or other elements.
 
@@ -304,6 +308,11 @@ Or place `<br />` tags after each image blocks.
 2. This is setting panel.
 
 == Changelog ==
+
+= 0.2.2 =
+* TCPDF is updated to 5.9.143.
+* Changed the default file name in some languages.
+* Fix a bug: Getting the error, "TCPDF ERROR: Some data has already been output, can't send PDF file"
 
 = 0.2.1 =
 * Modified filters to format sourcecode.
@@ -350,6 +359,9 @@ Or place `<br />` tags after each image blocks.
 * This is the initial release.
 
 == Upgrade Notice ==
+
+= 0.2.2 =
+This version has a change and bug fix.
 
 = 0.2.1 =
 This version has a change and bug fix.

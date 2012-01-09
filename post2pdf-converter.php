@@ -3,14 +3,14 @@
 Plugin Name: POST2PDF Converter
 Plugin URI: http://www.near-mint.com/blog/software/post2pdf-converter
 Description: This plugin converts your post/page to PDF for visitors and visitors can download it easily.
-Version: 0.2.1
+Version: 0.2.2
 Author: redcocker
 Author URI: http://www.near-mint.com/blog/
 Text Domain: post2pdf_conv
 Domain Path: /languages
 */
 /*
-Last modified: 2012/1/4
+Last modified: 2012/1/9
 License: GPL v2(Except "TCPDF" libraries)
 */
 /*  Copyright 2011 M. Sumitomo
@@ -103,6 +103,7 @@ class POST2PDF_Converter {
 				$this->post2pdf_conv_setting_opt['lang'] = "jpn";
 				$this->post2pdf_conv_setting_opt['font'] = "cid0jp";
 				$this->post2pdf_conv_setting_opt['monospaced_font'] = "cid0jp";
+				$this->post2pdf_conv_setting_opt['file'] = "id";
 				break;
 			case 'af':
 				$this->post2pdf_conv_setting_opt['lang'] = "afr";
@@ -111,31 +112,37 @@ class POST2PDF_Converter {
 				$this->post2pdf_conv_setting_opt['lang'] = "ara";
 				$this->post2pdf_conv_setting_opt['font'] = "aealarabiya";
 				$this->post2pdf_conv_setting_opt['monospaced_font'] = "aealarabiya";
+				$this->post2pdf_conv_setting_opt['file'] = "id";
 				break;
 			case 'azb_AZB':
 				$this->post2pdf_conv_setting_opt['lang'] = "rtl";
 				$this->post2pdf_conv_setting_opt['font'] = "aealarabiya";
 				$this->post2pdf_conv_setting_opt['monospaced_font'] = "aealarabiya";
+				$this->post2pdf_conv_setting_opt['file'] = "id";
 				break;
 			case 'azr_AZR':
 				$this->post2pdf_conv_setting_opt['lang'] = "aze";
 				$this->post2pdf_conv_setting_opt['font'] = "dejavusans";
 				$this->post2pdf_conv_setting_opt['monospaced_font'] = "dejavusansmono";
+				$this->post2pdf_conv_setting_opt['file'] = "id";
 				break;
 			case 'be_BY':
 				$this->post2pdf_conv_setting_opt['lang'] = "bel";
 				$this->post2pdf_conv_setting_opt['font'] = "dejavusans";
 				$this->post2pdf_conv_setting_opt['monospaced_font'] = "dejavusansmono";
+				$this->post2pdf_conv_setting_opt['file'] = "id";
 				break;
 			case 'bg_BG':
 				$this->post2pdf_conv_setting_opt['lang'] = "ltr";
 				$this->post2pdf_conv_setting_opt['font'] = "dejavusans";
 				$this->post2pdf_conv_setting_opt['monospaced_font'] = "dejavusansmono";
+				$this->post2pdf_conv_setting_opt['file'] = "id";
 				break;
 			case 'bs_BA':
 				$this->post2pdf_conv_setting_opt['lang'] = "ltr";
 				$this->post2pdf_conv_setting_opt['font'] = "dejavusans";
 				$this->post2pdf_conv_setting_opt['monospaced_font'] = "dejavusansmono";
+				$this->post2pdf_conv_setting_opt['file'] = "id";
 				break;
 			case 'pt_BR':
 				$this->post2pdf_conv_setting_opt['lang'] = "bra";
@@ -147,6 +154,7 @@ class POST2PDF_Converter {
 				$this->post2pdf_conv_setting_opt['lang'] = "rtl";
 				$this->post2pdf_conv_setting_opt['font'] = "aealarabiya";
 				$this->post2pdf_conv_setting_opt['monospaced_font'] = "aealarabiya";
+				$this->post2pdf_conv_setting_opt['file'] = "id";
 				break;
 			case 'cs_CZ':
 				$this->post2pdf_conv_setting_opt['lang'] = "ces";
@@ -161,6 +169,7 @@ class POST2PDF_Converter {
 				$this->post2pdf_conv_setting_opt['lang'] = "ltr";
 				$this->post2pdf_conv_setting_opt['font'] = "dejavusans";
 				$this->post2pdf_conv_setting_opt['monospaced_font'] = "dejavusansmono";
+				$this->post2pdf_conv_setting_opt['file'] = "id";
 				break;
 			case 'es_CL':
 				$this->post2pdf_conv_setting_opt['lang'] = "ltr";
@@ -184,6 +193,7 @@ class POST2PDF_Converter {
 				$this->post2pdf_conv_setting_opt['lang'] = "far";
 				$this->post2pdf_conv_setting_opt['font'] = "aealarabiya";
 				$this->post2pdf_conv_setting_opt['monospaced_font'] = "aealarabiya";
+				$this->post2pdf_conv_setting_opt['file'] = "id";
 				break;
 			case 'fi':
 				$this->post2pdf_conv_setting_opt['lang'] = "ltr";
@@ -201,6 +211,7 @@ class POST2PDF_Converter {
 				$this->post2pdf_conv_setting_opt['lang'] = "kat";
 				$this->post2pdf_conv_setting_opt['font'] = "freesans";
 				$this->post2pdf_conv_setting_opt['monospaced_font'] = "freemono";
+				$this->post2pdf_conv_setting_opt['file'] = "id";
 				break;
 			case 'gl_ES':
 				$this->post2pdf_conv_setting_opt['lang'] = "glg";
@@ -209,6 +220,7 @@ class POST2PDF_Converter {
 				$this->post2pdf_conv_setting_opt['lang'] = "heb";
 				$this->post2pdf_conv_setting_opt['font'] = "freesans";
 				$this->post2pdf_conv_setting_opt['monospaced_font'] = "freemono";
+				$this->post2pdf_conv_setting_opt['file'] = "id";
 				break;
 			case 'hr':
 				$this->post2pdf_conv_setting_opt['lang'] = "hrv";
@@ -229,26 +241,31 @@ class POST2PDF_Converter {
 				$this->post2pdf_conv_setting_opt['lang'] = "ltr";
 				$this->post2pdf_conv_setting_opt['font'] = "dejavusans";
 				$this->post2pdf_conv_setting_opt['monospaced_font'] = "dejavusansmono";
+				$this->post2pdf_conv_setting_opt['file'] = "id";
 				break;
 			case 'kk_KZ':
 				$this->post2pdf_conv_setting_opt['lang'] = "ltr";
 				$this->post2pdf_conv_setting_opt['font'] = "dejavusans";
 				$this->post2pdf_conv_setting_opt['monospaced_font'] = "dejavusansmono";
+				$this->post2pdf_conv_setting_opt['file'] = "id";
 				break;
 			case 'kk-Cyrl':
 				$this->post2pdf_conv_setting_opt['lang'] = "ltr";
 				$this->post2pdf_conv_setting_opt['font'] = "dejavusans";
 				$this->post2pdf_conv_setting_opt['monospaced_font'] = "dejavusansmono";
+				$this->post2pdf_conv_setting_opt['file'] = "id";
 				break;
 			case 'kk_CN':
 				$this->post2pdf_conv_setting_opt['lang'] = "rtl";
 				$this->post2pdf_conv_setting_opt['font'] = "aealarabiya";
 				$this->post2pdf_conv_setting_opt['monospaced_font'] = "aealarabiya";
+				$this->post2pdf_conv_setting_opt['file'] = "id";
 				break;
 			case 'kk-Arab':
 				$this->post2pdf_conv_setting_opt['lang'] = "rtl";
 				$this->post2pdf_conv_setting_opt['font'] = "aealarabiya";
 				$this->post2pdf_conv_setting_opt['monospaced_font'] = "aealarabiya";
+				$this->post2pdf_conv_setting_opt['file'] = "id";
 				break;
 			case 'kk_TR':
 				$this->post2pdf_conv_setting_opt['lang'] = "ltr";
@@ -260,6 +277,7 @@ class POST2PDF_Converter {
 				$this->post2pdf_conv_setting_opt['lang'] = "kor";
 				$this->post2pdf_conv_setting_opt['font'] = "cid0kr";
 				$this->post2pdf_conv_setting_opt['monospaced_font'] = "cid0kr";
+				$this->post2pdf_conv_setting_opt['file'] = "id";
 				break;
 			case 'lt_LT':
 				$this->post2pdf_conv_setting_opt['lang'] = "ltr";
@@ -271,6 +289,7 @@ class POST2PDF_Converter {
 				$this->post2pdf_conv_setting_opt['lang'] = "mkd";
 				$this->post2pdf_conv_setting_opt['font'] = "dejavusans";
 				$this->post2pdf_conv_setting_opt['monospaced_font'] = "dejavusansmono";
+				$this->post2pdf_conv_setting_opt['file'] = "id";
 				break;
 			case 'mg_MG':
 				$this->post2pdf_conv_setting_opt['lang'] = "ltr";
@@ -294,6 +313,7 @@ class POST2PDF_Converter {
 				$this->post2pdf_conv_setting_opt['lang'] = "pol";
 				$this->post2pdf_conv_setting_opt['font'] = "dejavusans";
 				$this->post2pdf_conv_setting_opt['monospaced_font'] = "dejavusansmono";
+				$this->post2pdf_conv_setting_opt['file'] = "id";
 				break;
 			case 'pt_PT':
 				$this->post2pdf_conv_setting_opt['lang'] = "por";
@@ -305,6 +325,7 @@ class POST2PDF_Converter {
 				$this->post2pdf_conv_setting_opt['lang'] = "rus";
 				$this->post2pdf_conv_setting_opt['font'] = "dejavusans";
 				$this->post2pdf_conv_setting_opt['monospaced_font'] = "dejavusansmono";
+				$this->post2pdf_conv_setting_opt['file'] = "id";
 				break;
 			case 'sk_SK':
 				$this->post2pdf_conv_setting_opt['lang'] = "ltr";
@@ -323,6 +344,7 @@ class POST2PDF_Converter {
 				$this->post2pdf_conv_setting_opt['lang'] = "srp";
 				$this->post2pdf_conv_setting_opt['font'] = "dejavusans";
 				$this->post2pdf_conv_setting_opt['monospaced_font'] = "dejavusansmono";
+				$this->post2pdf_conv_setting_opt['file'] = "id";
 				break;
 			case 'sv_SE':
 				$this->post2pdf_conv_setting_opt['lang'] = "swe";
@@ -331,11 +353,13 @@ class POST2PDF_Converter {
 				$this->post2pdf_conv_setting_opt['lang'] = "ltr";
 				$this->post2pdf_conv_setting_opt['font'] = "dejavusans";
 				$this->post2pdf_conv_setting_opt['monospaced_font'] = "dejavusansmono";
+				$this->post2pdf_conv_setting_opt['file'] = "id";
 				break;
 			case 'th':
 				$this->post2pdf_conv_setting_opt['lang'] = "ltr";
 				$this->post2pdf_conv_setting_opt['font'] = "freesans";
 				$this->post2pdf_conv_setting_opt['monospaced_font'] = "freemono";
+				$this->post2pdf_conv_setting_opt['file'] = "id";
 				break;
 			case 'tr_TR':
 				$this->post2pdf_conv_setting_opt['lang'] = "ltr";
@@ -344,11 +368,13 @@ class POST2PDF_Converter {
 				$this->post2pdf_conv_setting_opt['lang'] = "ltr";
 				$this->post2pdf_conv_setting_opt['font'] = "dejavusans";
 				$this->post2pdf_conv_setting_opt['monospaced_font'] = "dejavusansmono";
+				$this->post2pdf_conv_setting_opt['file'] = "id";
 				break;
 			case 'ug_CN':
 				$this->post2pdf_conv_setting_opt['lang'] = "rtl";
 				$this->post2pdf_conv_setting_opt['font'] = "aealarabiya";
 				$this->post2pdf_conv_setting_opt['monospaced_font'] = "aealarabiya";
+				$this->post2pdf_conv_setting_opt['file'] = "id";
 				break;
 			case 'uz_UZ':
 				$this->post2pdf_conv_setting_opt['lang'] = "ltr";
@@ -360,16 +386,19 @@ class POST2PDF_Converter {
 				$this->post2pdf_conv_setting_opt['lang'] = "chi";
 				$this->post2pdf_conv_setting_opt['font'] = "cid0cs";
 				$this->post2pdf_conv_setting_opt['monospaced_font'] = "cid0cs";
+				$this->post2pdf_conv_setting_opt['file'] = "id";
 				break;
 			case 'zh_TW':
 				$this->post2pdf_conv_setting_opt['lang'] = "zho";
 				$this->post2pdf_conv_setting_opt['font'] = "cid0ct";
 				$this->post2pdf_conv_setting_opt['monospaced_font'] = "cid0ct";
+				$this->post2pdf_conv_setting_opt['file'] = "id";
 				break;
 			case 'zh_HK':
 				$this->post2pdf_conv_setting_opt['lang'] = "zho";
 				$this->post2pdf_conv_setting_opt['font'] = "cid0ct";
 				$this->post2pdf_conv_setting_opt['monospaced_font'] = "cid0ct";
+				$this->post2pdf_conv_setting_opt['file'] = "id";
 				break;
 		}
 
