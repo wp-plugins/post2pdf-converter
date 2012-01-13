@@ -1,7 +1,7 @@
 <?php
 /*
 by Redcocker
-Last modified: 2012/1/8
+Last modified: 2012/1/11
 License: GPL v2
 http://www.near-mint.com/blog/
 */
@@ -311,7 +311,7 @@ class POST2PDF_Converter_PDF_Maker {
 		// For other sourcecode
 		$content = preg_replace("/<pre[^>]*?><code[^>]*?>(.*?)<\/code><\/pre>/is", "<pre style=\"word-wrap:break-word; color: #406040; background-color: #F1F1F1; border: 1px solid #9F9F9F;\">$1</pre>", $content);
 		// For blockquote
-		$content = preg_replace("/<blockquote[^>]*?>(.*?)<\/blockquote>/is", "<pre style=\"word-wrap:break-word; color: #406040; background-color: #F1F1F1; border: 1px solid #9F9F9F;\">$1</pre>", $content);
+		$content = preg_replace("/<blockquote[^>]*?>(.*?)<\/blockquote>/is", "<blockquote style=\"color: #406040;\">$1</blockquote>", $content);
 
 		$formatted_title = '<h1 style="text-align:center;">' . $title . '</h1>';
 		$formatted_post = $formatted_title . '<br/><br/>' . $content;

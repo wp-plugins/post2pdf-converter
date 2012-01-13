@@ -3,14 +3,14 @@
 Plugin Name: POST2PDF Converter
 Plugin URI: http://www.near-mint.com/blog/software/post2pdf-converter
 Description: This plugin converts your post/page to PDF for visitors and visitors can download it easily.
-Version: 0.2.2
+Version: 0.2.3
 Author: redcocker
 Author URI: http://www.near-mint.com/blog/
 Text Domain: post2pdf_conv
 Domain Path: /languages
 */
 /*
-Last modified: 2012/1/9
+Last modified: 2012/1/13
 License: GPL v2(Except "TCPDF" libraries)
 */
 /*  Copyright 2011 M. Sumitomo
@@ -38,9 +38,10 @@ TCPDF is licensed under the LGPL 3.
 class POST2PDF_Converter {
 
 	var $post2pdf_conv_plugin_url;
-	var $post2pdf_conv_db_ver = "0.2";
+	var $post2pdf_conv_db_ver = "0.2.3";
 	var $post2pdf_allowed_str = "3";
 	var $post2pdf_conv_setting_opt;
+	var $post2pdf_conv_exc;
 	var $post2pdf_conv_sig;
 
 	function __construct() {
@@ -48,6 +49,7 @@ class POST2PDF_Converter {
 		$this->post2pdf_conv_plugin_url = plugin_dir_url(__FILE__);
 
 		$this->post2pdf_conv_setting_opt = get_option('post2pdf_conv_setting_opt');
+		$this->post2pdf_conv_exc = get_option('post2pdf_conv_exc');
 		$this->post2pdf_conv_sig = get_option('post2pdf_conv_sig');
 
 		add_action('plugins_loaded', array(&$this, 'post2pdf_conv_check_db_ver'));
@@ -402,10 +404,12 @@ class POST2PDF_Converter {
 				break;
 		}
 
+		$this->post2pdf_conv_exc = "";
 		$this->post2pdf_conv_sig = "";
 
 		// Store in DB
 		add_option('post2pdf_conv_setting_opt', $this->post2pdf_conv_setting_opt);
+		add_option('post2pdf_conv_exc', $this->post2pdf_conv_exc);
 		add_option('post2pdf_conv_sig', $this->post2pdf_conv_sig);
 		add_option('post2pdf_conv_updated', 'false');
 	}
@@ -461,8 +465,15 @@ class POST2PDF_Converter {
 				$this->post2pdf_conv_setting_opt['footer'] = 1;
 				$this->post2pdf_conv_setting_opt['filters'] = 1;
 				update_option('post2pdf_conv_setting_opt', $this->post2pdf_conv_setting_opt);
-
+				$this->post2pdf_conv_sig = "";
 				update_option('post2pdf_conv_sig', $this->post2pdf_conv_sig);
+
+				$updated_count = $updated_count + 1;
+			}
+			// For update from ver.0.2.2 or older
+			if ($current_checkver_stamp && version_compare($current_checkver_stamp, "0.1.6", "<=")) {
+				$this->post2pdf_conv_exc = "";
+				update_option('post2pdf_conv_exc', $this->post2pdf_conv_exc);
 
 				$updated_count = $updated_count + 1;
 			}
@@ -525,8 +536,18 @@ class POST2PDF_Converter {
 		if ($this->post2pdf_conv_setting_opt['access'] == "login" && !is_user_logged_in()) {
 			$link = "";
 		}
-
+		// Exclusion posts/pages
+		if ($this->post2pdf_conv_exc != "") {
+			$exclusion = explode(",", $this->post2pdf_conv_exc);
+			foreach ($exclusion as $val) {
+				if ($val == $post->ID) {
+					return $content;
+				}
+			}
+		}
+		// Return content
 		if (($this->post2pdf_conv_setting_opt['post'] == 1 && is_single()) || ($this->post2pdf_conv_setting_opt['page'] == 1 && is_page())) {
+
 			if ($this->post2pdf_conv_setting_opt['position'] == "before") {
 				return $link.$content;
 			} else if ($this->post2pdf_conv_setting_opt['position'] == "after") {
@@ -565,6 +586,16 @@ class POST2PDF_Converter {
 <!-- POST2PDF Converter CSS End -->\n";
 
 		if (!($this->post2pdf_conv_setting_opt['access'] == "login" && !is_user_logged_in())) {
+			// Exclusion posts/pages
+			if ($this->post2pdf_conv_exc != "") {
+				$exclusion = explode(",", $this->post2pdf_conv_exc);
+				foreach ($exclusion as $val) {
+					if ($val == $post->ID) {
+						return $css;
+					}
+				}
+			}
+			// Return css
 			if (($this->post2pdf_conv_setting_opt['post'] == 1 && is_single()) || ($this->post2pdf_conv_setting_opt['page'] == 1 && is_page())) {
 				echo $css;
 			} else {
@@ -722,6 +753,7 @@ class POST2PDF_Converter {
 			} else {
 				$this->post2pdf_conv_setting_opt['page'] = 0;
 			}
+			$this->post2pdf_conv_exc = stripslashes($_POST['post2pdf_conv_exc']);
 			$this->post2pdf_conv_setting_opt['icon_size'] = $_POST['icon_size'];
 			$this->post2pdf_conv_setting_opt['link_text'] = stripslashes($_POST['link_text']);
 			$this->post2pdf_conv_setting_opt['link_text_size'] = $_POST['link_text_size'];
@@ -806,6 +838,7 @@ class POST2PDF_Converter {
 				$this->post2pdf_conv_setting_opt['add_to_font_family'] = 0;
 			}
 			// Transforming
+			$this->post2pdf_conv_exc = preg_replace("/,\s+?([0-9]+?)/", ",$1", $this->post2pdf_conv_exc);
 			$this->post2pdf_conv_setting_opt['link_text'] = strip_tags($this->post2pdf_conv_setting_opt['link_text']);
 			$this->post2pdf_conv_setting_opt['margin_top']  = intval($this->post2pdf_conv_setting_opt['margin_top']);
 			$this->post2pdf_conv_setting_opt['margin_bottom']  = intval($this->post2pdf_conv_setting_opt['margin_bottom']);
@@ -818,6 +851,9 @@ class POST2PDF_Converter {
 			$this->post2pdf_conv_setting_opt['logo_width']  = intval($this->post2pdf_conv_setting_opt['logo_width']);
 			$this->post2pdf_conv_sig = str_replace(array("\r\n", "\r", "\n"), "<br />", $this->post2pdf_conv_sig);
 			// Validate values
+			if ($this->post2pdf_conv_exc != "" && !preg_match("/^([0-9]+?,)*?[0-9]+?$/i", $this->post2pdf_conv_exc)) {
+				wp_die(__('Invalid value. Settings could not be saved.<br />Your "Exclusion" contains some character strings that are not allowed to use.', 'post2pdf_conv'));
+			}
 			if ($this->post2pdf_conv_valid_text($this->post2pdf_conv_sig, $this->post2pdf_conv_allowed_str) == "invalid") {
 				wp_die(__('Invalid value. Settings could not be saved.<br />Your "Signature" contains some character strings that are not allowed to use.', 'post2pdf_conv'));
 			} else {
@@ -825,6 +861,7 @@ class POST2PDF_Converter {
 			}
 			// Store in DB
 			update_option('post2pdf_conv_setting_opt', $this->post2pdf_conv_setting_opt);
+			update_option('post2pdf_conv_exc', $this->post2pdf_conv_exc);
 			update_option('post2pdf_conv_sig', $this->post2pdf_conv_sig);
 			update_option('post2pdf_conv_updated', 'false');
 			// Show message for admin
@@ -907,6 +944,13 @@ class POST2PDF_Converter {
 				<td>
 					<input type="checkbox" name="post" value="1" <?php if($this->post2pdf_conv_setting_opt['post'] == 1){echo 'checked="checked" ';} ?>/><?php _e("Posts", "post2pdf_conv") ?> <input type="checkbox" name="page" value="1" <?php if($this->post2pdf_conv_setting_opt['page'] == 1){echo 'checked="checked" ';} ?>/><?php _e("Pages", "post2pdf_conv") ?><br />
 					<p><small><?php _e("Put a download link on the posts/pages.", "post2pdf_conv") ?></small></p>
+				</td>
+			</tr>
+			<tr valign="top">
+				<th scope="row"><?php _e('Exclusion', 'post2pdf_conv') ?></th>
+				<td>
+					<input type="text" name="post2pdf_conv_exc" size="80" value="<?php echo esc_html($this->post2pdf_conv_exc); ?>" /><br />
+					<p><small><?php _e("Enter comma-separated Post_id(s).<br />The download link will not be shown on Posts/Pages with enterd Post_id.", "post2pdf_conv") ?></small></p>
 				</td>
 			</tr>
 			<tr valign="top">
@@ -1082,6 +1126,10 @@ class POST2PDF_Converter {
 				<th scope="row"><?php _e("Image ratio", "post2pdf_conv") ?></th> 
 				<td>
 					<select name="image_ratio">
+						<option value="0.8" <?php if ($this->post2pdf_conv_setting_opt['image_ratio'] == "0.8") {echo 'selected="selected"';} ?>>0.8</option>
+						<option value="0.85" <?php if ($this->post2pdf_conv_setting_opt['image_ratio'] == "0.85") {echo 'selected="selected"';} ?>>0.85</option>
+						<option value="0.9" <?php if ($this->post2pdf_conv_setting_opt['image_ratio'] == "0.9") {echo 'selected="selected"';} ?>>0.9</option>
+						<option value="0.95" <?php if ($this->post2pdf_conv_setting_opt['image_ratio'] == "0.95") {echo 'selected="selected"';} ?>>0.95</option>
 						<option value="1.0" <?php if ($this->post2pdf_conv_setting_opt['image_ratio'] == "1.0") {echo 'selected="selected"';} ?>>1.0</option>
 						<option value="1.05" <?php if ($this->post2pdf_conv_setting_opt['image_ratio'] == "1.05") {echo 'selected="selected"';} ?>>1.05</option>
 						<option value="1.1" <?php if ($this->post2pdf_conv_setting_opt['image_ratio'] == "1.1") {echo 'selected="selected"';} ?>>1.1</option>
@@ -1093,6 +1141,10 @@ class POST2PDF_Converter {
 						<option value="1.4" <?php if ($this->post2pdf_conv_setting_opt['image_ratio'] == "1.4") {echo 'selected="selected"';} ?>>1.4</option>
 						<option value="1.45" <?php if ($this->post2pdf_conv_setting_opt['image_ratio'] == "1.45") {echo 'selected="selected"';} ?>>1.45</option>
 						<option value="1.5" <?php if ($this->post2pdf_conv_setting_opt['image_ratio'] == "1.5") {echo 'selected="selected"';} ?>>1.5</option>
+						<option value="1.55" <?php if ($this->post2pdf_conv_setting_opt['image_ratio'] == "1.55") {echo 'selected="selected"';} ?>>1.55</option>
+						<option value="1.6" <?php if ($this->post2pdf_conv_setting_opt['image_ratio'] == "1.6") {echo 'selected="selected"';} ?>>1.6</option>
+						<option value="1.65" <?php if ($this->post2pdf_conv_setting_opt['image_ratio'] == "1.65") {echo 'selected="selected"';} ?>>1.65</option>
+						<option value="1.7" <?php if ($this->post2pdf_conv_setting_opt['image_ratio'] == "1.7") {echo 'selected="selected"';} ?>>1.7</option>
 					</select>
 					<p><small><?php _e("Set image ratio.<br />Note: With increasing numerical value, you will get smaller images.", "post2pdf_conv") ?></small></p>
 				</td>

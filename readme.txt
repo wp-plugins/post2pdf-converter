@@ -4,7 +4,7 @@ Donate link: http://www.near-mint.com/blog/donate
 Tags: pdf, post, page, convert, download, tcpdf
 Requires at least: 2.8
 Tested up to: 3.3.1
-Stable tag: 0.2.2
+Stable tag: 0.2.3
 
 This plugin converts your post/page to PDF for visitors and visitor can download it easily.
 
@@ -165,12 +165,13 @@ After automatic updating, your added fonts will be removed.
 
 If you enable "Safe fonts directory" option in the setting panel, your fonts will never be removed.
 
-Before you enable "Safe fonts directory", you must make /wp-content/tcpdf-fonts/ directory on your server manually. And upload/move original fonts and your fonts to new directory and enable "Safe fonts directory".
+Before you enable "Safe fonts directory", you must make `/wp-content/tcpdf-fonts/` directory on your server manually. And upload/move bundled fonts and your fonts to new directory and enable "Safe fonts directory".
 
 Now you can remove original fonts directory.
 
-* Orignal fonts: Unzip a plugin zip file and you can find orignal fonts in /post2pdf-converter/tcpdf/fonts.
-* Original fonts directory: /YOUR PLUGIN DIRECTORY/post2pdf-converter/tcpdf/fonts
+* Bundled fonts: Unzip a plugin zip file and you can find orignal fonts in `/post2pdf-converter/tcpdf/fonts`.
+* Original fonts directory: `/YOUR PLUGIN DIRECTORY/post2pdf-converter/tcpdf/fonts`
+・You need not to upload all bundled fonts to new font directory. But you must upload helvetica.php, helveticab.php, helveticabi.php, helveticai.php to new font directory at least.
 
 However, after automatic updating, fonts in the new directory will never be updated. You must maintain the new fonts directory by yourself.
 
@@ -302,12 +303,20 @@ Adjust width and height attributes in `<img>` tag or width and height properties
 
 Or place `<br />` tags after each image blocks.
 
+= Q. I got following error when downloding PDF file. "TCPDF ERROR: Could not include font definition file: helvetica" =
+
+When "Safe fonts directory" option is enabled, there must be some bundled fonts in new font directory. Upload helvetica.php, helveticab.php, helveticabi.php, helveticai.php to new font directory at least. You can find these fonts in `/YOUR PLUGIN DIRECTORY/post2pdf-converter/tcpdf/fonts` directory.
+
 == Screenshots ==
 
 1. This is the download link.
 2. This is setting panel.
 
 == Changelog ==
+
+= 0.2.3 =
+* Added new setting option to excluded some posts/pages as posts/pages without a download link.
+* Changed filter for `<blockquote>` tag.
 
 = 0.2.2 =
 * TCPDF is updated to 5.9.143.
@@ -359,6 +368,9 @@ Or place `<br />` tags after each image blocks.
 * This is the initial release.
 
 == Upgrade Notice ==
+
+= 0.2.3 =
+This version has a new feature and change.
 
 = 0.2.2 =
 This version has a change and bug fix.
