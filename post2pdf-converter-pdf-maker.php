@@ -1,7 +1,7 @@
 <?php
 /*
 by Redcocker
-Last modified: 2012/1/14
+Last modified: 2012/1/15
 License: GPL v2
 http://www.near-mint.com/blog/
 */
@@ -292,7 +292,7 @@ class POST2PDF_Converter_PDF_Maker {
 		}
 
 		// Convert relative image path to absolute image path
-		$content = preg_replace("/<img([^>]*?)src=['\"]((?!(http:\/\/|https:\/\/))[^'\"]+?)['\"]([^>]*?)>/i", "<img$1src=\"".site_url()."/$2\"$4>", $content);
+		$content = preg_replace("/<img([^>]*?)src=['\"]((?!(http:\/\/|https:\/\/|\/))[^'\"]+?)['\"]([^>]*?)>/i", "<img$1src=\"".site_url()."/$2\"$4>", $content);
 
 		if ($shortcode == "parse") {
 			if (function_exists('wp_sh_do_shortcode')) {

@@ -314,6 +314,9 @@ When "Safe fonts directory" option is enabled, there must be some bundled fonts 
 
 == Changelog ==
 
+= 0.2.3.1 =
+* Support relative image path.
+
 = 0.2.3 =
 * Added new setting option to excluded some posts/pages as posts/pages without a download link.
 * Changed filter for `<blockquote>` tag.
@@ -368,6 +371,9 @@ When "Safe fonts directory" option is enabled, there must be some bundled fonts 
 * This is the initial release.
 
 == Upgrade Notice ==
+
+= 0.2.3.1 =
+This version has a change.
 
 = 0.2.3 =
 This version has a new feature and change.
