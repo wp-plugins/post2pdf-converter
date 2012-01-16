@@ -3,14 +3,14 @@
 Plugin Name: POST2PDF Converter
 Plugin URI: http://www.near-mint.com/blog/software/post2pdf-converter
 Description: This plugin converts your post/page to PDF for visitors and visitors can download it easily.
-Version: 0.2.3.1
+Version: 0.2.4
 Author: redcocker
 Author URI: http://www.near-mint.com/blog/
 Text Domain: post2pdf_conv
 Domain Path: /languages
 */
 /*
-Last modified: 2012/1/15
+Last modified: 2012/1/16
 License: GPL v2(Except "TCPDF" libraries)
 */
 /*  Copyright 2011 M. Sumitomo
@@ -38,7 +38,7 @@ TCPDF is licensed under the LGPL 3.
 class POST2PDF_Converter {
 
 	var $post2pdf_conv_plugin_url;
-	var $post2pdf_conv_db_ver = "0.2.3";
+	var $post2pdf_conv_db_ver = "0.2.4";
 	var $post2pdf_allowed_str = "3";
 	var $post2pdf_conv_setting_opt;
 	var $post2pdf_conv_exc;
@@ -74,9 +74,10 @@ class POST2PDF_Converter {
 			"margin_top" => '10',
 			"margin_bottom" => '10',
 			"right_justify" => 1,
+			"shortcode" => 0,
 			"destination" => 'D',
 			"access" => 'referrer',
-			"shortcode" => 0,
+			"nofollow" => 1,
 			"lang" => 'eng',
 			"file" => 'title',
 			"font" => 'helvetica',
@@ -470,10 +471,17 @@ class POST2PDF_Converter {
 
 				$updated_count = $updated_count + 1;
 			}
-			// For update from ver.0.2.2 or older
-			if ($current_checkver_stamp && version_compare($current_checkver_stamp, "0.1.6", "<=")) {
+			// For update from ver.0.2 or older
+			if ($current_checkver_stamp && version_compare($current_checkver_stamp, "0.2", "<=")) {
 				$this->post2pdf_conv_exc = "";
 				update_option('post2pdf_conv_exc', $this->post2pdf_conv_exc);
+
+				$updated_count = $updated_count + 1;
+			}
+			// For update from ver.0.2.3 or older
+			if ($current_checkver_stamp && version_compare($current_checkver_stamp, "0.2.3", "<=")) {
+				$this->post2pdf_conv_setting_opt['nofollow'] = 1;
+				update_option('post2pdf_conv_setting_opt', $this->post2pdf_conv_setting_opt);
 
 				$updated_count = $updated_count + 1;
 			}
@@ -526,11 +534,16 @@ class POST2PDF_Converter {
 
 	function post2pdf_conv_add_download_lnk($content) {
 		global $post;
+		$nofollow = "";
+
+		if ($this->post2pdf_conv_setting_opt['nofollow'] == 1) {
+			$nofollow = ' rel="nofollow"';
+		}
 
 		if ($this->post2pdf_conv_setting_opt['icon_size'] == "none") {
-			$link = '<div id="downloadpdf"><a href="'.$this->post2pdf_conv_plugin_url.'post2pdf-converter-pdf-maker.php?id='.$post->ID.'">'.$this->post2pdf_conv_setting_opt['link_text'].'</a></div>';
+			$link = '<div id="downloadpdf"><a href="'.$this->post2pdf_conv_plugin_url.'post2pdf-converter-pdf-maker.php?id='.$post->ID.'"'.$nofollow.'>'.$this->post2pdf_conv_setting_opt['link_text'].'</a></div>';
 		} else {
-			$link = '<div id="downloadpdf"><a href="'.$this->post2pdf_conv_plugin_url.'post2pdf-converter-pdf-maker.php?id='.$post->ID.'"><img src="'.$this->post2pdf_conv_plugin_url.'img/pdf'.$this->post2pdf_conv_setting_opt['icon_size'].'.png" alt="download as a pdf file" /> '.$this->post2pdf_conv_setting_opt['link_text'].'</a></div>';
+			$link = '<div id="downloadpdf"><a href="'.$this->post2pdf_conv_plugin_url.'post2pdf-converter-pdf-maker.php?id='.$post->ID.'"'.$nofollow.'><img src="'.$this->post2pdf_conv_plugin_url.'img/pdf'.$this->post2pdf_conv_setting_opt['icon_size'].'.png" alt="download as a pdf file" /> '.$this->post2pdf_conv_setting_opt['link_text'].'</a></div>';
 		}
 
 		if ($this->post2pdf_conv_setting_opt['access'] == "login" && !is_user_logged_in()) {
@@ -663,7 +676,13 @@ class POST2PDF_Converter {
 			$ffamily = $this->post2pdf_conv_setting_opt['add_to_font_family'];
 		}
 
-		return '<a href="'.$this->post2pdf_conv_plugin_url.'post2pdf-converter-pdf-maker.php?id='.$id.'&file='.$file.'&font='.$font.'&monospaced='.$monospaced.'&fontsize='.$fontsize.'&subsetting='.$subsetting.'&ratio='.$ratio.'&header='.$header.'&wrap_title='.$wrap_title.'&logo='.$logo.'&logo_file='.$logo_file.'&logo_width='.$logo_width.'&footer='.$footer.'&filters='.$filters.'&shortcode='.$shortcode.'&ffamily='.$ffamily.'">'.$content.'</a>';
+		$nofollow = "";
+
+		if ($this->post2pdf_conv_setting_opt['nofollow'] == 1) {
+			$nofollow = ' rel="nofollow"';
+		}
+
+		return '<a href="'.$this->post2pdf_conv_plugin_url.'post2pdf-converter-pdf-maker.php?id='.$id.'&file='.$file.'&font='.$font.'&monospaced='.$monospaced.'&fontsize='.$fontsize.'&subsetting='.$subsetting.'&ratio='.$ratio.'&header='.$header.'&wrap_title='.$wrap_title.'&logo='.$logo.'&logo_file='.$logo_file.'&logo_width='.$logo_width.'&footer='.$footer.'&filters='.$filters.'&shortcode='.$shortcode.'&ffamily='.$ffamily.'"'.$nofollow.'>'.$content.'</a>';
 	}
 
 	// Validate free style text data
@@ -765,12 +784,17 @@ class POST2PDF_Converter {
 			} else {
 				$this->post2pdf_conv_setting_opt['right_justify'] = 0;
 			}
-			$this->post2pdf_conv_setting_opt['destination'] = $_POST['destination'];
-			$this->post2pdf_conv_setting_opt['access'] = $_POST['access'];
 			if ($_POST['shortcode'] == 1) {
 				$this->post2pdf_conv_setting_opt['shortcode'] = 1;
 			} else {
 				$this->post2pdf_conv_setting_opt['shortcode'] = 0;
+			}
+			$this->post2pdf_conv_setting_opt['destination'] = $_POST['destination'];
+			$this->post2pdf_conv_setting_opt['access'] = $_POST['access'];
+			if ($_POST['nofollow'] == 1) {
+				$this->post2pdf_conv_setting_opt['nofollow'] = 1;
+			} else {
+				$this->post2pdf_conv_setting_opt['nofollow'] = 0;
 			}
 			$this->post2pdf_conv_setting_opt['lang'] = $_POST['lang'];
 			$this->post2pdf_conv_setting_opt['file'] = $_POST['file'];
@@ -1047,6 +1071,13 @@ class POST2PDF_Converter {
 						<option value="login" <?php if ($this->post2pdf_conv_setting_opt['access'] == "login") {echo 'selected="selected"';} ?>><?php _e("Allow only registered users", "post2pdf_conv") ?></option>
 					</select>
 					<p><small><?php _e("You can restrict access to the download link.<br/>When 'Deny any access with the download URL directly' is chosen, HTTP referrer must contain your WordPress URL.<br />When 'Allow only registered users' is chosen, Only registered users can download a PDF.", "post2pdf_conv") ?></small></p>
+				</td>
+			</tr>
+			<tr valign="top">
+				<th scope="row"><?php _e('Nofollow', 'post2pdf_conv') ?></th>
+				<td>
+					<input type="checkbox" name="nofollow" value="1" <?php if($this->post2pdf_conv_setting_opt['nofollow'] == 1){echo 'checked="checked" ';} ?>/><br />
+					<p><small><?php _e("This plugin will add rel=\"nofollow\" into the download link to prevent search engines from crawling and indexing PDF files.", "post2pdf_conv") ?></small></p>
 				</td>
 			</tr>
 		</table>
