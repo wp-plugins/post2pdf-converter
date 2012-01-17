@@ -1,7 +1,7 @@
 <?php
 /*
 by Redcocker
-Last modified: 2012/1/15
+Last modified: 2012/1/18
 License: GPL v2
 http://www.near-mint.com/blog/
 */
@@ -23,7 +23,13 @@ class POST2PDF_Converter_PDF_Maker {
 		$this->post2pdf_conv_setting_opt = get_option('post2pdf_conv_setting_opt');
 		$this->post2pdf_conv_sig = get_option('post2pdf_conv_sig');
 
-		if (($this->post2pdf_conv_setting_opt['access'] == "referrer" && strpos($_SERVER['HTTP_REFERER'], site_url()) === false) ||
+		if(function_exists("home_url")) {
+			$wp_url = home_url();
+		} else {
+			$wp_url = get_option('home');
+		}
+
+		if (($this->post2pdf_conv_setting_opt['access'] == "referrer" && strpos($_SERVER['HTTP_REFERER'], $wp_url) === false) ||
 			($this->post2pdf_conv_setting_opt['access'] == "login" && !is_user_logged_in())
 		) {
 			wp_die(__("You are not allowed to access this file.", "post2pdf_conv"));
