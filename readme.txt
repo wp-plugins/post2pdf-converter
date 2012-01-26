@@ -4,13 +4,13 @@ Donate link: http://www.near-mint.com/blog/donate
 Tags: pdf, post, page, convert, download, tcpdf
 Requires at least: 2.8
 Tested up to: 3.3.1
-Stable tag: 0.2.4.1
+Stable tag: 0.3
 
-This plugin converts your post/page to PDF for visitors and visitor can download it easily.
+This plugin converts your post/page to PDF for visitors and visitors can download it easily.
 
 == Description ==
 
-This plugin converts your post/page to PDF for visitors and visitor can download it easily.
+This plugin converts your post/page to PDF for visitors and visitors can download it easily.
 
 You can add a download link above/below every posts/pages.
 
@@ -19,7 +19,9 @@ Note: This plugin requires PHP 5.
 = Features =
 
 * Base on "[TCPDF](http://www.tcpdf.org/ "TCPDF")".
+* Convert your posts/pages to PDF file dynamically or statically.
 * Easy to add a download link into every posts/pages.
+* Easy to add your TrueType fonts.
 * Easy to configure.
 
 = Localization =
@@ -69,6 +71,8 @@ If your contents are written in Japanese, please install one of these fonts. You
 You can also use following fonts.
 
 [日本語フリーFONT](http://www.monzen.org/Refdoc/tcpdf_freefontj/ "日本語フリーFONT")
+
+If you want to use your own TrueType font, you can convert TrueType font to a font for TCPDF using "Font converter" in setting panel.
 
 = Fonts for Latin, Greek and Cyrillic =
 
@@ -138,13 +142,15 @@ Note: "freemono" is a monospaced font.
 
 = Add new fonts =
 
-You can add new fonts.
+You can add new fonts for TCPDF.
 
 **How to convert a font**
 
 Convert a TrueType font(*.ttf) to font files for TCPDF.
 
-1. Read [TCPDF Fonts](http://www.tcpdf.org/fonts.php "TCPDF Fonts").
+1. Read [TCPDF Fonts](http://www.tcpdf.org/fonts.php "TCPDF Fonts") or Use "Font converter" in the setting panel.
+
+You can download [utilities](http://tcpdf.git.sourceforge.net/git/gitweb.cgi?p=tcpdf/tcpdf;a=tree;f=fonts/utils;h=bb226721af699d7ce3b5fff6f612c115a9a3a1a3;hb=30b07848b44dd53e2519617542f67e4e83f53134 "utilities") to convert a font.
 
 **How to install a font**
 
@@ -314,6 +320,12 @@ When "Safe fonts directory" option is enabled, there must be some bundled fonts 
 
 == Changelog ==
 
+= 0.3 =
+* TCPDF is updated to 5.9.144.
+* Can convert post/page to a PDF statically in the setting panel.
+* Can convert a TrueType font to a font for TCPDF in the setting panel.
+* Changed the default font for Turkish.
+
 = 0.2.4.1 =
 * Fix a bug: When Site Address is different from WordPress Address and "Access" option is set to "Deny any access with the download URL directly", Can't donwload PDF file.
 
@@ -378,6 +390,9 @@ When "Safe fonts directory" option is enabled, there must be some bundled fonts 
 * This is the initial release.
 
 == Upgrade Notice ==
+
+= 0.3 =
+This version has a new feature.
 
 = 0.2.4.1 =
 This version has a bug fix.

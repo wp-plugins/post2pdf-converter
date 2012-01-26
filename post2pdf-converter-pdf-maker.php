@@ -1,7 +1,7 @@
 <?php
 /*
 by Redcocker
-Last modified: 2012/1/18
+Last modified: 2012/1/26
 License: GPL v2
 http://www.near-mint.com/blog/
 */
@@ -17,6 +17,7 @@ class POST2PDF_Converter_PDF_Maker {
 	var $post2pdf_conv_plugin_url;
 	var $post2pdf_conv_setting_opt;
 	var $post2pdf_conv_sig;
+	var $target_post_id;
 
 	function __construct() {
 		$this->post2pdf_conv_plugin_url = plugin_dir_url(__FILE__);
@@ -27,6 +28,15 @@ class POST2PDF_Converter_PDF_Maker {
 			$wp_url = home_url();
 		} else {
 			$wp_url = get_option('home');
+		}
+
+		$this->target_post_id = 0;
+
+		if (isset($_POST['POST2PDF_Converter_PDF_Generater']) && $_POST['post2pdf_conv_pdf_generater_hidden_value'] == "true" && check_admin_referer("post2pdf_conv_pdf_generater", "_wpnonce_pdf_generater")) {
+			if (!file_exists(WP_CONTENT_DIR."/tcpdf-pdf/")) {
+				mkdir(WP_CONTENT_DIR."/tcpdf-pdf", 0755 );
+			}
+			$this->target_post_id = intval($_POST['target_id']);
 		}
 
 		if (($this->post2pdf_conv_setting_opt['access'] == "referrer" && strpos($_SERVER['HTTP_REFERER'], $wp_url) === false) ||
@@ -40,9 +50,12 @@ class POST2PDF_Converter_PDF_Maker {
 
 	function post2pdf_conv_post_to_pdf() {
 		$post_id = 0;
-		$post_id = intval($_GET['id']);
 		if (!empty($_GET['id'])) {
 			$post_id = intval($_GET['id']);
+		}
+
+		if ($this->target_post_id != 0) {
+			$post_id = $this->target_post_id;
 		}
 
 		$post_data = get_post($post_id);
@@ -85,10 +98,16 @@ class POST2PDF_Converter_PDF_Maker {
 		} else {
 			$filename_type = $this->post2pdf_conv_setting_opt['file'];
 		}
-		if ($filename_type == "title") {
+		if ($filename_type == "title" && $this->target_post_id == 0) {
 			$filename = $post_data->post_title;
 		} else {
 			$filename = $post_id;
+		}
+
+		$filename = substr($filename, 0 ,255);
+
+		if ($this->target_post_id != 0) {
+			$filename = WP_CONTENT_DIR."/tcpdf-pdf/".$filename;
 		}
 
 		if (!empty($_GET['font'])) {
@@ -173,6 +192,12 @@ class POST2PDF_Converter_PDF_Maker {
 			$shortcode = esc_html($_GET['shortcode']);
 		} else {
 			$shortcode = $this->post2pdf_conv_setting_opt['shortcode_handling'];
+		}
+
+		$destination = $this->post2pdf_conv_setting_opt['destination'];
+
+		if ($this->target_post_id != 0) {
+			$destination = "F";
 		}
 
 		// Apply default filters to title and content
@@ -358,7 +383,11 @@ class POST2PDF_Converter_PDF_Maker {
 		// Output pdf document
 		// Clean the output buffer
 		ob_clean();
-		$pdf->Output(substr($filename, 0 ,255).'.pdf', $this->post2pdf_conv_setting_opt['destination']);
+		$pdf->Output($filename.'.pdf', $destination);
+
+		if ($this->target_post_id != 0) {
+			wp_die(__("<strong>Generating completed successfully.</strong><br /><br />Post/Page title: ", "post2pdf_conv").$title.__("<br />Output path: ", "post2pdf_conv").WP_CONTENT_DIR."/tcpdf-pdf/".$this->target_post_id.".pdf".__("<br /><br />Go back to ", "post2pdf_conv")."<a href=\"".site_url()."/wp-admin/options-general.php?page=post2pdf-converter-options\">".__("the settig panel</a>.", "post2pdf_conv"), __("POST2PDF Converter", "post2pdf_conv"));
+		}
 
 	}
 

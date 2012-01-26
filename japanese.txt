@@ -6,7 +6,9 @@
 
 特徴
 ・PDFの作成のためにTCPDF（http://www.tcpdf.org/）を使用。
+・投稿や固定ページを動的、あるいは静的にPDFファイルに変換。
 ・投稿や固定ベージの先頭または後ろにダウンロード用リンクを簡単に追加できる。
+・簡単な操作でTrueTypeフォントを追加できる。
 ・簡単な設定。
 ・管理画面やメッセージは、英語、日本語、ドイツ語(訳：Uli Sobers)に対応。
 
@@ -69,6 +71,8 @@ TCPDF用日本語フォント：http://www.near-mint.com/blog/software/rcjfont-f
 下記のサイトでも、TCPDF用の日本語フォントをダウンロードできます。
 
 http://www.monzen.org/Refdoc/tcpdf_freefontj/
+
+手持ちのTrueTypeフォントを使いたい場合は、設定画面の「フォントの変換」を実行し、TrueTypeフォントをTCPDF用のフォントに変換することが出来ます。
 
 
 6-2.ラテン文字、ギリシャ文字、キリル文字のためのフォント
@@ -150,9 +154,15 @@ http://www.monzen.org/Refdoc/tcpdf_freefontj/
 
 TrueTypeフォント（*.ttf）を、TCPDF用フォントにコンバートします。
 
-下記のサイトにフォントの変換方法が書かれています。
+下記のサイトにフォントの変換方法が書かれていますので、それに従って下さい。
 
 http://www.tcpdf.org/fonts.php
+
+変換ツール：http://tcpdf.git.sourceforge.net/git/gitweb.cgi?p=tcpdf/tcpdf;a=tree;f=fonts/utils;h=bb226721af699d7ce3b5fff6f612c115a9a3a1a3;hb=30b07848b44dd53e2519617542f67e4e83f53134
+
+または、
+
+設定画面の「フォントの変換」を実行して、TCPDF用のフォントに変換します。
 
 
 7-2.フォントのアップロード
@@ -338,6 +348,12 @@ http://www.near-mint.com/blog/donate
 
 
 13.履歴
+
+2012/1/26　バージョン 0.3 リリース
+ ※TCPDFをバージョン5.9.144にアップデート。
+ ※管理画面で静的に投稿、固定ページをPDFに変換出来るようになった。
+ ※管理画面でTrueTypeフォントをTCPDF用に変換出きるようになった。
+ ※トルコ語用のデフォルトのフォントを変更。
 
 2012/1/18　バージョン 0.2.4.1 リリース
  ※サイトアドレスとWordPress アドレスが異なり、かつ、「アクセス」オプションが「ダウンロードURLへの直接アクセスを禁止」に設定されている場合にPDFをダウンロード出来ない問題を修正。
