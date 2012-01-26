@@ -4,7 +4,7 @@ Donate link: http://www.near-mint.com/blog/donate
 Tags: pdf, post, page, convert, download, tcpdf
 Requires at least: 2.8
 Tested up to: 3.3.1
-Stable tag: 0.3
+Stable tag: trunk
 
 This plugin converts your post/page to PDF for visitors and visitors can download it easily.
 
@@ -392,7 +392,7 @@ When "Safe fonts directory" option is enabled, there must be some bundled fonts 
 == Upgrade Notice ==
 
 = 0.3 =
-This version has a new feature.
+This version has new features and change.
 
 = 0.2.4.1 =
 This version has a bug fix.
