@@ -392,7 +392,7 @@ When "Safe fonts directory" option is enabled, there must be some bundled fonts 
 == Upgrade Notice ==
 
 = 0.3 =
-This version has a new feature.
+This version has new features and change.
 
 = 0.2.4.1 =
 This version has a bug fix.
