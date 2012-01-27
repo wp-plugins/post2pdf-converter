@@ -10,7 +10,7 @@ Text Domain: post2pdf_conv
 Domain Path: /languages
 */
 /*
-Last modified: 2012/1/26
+Last modified: 2012/1/28
 License: GPL v2(Except "TCPDF" libraries)
 */
 /*  Copyright 2011 M. Sumitomo
@@ -535,6 +535,7 @@ class POST2PDF_Converter {
 		wp_enqueue_script('rc_admin_js', $this->post2pdf_conv_plugin_url.'rc-admin-js.js', false, '1.2');
 	}
 
+	// Add download link
 	function post2pdf_conv_add_download_lnk($content) {
 		global $post;
 		$nofollow = "";
@@ -578,6 +579,7 @@ class POST2PDF_Converter {
 		}
 	}
 
+	// Add CSS for download link
 	function post2pdf_conv_add_style() {
 		global $post;
 
@@ -607,7 +609,7 @@ class POST2PDF_Converter {
 				$exclusion = explode(",", $this->post2pdf_conv_exc);
 				foreach ($exclusion as $val) {
 					if ($val == $post->ID) {
-						return $css;
+						return;
 					}
 				}
 			}

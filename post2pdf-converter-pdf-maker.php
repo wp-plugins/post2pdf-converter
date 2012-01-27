@@ -1,7 +1,7 @@
 <?php
 /*
 by Redcocker
-Last modified: 2012/1/26
+Last modified: 2012/1/28
 License: GPL v2
 http://www.near-mint.com/blog/
 */
@@ -326,15 +326,20 @@ class POST2PDF_Converter_PDF_Maker {
 		$content = preg_replace("/<img([^>]*?)src=['\"]((?!(http:\/\/|https:\/\/|\/))[^'\"]+?)['\"]([^>]*?)>/i", "<img$1src=\"".site_url()."/$2\"$4>", $content);
 
 		if ($shortcode == "parse") {
+			// For WP SyntaxHighlighter
 			if (function_exists('wp_sh_do_shortcode')) {
 				$content = wp_sh_do_shortcode($content);
+			}
+			// For QuickLaTeX
+			if (function_exists('quicklatex_parser')) {
+				$content = quicklatex_parser($content);
 			}
 			$content = do_shortcode($content);
 		} else if ($this->post2pdf_conv_setting_opt['shortcode_handling'] == "remove") {
 			$content = strip_shortcodes($content);
 		}
 
-		// For SyntaxHighlighter
+		// For common SyntaxHighlighter
 		$content = preg_replace("/<pre[^>]*?brush:[^>]*?>(.*?)<\/pre>/is", "<pre style=\"word-wrap:break-word; color: #406040; background-color: #F1F1F1; border: 1px solid #9F9F9F;\">$1</pre>", $content);
 		$content = preg_replace("/<script[^>]*?type=['\"]syntaxhighlighter['\"][^>]*?>(.*?)<\/script>/is", "<pre style=\"word-wrap:break-word; color: #406040; background-color: #F1F1F1; border: 1px solid #9F9F9F;\">$1</pre>", $content);
 		$content = preg_replace("/<pre[^>]*?name=['\"][^>]*?>(.*?)<\/pre>/is", "<pre style=\"word-wrap:break-word; color: #406040; background-color: #F1F1F1; border: 1px solid #9F9F9F;\">$1</pre>", $content);
