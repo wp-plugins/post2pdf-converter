@@ -331,7 +331,7 @@ class POST2PDF_Converter_PDF_Maker {
 			if (function_exists('quicklatex_parser')) {
 				$content = quicklatex_parser($content);
 				$content = preg_replace_callback("/(<p class=\"ql-(center|left|right)-displayed-equation\" style=\"line-height: )([0-9]+?)(px;)(\">)/i", array($this, post2pdf_conv_qlatex_displayed_equation), $content);
-				$content = preg_replace("/<p class=\"ql-center-picture\">/i", "<p class=\"ql-center-picture\" style=\"text-align: center;\"><span class=\"ql-right-eqno\"> &nbsp; <\/span><span class=\"ql-left-eqno\"> &nbsp; <\/span>", $content);
+				$content = str_replace("<p class=\"ql-center-picture\">", "<p class=\"ql-center-picture\" style=\"text-align: center;\"><span class=\"ql-right-eqno\"> &nbsp; <\/span><span class=\"ql-left-eqno\"> &nbsp; <\/span>", $content);
 			}
 			$content = do_shortcode($content);
 		} else if ($this->post2pdf_conv_setting_opt['shortcode_handling'] == "remove") {
@@ -402,12 +402,7 @@ class POST2PDF_Converter_PDF_Maker {
 	}
 
 	function post2pdf_conv_qlatex_displayed_equation($matches) {
-		$line_height = intval($matches[3]);
-		if ($line_height > 40) {
-			$line_height = $line_height/3;
-		} else {
-			$line_height = round($line_height/2);
-		}
+		$line_height = "6";
 		return $matches[1].$line_height.$matches[4]." text-align: ".$matches[2].";".$matches[5];
 	}
 
