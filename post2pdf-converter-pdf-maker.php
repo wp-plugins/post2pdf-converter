@@ -322,9 +322,6 @@ class POST2PDF_Converter_PDF_Maker {
 			}
 		}
 
-		// Convert relative image path to absolute image path
-		$content = preg_replace("/<img([^>]*?)src=['\"]((?!(http:\/\/|https:\/\/|\/))[^'\"]+?)['\"]([^>]*?)>/i", "<img$1src=\"".site_url()."/$2\"$4>", $content);
-
 		if ($shortcode == "parse") {
 			// For WP SyntaxHighlighter
 			if (function_exists('wp_sh_do_shortcode')) {
@@ -333,11 +330,19 @@ class POST2PDF_Converter_PDF_Maker {
 			// For QuickLaTeX
 			if (function_exists('quicklatex_parser')) {
 				$content = quicklatex_parser($content);
+				$content = preg_replace_callback("/(<p class=\"ql-(center|left|right)-displayed-equation\" style=\"line-height: )([0-9]+?)(px;)(\">)/i", array($this, post2pdf_conv_qlatex_displayed_equation), $content);
+				$content = preg_replace("/<p class=\"ql-center-picture\">/i", "<p class=\"ql-center-picture\" style=\"text-align: center;\"><span class=\"ql-right-eqno\"> &nbsp; <\/span><span class=\"ql-left-eqno\"> &nbsp; <\/span>", $content);
 			}
 			$content = do_shortcode($content);
 		} else if ($this->post2pdf_conv_setting_opt['shortcode_handling'] == "remove") {
 			$content = strip_shortcodes($content);
 		}
+
+		// Convert relative image path to absolute image path
+		$content = preg_replace("/<img([^>]*?)src=['\"]((?!(http:\/\/|https:\/\/|\/))[^'\"]+?)['\"]([^>]*?)>/i", "<img$1src=\"".site_url()."/$2\"$4>", $content);
+
+		// Add width and height into image tag
+		$content = preg_replace_callback("/(<img[^>]*?src=['\"]((http:\/\/|https:\/\/|\/)[^'\"]*?(jpg|jpeg|gif|png))['\"])([^>]*?>)/i", array($this, post2pdf_conv_img_size), $content);
 
 		// For common SyntaxHighlighter
 		$content = preg_replace("/<pre[^>]*?brush:[^>]*?>(.*?)<\/pre>/is", "<pre style=\"word-wrap:break-word; color: #406040; background-color: #F1F1F1; border: 1px solid #9F9F9F;\">$1</pre>", $content);
@@ -394,6 +399,22 @@ class POST2PDF_Converter_PDF_Maker {
 			wp_die(__("<strong>Generating completed successfully.</strong><br /><br />Post/Page title: ", "post2pdf_conv").$title.__("<br />Output path: ", "post2pdf_conv").WP_CONTENT_DIR."/tcpdf-pdf/".$this->target_post_id.".pdf".__("<br /><br />Go back to ", "post2pdf_conv")."<a href=\"".site_url()."/wp-admin/options-general.php?page=post2pdf-converter-options\">".__("the settig panel</a>.", "post2pdf_conv"), __("POST2PDF Converter", "post2pdf_conv"));
 		}
 
+	}
+
+	function post2pdf_conv_qlatex_displayed_equation($matches) {
+		$line_height = intval($matches[3]);
+		if ($line_height > 40) {
+			$line_height = $line_height/3;
+		} else {
+			$line_height = round($line_height/2);
+		}
+		return $matches[1].$line_height.$matches[4]." text-align: ".$matches[2].";".$matches[5];
+	}
+
+	function post2pdf_conv_img_size($matches) {
+		$size = getimagesize($matches[2]);
+		$img_tag = $matches[1]." ".$size[3].$matches[5];
+		return $img_tag;
 	}
 
 }
