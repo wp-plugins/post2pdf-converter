@@ -1,7 +1,7 @@
 <?php
 /*
 by Redcocker
-Last modified: 2012/1/29
+Last modified: 2012/1/30
 License: GPL v2
 http://www.near-mint.com/blog/
 */
@@ -200,13 +200,50 @@ class POST2PDF_Converter_PDF_Maker {
 			$destination = "F";
 		}
 
+		// For CodeColorer(GeSHi)
+		$content = preg_replace_callback("/<code[^>]*?lang=['\"][^>]*?>(.*?)<\/code>/is", array($this, post2pdf_conv_sourcecode_wrap_pre_and_esc), $content);
+		// For WP-Syntax and WP-CodeBox(GeSHi)
+		$content = preg_replace_callback("/<pre[^>]*?lang=['\"][^>]*?>(.*?)<\/pre>/is", array($this, post2pdf_conv_sourcecode_wrap_pre_and_esc), $content);
+
+		// Parse shortcode before applied WP default filters
 		if ($shortcode == "parse") {
+			// For WP SyntaxHighlighter
+			if (function_exists('wp_sh_do_shortcode')) {
+				$content = wp_sh_do_shortcode($content);
+			}
 			// For SyntaxHighlighter Evolved
 			if (class_exists('SyntaxHighlighter')) {
 				global $SyntaxHighlighter;
 				if (method_exists('SyntaxHighlighter', 'parse_shortcodes') && method_exists('SyntaxHighlighter', 'shortcode_hack')) {
 					$content = $SyntaxHighlighter->parse_shortcodes($content);
 				}
+			}
+			// For SyntaxHighlighterPro
+			if (class_exists('GoogleSyntaxHighlighterPro')) {
+				global $googleSyntaxHighlighter;
+				if (method_exists('GoogleSyntaxHighlighterPro', 'bbcode')) {
+					$content = $googleSyntaxHighlighter->bbcode($content);
+				}
+			}
+			// For CodeColorer(GeSHi)
+			if (class_exists('CodeColorerLoader')) {
+				$content = preg_replace_callback("/\[cc[^\]]*?lang=['\"][^\]]*?\](.*?)\[\/cc\]/is", array($this, post2pdf_conv_sourcecode_wrap_pre_and_esc), $content);
+			}
+		} else if ($this->post2pdf_conv_setting_opt['shortcode_handling'] == "remove") {
+			// For WP SyntaxHighlighter
+			if (function_exists('wp_sh_strip_shortcodes')) {
+				$content = wp_sh_strip_shortcodes($content);
+			}
+			// For SyntaxHighlighterPro
+			if (class_exists('GoogleSyntaxHighlighterPro')) {
+				global $googleSyntaxHighlighter;
+				if (method_exists('GoogleSyntaxHighlighterPro', 'bbcode_strip')) {
+					$content = $googleSyntaxHighlighter->bbcode_strip($content);
+				}
+			}
+			// For CodeColorer(GeSHi)
+			if (class_exists('CodeColorerLoader')) {
+				$content = preg_replace_callback("/\[cc[^\]]*?lang=['\"][^\]]*?\](.*?)\[\/cc\]/is", array($this, post2pdf_conv_sourcecode_esc), $content);
 			}
 		}
 
@@ -332,11 +369,8 @@ class POST2PDF_Converter_PDF_Maker {
 			}
 		}
 
+		// Parse shortcode after applied WP default filters
 		if ($shortcode == "parse") {
-			// For WP SyntaxHighlighter
-			if (function_exists('wp_sh_do_shortcode')) {
-				$content = wp_sh_do_shortcode($content);
-			}
 			// For WP QuickLaTeX
 			if (function_exists('quicklatex_parser')) {
 				$content = quicklatex_parser($content);
@@ -359,13 +393,9 @@ class POST2PDF_Converter_PDF_Maker {
 		$content = preg_replace("/<script[^>]*?type=['\"]syntaxhighlighter['\"][^>]*?>(.*?)<\/script>/is", "<pre style=\"word-wrap:break-word; color: #406040; background-color: #F1F1F1; border: 1px solid #9F9F9F;\">$1</pre>", $content);
 		$content = preg_replace("/<pre[^>]*?name=['\"][^>]*?>(.*?)<\/pre>/is", "<pre style=\"word-wrap:break-word; color: #406040; background-color: #F1F1F1; border: 1px solid #9F9F9F;\">$1</pre>", $content);
 		$content = preg_replace("/<textarea[^>]*?name=['\"][^>]*?>(.*?)<\/textarea>/is", "<pre style=\"word-wrap:break-word; color: #406040; background-color: #F1F1F1; border: 1px solid #9F9F9F;\">$1</pre>", $content);
-		// For WP-Syntax, WP-CodeBox(GeSHi)
-		$content = preg_replace("/<pre[^>]*?lang=['\"][^>]*?>(.*?)<\/pre>/is", "<pre style=\"word-wrap:break-word; color: #406040; background-color: #F1F1F1; border: 1px solid #9F9F9F;\">$1</pre>", $content);
 		// For WP-SynHighlight(GeSHi)
 		$content = preg_replace("/<pre[^>]*?class=['\"][^>]*?>(.*?)<\/pre>/is", "<pre style=\"word-wrap:break-word; color: #406040; background-color: #F1F1F1; border: 1px solid #9F9F9F;\">$1</pre>", $content);
 		$content = preg_replace("|<div[^>]*?class=\"wp-synhighlighter-outer\"><div[^>]*?class=\"wp-synhighlighter-expanded\"><table[^>]*?><tr><td[^>]*?><a[^>]*?></a><a[^>]*?class=\"wp-synhighlighter-title\"[^>]*?>[^<]*?</a></td><td[^>]*?><a[^>]*?><img[^>]*?/></a>[^<]*?<a[^>]*?><img[^>]*?/></a>[^<]*?<a[^>]*?><img[^>]*?/></a>[^<]*?</td></tr></table></div>|is", "", $content);
-		// For CodeColorer <code> tag method
-		$content = preg_replace("/<code[^>]*?lang=['\"][^>]*?>(.*?)<\/code>/is", "<pre style=\"word-wrap:break-word; color: #406040; background-color: #F1F1F1; border: 1px solid #9F9F9F;\">$1</pre>", $content);
 		// For other sourcecode
 		$content = preg_replace("/<pre[^>]*?><code[^>]*?>(.*?)<\/code><\/pre>/is", "<pre style=\"word-wrap:break-word; color: #406040; background-color: #F1F1F1; border: 1px solid #9F9F9F;\">$1</pre>", $content);
 		// For blockquote
@@ -428,9 +458,17 @@ class POST2PDF_Converter_PDF_Maker {
 		return $img_tag;
 	}
 
+	function post2pdf_conv_sourcecode_wrap_pre_and_esc($matches) {
+		return "<pre style=\"word-wrap:break-word; color: #406040; background-color: #F1F1F1; border: 1px solid #9F9F9F;\">".htmlspecialchars($matches[1])."</pre>";
+	}
+
+	function post2pdf_conv_sourcecode_esc($matches) {
+		return htmlspecialchars($matches[1]);
+	}
+
 }
 
 // Start this plugin
 $POST2PDF_Converter_PDF_Maker = new POST2PDF_Converter_PDF_Maker();
 
-?>
+?>post2pdf_conv_sourcecode_wrap_pre_and_esc
