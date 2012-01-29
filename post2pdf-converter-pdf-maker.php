@@ -1,7 +1,7 @@
 <?php
 /*
 by Redcocker
-Last modified: 2012/1/28
+Last modified: 2012/1/29
 License: GPL v2
 http://www.near-mint.com/blog/
 */
@@ -200,6 +200,16 @@ class POST2PDF_Converter_PDF_Maker {
 			$destination = "F";
 		}
 
+		if ($shortcode == "parse") {
+			// For SyntaxHighlighter Evolved
+			if (class_exists('SyntaxHighlighter')) {
+				global $SyntaxHighlighter;
+				if (method_exists('SyntaxHighlighter', 'parse_shortcodes') && method_exists('SyntaxHighlighter', 'shortcode_hack')) {
+					$content = $SyntaxHighlighter->parse_shortcodes($content);
+				}
+			}
+		}
+
 		// Apply default filters to title and content
 		if ($filters == 1) {
 			if (has_filter('the_title', 'wptexturize')) {
@@ -327,7 +337,7 @@ class POST2PDF_Converter_PDF_Maker {
 			if (function_exists('wp_sh_do_shortcode')) {
 				$content = wp_sh_do_shortcode($content);
 			}
-			// For QuickLaTeX
+			// For WP QuickLaTeX
 			if (function_exists('quicklatex_parser')) {
 				$content = quicklatex_parser($content);
 				$content = preg_replace_callback("/(<p class=\"ql-(center|left|right)-displayed-equation\" style=\"line-height: )([0-9]+?)(px;)(\">)/i", array($this, post2pdf_conv_qlatex_displayed_equation), $content);
@@ -349,8 +359,12 @@ class POST2PDF_Converter_PDF_Maker {
 		$content = preg_replace("/<script[^>]*?type=['\"]syntaxhighlighter['\"][^>]*?>(.*?)<\/script>/is", "<pre style=\"word-wrap:break-word; color: #406040; background-color: #F1F1F1; border: 1px solid #9F9F9F;\">$1</pre>", $content);
 		$content = preg_replace("/<pre[^>]*?name=['\"][^>]*?>(.*?)<\/pre>/is", "<pre style=\"word-wrap:break-word; color: #406040; background-color: #F1F1F1; border: 1px solid #9F9F9F;\">$1</pre>", $content);
 		$content = preg_replace("/<textarea[^>]*?name=['\"][^>]*?>(.*?)<\/textarea>/is", "<pre style=\"word-wrap:break-word; color: #406040; background-color: #F1F1F1; border: 1px solid #9F9F9F;\">$1</pre>", $content);
-		// For GeSHi(WP-Syntax, CodeColorer, WP-CodeBox, WP-SynHighlight etc)
+		// For WP-Syntax, WP-CodeBox(GeSHi)
 		$content = preg_replace("/<pre[^>]*?lang=['\"][^>]*?>(.*?)<\/pre>/is", "<pre style=\"word-wrap:break-word; color: #406040; background-color: #F1F1F1; border: 1px solid #9F9F9F;\">$1</pre>", $content);
+		// For WP-SynHighlight(GeSHi)
+		$content = preg_replace("/<pre[^>]*?class=['\"][^>]*?>(.*?)<\/pre>/is", "<pre style=\"word-wrap:break-word; color: #406040; background-color: #F1F1F1; border: 1px solid #9F9F9F;\">$1</pre>", $content);
+		$content = preg_replace("|<div[^>]*?class=\"wp-synhighlighter-outer\"><div[^>]*?class=\"wp-synhighlighter-expanded\"><table[^>]*?><tr><td[^>]*?><a[^>]*?></a><a[^>]*?class=\"wp-synhighlighter-title\"[^>]*?>[^<]*?</a></td><td[^>]*?><a[^>]*?><img[^>]*?/></a>[^<]*?<a[^>]*?><img[^>]*?/></a>[^<]*?<a[^>]*?><img[^>]*?/></a>[^<]*?</td></tr></table></div>|is", "", $content);
+		// For CodeColorer <code> tag method
 		$content = preg_replace("/<code[^>]*?lang=['\"][^>]*?>(.*?)<\/code>/is", "<pre style=\"word-wrap:break-word; color: #406040; background-color: #F1F1F1; border: 1px solid #9F9F9F;\">$1</pre>", $content);
 		// For other sourcecode
 		$content = preg_replace("/<pre[^>]*?><code[^>]*?>(.*?)<\/code><\/pre>/is", "<pre style=\"word-wrap:break-word; color: #406040; background-color: #F1F1F1; border: 1px solid #9F9F9F;\">$1</pre>", $content);
@@ -401,11 +415,13 @@ class POST2PDF_Converter_PDF_Maker {
 
 	}
 
+	// Callback for ql-xxx-displayed-equation class in QuickLaTeX
 	function post2pdf_conv_qlatex_displayed_equation($matches) {
 		$line_height = "6";
 		return $matches[1].$line_height.$matches[4]." text-align: ".$matches[2].";".$matches[5];
 	}
 
+	// Callback for images without width and height attributes
 	function post2pdf_conv_img_size($matches) {
 		$size = getimagesize($matches[2]);
 		$img_tag = $matches[1]." ".$size[3].$matches[5];
