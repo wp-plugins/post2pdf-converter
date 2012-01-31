@@ -464,17 +464,20 @@ class POST2PDF_Converter_PDF_Maker {
 
 	// Callback for images without width and height attributes
 	function post2pdf_conv_img_size($matches) {
+		$size = NULL;
+
 		if (strpos($matches[2], site_url()) === false) {
 			return $matches[1].$matches[5];
 		}
 
-		$size = getimagesize($matches[2]);
-		if (!$size) {
-			$image_path = ABSPATH.str_replace(site_url()."/", "", $matches[2]);
+		$image_path = ABSPATH.str_replace(site_url()."/", "", $matches[2]);
+		if (file_exists($image_path)) {
 			$size = getimagesize($image_path);
+		} else {
+			return $matches[1].$matches[5];
 		}
-		$img_tag = $matches[1]." ".$size[3].$matches[5];
-		return $img_tag;
+
+		return $matches[1]." ".$size[3].$matches[5];
 	}
 
 	// Callback for sourcecode
