@@ -464,6 +464,10 @@ class POST2PDF_Converter_PDF_Maker {
 
 	// Callback for images without width and height attributes
 	function post2pdf_conv_img_size($matches) {
+		if (strpos($matches[2], site_url()) === false) {
+			return $matches[1].$matches[5];
+		}
+
 		$size = getimagesize($matches[2]);
 		if (!$size) {
 			$image_path = ABSPATH.str_replace(site_url()."/", "", $matches[2]);
