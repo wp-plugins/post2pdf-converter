@@ -13,6 +13,33 @@
 ・管理画面やメッセージは、英語、日本語、ドイツ語(訳：Uli Sobers)に対応。
 
 
+= サポートするプラグイン =
+
+次のプラグインを使用しており、投稿、固定ページがソースコードを含む場合もPDFに変換できます。
+
+・WP SyntaxHighlighter：http://wordpress.org/extend/plugins/wp-syntaxhighlighter/
+・SyntaxHighlighter Evolved：http://wordpress.org/extend/plugins/syntaxhighlighter/
+・WP-Syntax：http://wordpress.org/extend/plugins/wp-syntax/
+・CodeColorer：http://wordpress.org/extend/plugins/codecolorer/
+・WP-CodeBox：http://wordpress.org/extend/plugins/wp-codebox/
+・WP-SynHighlight：http://wordpress.org/extend/plugins/wp-synhighlight/
+・Syntax Highlighter Compress：http://wordpress.org/extend/plugins/syntax-highlighter-compress/
+・Auto SyntaxHighlighter：http://wordpress.org/extend/plugins/auto-syntaxhighlighter/
+・Syntax Highlighter and Code Colorizer for WordPress：http://wordpress.org/extend/plugins/syntax-highlighter-and-code-prettifier/
+・Syntax Highlighter MT：http://wordpress.org/extend/plugins/syntax-highlighter-mt/
+・SyntaxHighlighterPro：http://wordpress.org/extend/plugins/syntaxhighlighterpro/
+・Easy Google Syntax Highlighter：http://wordpress.org/extend/plugins/easy-google-syntax-highlighter/
+・WP-GeSHi-Highlight：http://wordpress.org/extend/plugins/wp-geshi-highlight/
+・WP Code Highlight：http://wordpress.org/extend/plugins/wp-code-highlight/　他
+
+
+次のプラグインを使用しており、投稿、固定ページがLaTexで記述された数式、化学式、グラフを含む場合もPDFに変換できます。
+
+・WP QuickLaTeX：http://wordpress.org/extend/plugins/wp-quicklatex/
+
+※このサポートプラグインリストは、一例です。
+
+
 1.動作環境
 
 ・WordPress バージョン2.8 以上
@@ -348,6 +375,14 @@ http://www.near-mint.com/blog/donate
 
 
 13.履歴
+
+2012/2/6　バージョン 0.3.3 リリース
+ ※TCPDFをバージョン5.9.145にアップデート。
+ ※ダウンロードリンクにオリジナルアイコンを登録するためのオプションを追加。
+ ※「WP SyntaxHighlighter」、「SyntaxHighlighter Evolved」、「WP-Syntax」、「CodeColor」、「WP-CodeBox」、「WP-SynHighlight」他のソースコードの強調プラグインをサポート。
+ ※「WP QuickLaTeX」をサポート。
+ ※「K_PATH_IMAGES」定数の定義方法を変更。
+ ※誤ったCSSを出力する問題を修正。
 
 2012/1/26　バージョン 0.3 リリース
  ※TCPDFをバージョン5.9.144にアップデート。

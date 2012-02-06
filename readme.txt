@@ -4,7 +4,7 @@ Donate link: http://www.near-mint.com/blog/donate
 Tags: pdf, post, page, convert, download, tcpdf
 Requires at least: 2.8
 Tested up to: 3.3.1
-Stable tag: 0.3
+Stable tag: 0.3.3
 
 This plugin converts your post/page to PDF for visitors and visitors can download it easily.
 
@@ -20,7 +20,7 @@ Note: This plugin requires PHP 5.
 
 * Base on "[TCPDF](http://www.tcpdf.org/ "TCPDF")".
 * Convert your posts/pages to PDF file dynamically or statically.
-* Easy to add a download link into every posts/pages.
+* Easy to add a download link into every or specified posts/pages.
 * Easy to add your TrueType fonts.
 * Easy to configure.
 
@@ -28,6 +28,31 @@ Note: This plugin requires PHP 5.
 
 * 日本語(Japanese) by redcocker
 * Deutsch(German) by Uli Sobers([Free Templates](http://www.free-templates-sobers.de/ "Free Templates"), [IQ137](http://www.iq137.de/ "IQ137"))
+
+= Support plugins =
+
+You can use POST2PDF Converter with following code syntaxhighlighter plugins and convert posts/pages with sourcecodes to PDF.
+
+* [WP SyntaxHighlighter](http://wordpress.org/extend/plugins/wp-syntaxhighlighter/ "WP SyntaxHighlighter")
+* [SyntaxHighlighter Evolved](http://wordpress.org/extend/plugins/syntaxhighlighter/ "SyntaxHighlighter Evolved")
+* [WP-Syntax](http://wordpress.org/extend/plugins/wp-syntax/ "WP-Syntax")
+* [CodeColorer](http://wordpress.org/extend/plugins/codecolorer/ "CodeColorer")
+* [WP-CodeBox](http://wordpress.org/extend/plugins/wp-codebox/ "WP-CodeBox")
+* [WP-SynHighlight](http://wordpress.org/extend/plugins/wp-synhighlight/ "WP-SynHighlight")
+* [Syntax Highlighter Compress](http://wordpress.org/extend/plugins/syntax-highlighter-compress/ "Syntax Highlighter Compress")
+* [Auto SyntaxHighlighter](http://wordpress.org/extend/plugins/auto-syntaxhighlighter/ "Auto SyntaxHighlighter")
+* [Syntax Highlighter and Code Colorizer for WordPress](http://wordpress.org/extend/plugins/syntax-highlighter-and-code-prettifier/ "Syntax Highlighter and Code Colorizer for WordPress")
+* [Syntax Highlighter MT](http://wordpress.org/extend/plugins/syntax-highlighter-mt/ "Syntax Highlighter MT")
+* [SyntaxHighlighterPro](http://wordpress.org/extend/plugins/syntaxhighlighterpro/ "SyntaxHighlighterPro")
+* [Easy Google Syntax Highlighter](http://wordpress.org/extend/plugins/easy-google-syntax-highlighter/ "Easy Google Syntax Highlighter")
+* [WP-GeSHi-Highlight](http://wordpress.org/extend/plugins/wp-geshi-highlight/ "WP-GeSHi-Highlight")
+* [WP Code Highlight](http://wordpress.org/extend/plugins/wp-code-highlight/ "WP Code Highlight") etc.
+
+You can use POST2PDF Converter with following LaTex plugins and convert posts/pages with mathematical formulas, chemical formulae and charts to PDF.
+
+* [WP QuickLaTeX](http://wordpress.org/extend/plugins/wp-quicklatex/ "WP QuickLaTeX")
+
+**This list is only one example.**
 
 == Installation ==
 
@@ -320,6 +345,14 @@ When "Safe fonts directory" option is enabled, there must be some bundled fonts 
 
 == Changelog ==
 
+= 0.3.3 =
+* TCPDF is updated to 5.9.145.
+* Added new setting options to add custom icon to the download link.
+* Support WP SyntaxHighlighter, SyntaxHighlighter Evolved, WP-Syntax, CodeColor, WP-CodeBox, WP-SynHighlight and some other code syntaxhighlighter plugins.
+* Support WP QuickLaTeX.
+* Changed definition of "K_PATH_IMAGES" constant.
+* Fix a bug: Wrong outputing css.
+
 = 0.3 =
 * TCPDF is updated to 5.9.144.
 * Can convert post/page to a PDF statically in the setting panel.
@@ -391,8 +424,11 @@ When "Safe fonts directory" option is enabled, there must be some bundled fonts 
 
 == Upgrade Notice ==
 
+= 0.3.3 =
+This version has new features, change and bug fix.
+
 = 0.3 =
-This version has new features and change.
+This version has a new feature.
 
 = 0.2.4.1 =
 This version has a bug fix.

@@ -2,7 +2,7 @@
 //============================================================+
 // File name   : tcpdf_config.php
 // Begin       : 2004-06-11
-// Last Update : 2012-1-17 by redcocker
+// Last Update : 2012-2-1 by redcocker
 //
 // Description : Configuration file for TCPDF.
 // Author      : Nicola Asuni - Tecnick.com LTD - Manor Coach House, Church Hill, Aldershot, Hants, GU12 4RQ, UK - www.tecnick.com - info@tecnick.com
@@ -111,9 +111,10 @@ if (!defined('K_TCPDF_EXTERNAL_CONFIG')) {
 	/**
 	 *images directory
 	 */
-	// Modified by redcocker 2011/12/28
+	// Modified by redcocker 2011/2/1
 	//define ('K_PATH_IMAGES', K_PATH_MAIN.'images/');
-	if (file_exists(WP_CONTENT_DIR.'/tcpdf-images/')) {
+	$post2pdf_conv_setting_opt = get_option('post2pdf_conv_setting_opt');
+	if ($post2pdf_conv_setting_opt['logo_file'] != "" && file_exists(WP_CONTENT_DIR.'/tcpdf-images/'.$post2pdf_conv_setting_opt['logo_file'])) {
 		define ('K_PATH_IMAGES', WP_CONTENT_DIR.'/tcpdf-images/');
 	} else {
 		define ('K_PATH_IMAGES', K_PATH_MAIN.'images/');

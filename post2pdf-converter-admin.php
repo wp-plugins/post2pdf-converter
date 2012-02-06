@@ -2,7 +2,7 @@
 /*
 For dashboard
 by Redcocker
-Last modified: 2012/1/26
+Last modified: 2012/2/1
 License: GPL v2
 http://www.near-mint.com/blog/
 */
@@ -26,6 +26,7 @@ if (isset($_POST['POST2PDF_Converter_Setting_Submit']) && $_POST['post2pdf_conv_
 	}
 	$this->post2pdf_conv_exc = stripslashes($_POST['post2pdf_conv_exc']);
 	$this->post2pdf_conv_setting_opt['icon_size'] = $_POST['icon_size'];
+	$this->post2pdf_conv_setting_opt['icon_file'] = stripslashes($_POST['icon_file']);
 	$this->post2pdf_conv_setting_opt['link_text'] = stripslashes($_POST['link_text']);
 	$this->post2pdf_conv_setting_opt['link_text_size'] = $_POST['link_text_size'];
 	$this->post2pdf_conv_setting_opt['position'] = $_POST['position'];
@@ -35,6 +36,11 @@ if (isset($_POST['POST2PDF_Converter_Setting_Submit']) && $_POST['post2pdf_conv_
 		$this->post2pdf_conv_setting_opt['right_justify'] = 1;
 	} else {
 		$this->post2pdf_conv_setting_opt['right_justify'] = 0;
+	}
+	if ($_POST['css'] == 1) {
+		$this->post2pdf_conv_setting_opt['css'] = 1;
+	} else {
+		$this->post2pdf_conv_setting_opt['css'] = 0;
 	}
 	if ($_POST['shortcode'] == 1) {
 		$this->post2pdf_conv_setting_opt['shortcode'] = 1;
@@ -115,6 +121,11 @@ if (isset($_POST['POST2PDF_Converter_Setting_Submit']) && $_POST['post2pdf_conv_
 	}
 	// Transforming
 	$this->post2pdf_conv_exc = preg_replace("/,\s+?([0-9]+?)/", ",$1", $this->post2pdf_conv_exc);
+	if (preg_match('/^[^\.].+?\.(jpg|jpeg|png|gif)$/i', $this->post2pdf_conv_setting_opt['icon_file'])) {
+		$this->post2pdf_conv_setting_opt['icon_file'] = $this->post2pdf_conv_setting_opt['icon_file'];
+	} else {
+		$this->post2pdf_conv_setting_opt['icon_file'] = "";
+	}
 	$this->post2pdf_conv_setting_opt['link_text'] = strip_tags($this->post2pdf_conv_setting_opt['link_text']);
 	$this->post2pdf_conv_setting_opt['margin_top']  = intval($this->post2pdf_conv_setting_opt['margin_top']);
 	$this->post2pdf_conv_setting_opt['margin_bottom']  = intval($this->post2pdf_conv_setting_opt['margin_bottom']);
@@ -239,9 +250,10 @@ $languages = array(
 						<option value="48" <?php if ($this->post2pdf_conv_setting_opt['icon_size'] == "48") {echo 'selected="selected"';} ?>>48 px</option>
 						<option value="64" <?php if ($this->post2pdf_conv_setting_opt['icon_size'] == "64") {echo 'selected="selected"';} ?>>64 px</option>
 						<option value="128" <?php if ($this->post2pdf_conv_setting_opt['icon_size'] == "128") {echo 'selected="selected"';} ?>>128 px</option>
-						<option value="none" <?php if ($this->post2pdf_conv_setting_opt['icon_size'] == "none") {echo 'selected="selected"';} ?>>None</option>
-					</select>
-					<p><small><?php _e("Choose PDF icon size.", "post2pdf_conv") ?></small></p>
+						<option value="none" <?php if ($this->post2pdf_conv_setting_opt['icon_size'] == "none") {echo 'selected="selected"';} ?>><?php _e("None", "post2pdf_conv") ?></option>
+						<option value="custom" <?php if ($this->post2pdf_conv_setting_opt['icon_size'] == "custom") {echo 'selected="selected"';} ?>><?php _e("Custom icon", "post2pdf_conv") ?></option>
+					</select><br /><?php _e("Custom icon file name", "post2pdf_conv") ?> <input type="text" name="icon_file" size="15" value="<?php echo esc_html($this->post2pdf_conv_setting_opt['icon_file']); ?>" />
+					<p><small><?php _e("Choose PDF icon size.<br />If you want to use your cutom icon, upload your image to /wp-content/tcpdf-iamges/ directory(If not exist, create it).<br />After uploading, choose 'Custom icon' and enter iamge file name.", "post2pdf_conv") ?></small></p>
 				</td>
 			</tr>
 			<tr valign="top">
@@ -295,6 +307,13 @@ $languages = array(
 				<td>
 					<input type="checkbox" name="right_justify" value="1" <?php if($this->post2pdf_conv_setting_opt['right_justify'] == 1){echo 'checked="checked" ';} ?>/><br />
 					<p><small><?php _e("Justify the download link block to the right.", "post2pdf_conv") ?></small></p>
+				</td>
+			</tr>
+			<tr valign="top">
+				<th scope="row"><?php _e('CSS for download link', 'post2pdf_conv') ?></th>
+				<td>
+					<input type="checkbox" name="css" value="1" <?php if($this->post2pdf_conv_setting_opt['css'] == 1){echo 'checked="checked" ';} ?>/><br />
+					<p><small><?php _e("If you want to apply your own css to the download link, disable this option.", "post2pdf_conv") ?></small></p>
 				</td>
 			</tr>
 			<tr valign="top">
