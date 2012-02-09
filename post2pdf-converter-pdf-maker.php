@@ -1,7 +1,7 @@
 <?php
 /*
 by Redcocker
-Last modified: 2012/2/5
+Last modified: 2012/2/10
 License: GPL v2
 http://www.near-mint.com/blog/
 */
@@ -32,22 +32,37 @@ class POST2PDF_Converter_PDF_Maker {
 
 		$this->target_post_id = 0;
 
-		if (isset($_POST['POST2PDF_Converter_PDF_Generater']) && $_POST['post2pdf_conv_pdf_generater_hidden_value'] == "true" && check_admin_referer("post2pdf_conv_pdf_generater", "_wpnonce_pdf_generater")) {
+		// For static generation
+		if (isset($_POST['POST2PDF_Converter_PDF_Generater']) && $_POST['post2pdf_conv_pdf_generater_hidden_value'] == "true" && check_admin_referer("post2pdf_conv_pdf_generater", "_wpnonce_pdf_generater") && is_user_logged_in() && current_user_can('manage_options')) {
+
 			if (!file_exists(WP_CONTENT_DIR."/tcpdf-pdf/")) {
 				mkdir(WP_CONTENT_DIR."/tcpdf-pdf", 0755 );
 			}
+
 			$this->target_post_id = intval($_POST['target_id']);
+
+			if (is_user_logged_in() && current_user_can('manage_options')) {
+				$this->post2pdf_conv_post_to_pdf();
+			} else {
+				wp_die(__("You are not allowed to access this file.", "post2pdf_conv"));
+			}
 		}
 
+		// For dynamic generation
 		if (($this->post2pdf_conv_setting_opt['access'] == "referrer" && strpos($_SERVER['HTTP_REFERER'], $wp_url) === false) ||
 			($this->post2pdf_conv_setting_opt['access'] == "login" && !is_user_logged_in())
 		) {
 			wp_die(__("You are not allowed to access this file.", "post2pdf_conv"));
 		} else {
-			$this->post2pdf_conv_post_to_pdf();
+			if ($this->post2pdf_conv_setting_opt['cache'] == 1 && $this->post2pdf_conv_cache_exists() == true) {
+				$this->post2pdf_conv_force_download();
+			} else {
+				$this->post2pdf_conv_post_to_pdf();
+			}
 		}
 	}
 
+	// Generate PDF 
 	function post2pdf_conv_post_to_pdf() {
 		$post_id = 0;
 		if (!empty($_GET['id'])) {
@@ -105,6 +120,17 @@ class POST2PDF_Converter_PDF_Maker {
 		}
 
 		$filename = substr($filename, 0 ,255);
+
+		$chached_filename = "";
+
+		if ($this->post2pdf_conv_setting_opt['cache'] == 1) {
+			$output_path = WP_PLUGIN_DIR."/".dirname(plugin_basename(__FILE__))."/pdfs/";
+			if (!file_exists($output_path)) {
+				wp_die(__("<strong>Error: Directory not found.</strong><br /><br />Path: ", "post2pdf_conv").$output_path);
+			} else {
+				$cached_filename = $output_path.$post_id;
+			}
+		}
 
 		if ($this->target_post_id != 0) {
 			$filename = WP_CONTENT_DIR."/tcpdf-pdf/".$filename;
@@ -200,6 +226,8 @@ class POST2PDF_Converter_PDF_Maker {
 			$destination = "F";
 		}
 
+		// Delete shortcode for POST2PDF Converter
+		$content = preg_replace("|\[pdf[^\]]*?\].*?\[/pdf\]|i", "", $content);
 		// For WP-Syntax, WP-CodeBox(GeSHi) and WP-GeSHi-Highlight -- syntax highlighting with clean, small and valid (X)HTML
 		if (function_exists('wp_syntax_highlight') || function_exists('wp_codebox_before_filter') || function_exists('wp_geshi_main')) {
 			$content = preg_replace_callback("/<pre[^>]*?lang=['\"][^>]*?>(.*?)<\/pre>/is", array($this, post2pdf_conv_sourcecode_wrap_pre_and_esc), $content);
@@ -412,8 +440,13 @@ class POST2PDF_Converter_PDF_Maker {
 		// For blockquote
 		$content = preg_replace("/<blockquote[^>]*?>(.*?)<\/blockquote>/is", "<blockquote style=\"color: #406040;\">$1</blockquote>", $content);
 
-		$formatted_title = '<h1 style="text-align:center;">' . $title . '</h1>';
-		$formatted_post = $formatted_title . '<br/><br/>' . $content;
+		// Combine title with content
+		if ($this->post2pdf_conv_setting_opt['title'] == 1) {
+			$formatted_title = '<h1 style="text-align:center;">' . $title . '</h1>';
+			$formatted_post = $formatted_title . '<br/><br/>' . $content;
+		} else {
+			$formatted_post = $content;
+		}
 
 		if ($this->post2pdf_conv_setting_opt['add_to_font_family'] == 1) {
 			$formatted_post = preg_replace('/(<[^>]*?font-family[^:]*?:)([^;]*?;[^>]*?>)/is', "$1".$font.",$2", $formatted_post);
@@ -454,6 +487,88 @@ class POST2PDF_Converter_PDF_Maker {
 			wp_die(__("<strong>Generating completed successfully.</strong><br /><br />Post/Page title: ", "post2pdf_conv").$title.__("<br />Output path: ", "post2pdf_conv").WP_CONTENT_DIR."/tcpdf-pdf/".$this->target_post_id.".pdf".__("<br /><br />Go back to ", "post2pdf_conv")."<a href=\"".site_url()."/wp-admin/options-general.php?page=post2pdf-converter-options\">".__("the settig panel</a>.", "post2pdf_conv"), __("POST2PDF Converter", "post2pdf_conv"));
 		}
 
+		if ($this->post2pdf_conv_setting_opt['cache'] == 1) {
+			ob_clean();
+			$pdf->Output($cached_filename.'.pdf', 'F');
+		}
+
+	}
+
+	// Download cached PDF file
+	function post2pdf_conv_force_download() {
+		if (!empty($_GET['id'])) {
+			$post_id = intval($_GET['id']);
+		} else {
+			wp_die(__("You are not allowed to access this file.", "post2pdf_conv"));
+		}
+
+		$post_data = get_post($post_id);
+
+		if (!$post_data) {
+			wp_die(__('Post does not exists.', 'post2pdf_conv'));
+		}
+
+		$filename_type = $this->post2pdf_conv_setting_opt['file'];
+
+		if ($filename_type == "title") {
+			$filename = $post_data->post_title;
+			$filename = preg_replace('/[\s]+/', '_', $filename);
+			$filename = preg_replace('/[^a-zA-Z0-9_\.-]/', '', $filename).".pdf";
+		} else {
+			$filename = $post_id.".pdf";
+		}
+
+		$filename = substr($filename, 0 ,255);
+
+		$file_path = WP_PLUGIN_DIR."/".dirname(plugin_basename(__FILE__))."/pdfs/".$post_id.".pdf";
+
+		if (!file_exists($file_path)) {
+			wp_die(__("<strong>Error: File not found.</strong><br /><br />Path: ", "post2pdf_conv").$this->post2pdf_conv_font_file_path);
+		}
+
+		$contenttype = 'application/pdf';
+		$target_file = fopen($file_path, 'rb');
+
+		if ($target_file) {
+			header("Content-Type: ".$contenttype);
+
+			if ($this->post2pdf_conv_setting_opt['destination'] == "D") {
+				header("Content-Disposition: attachment; filename=".$filename);
+			} else {
+				header("Content-Disposition: inline; filename=".$filename);
+			}
+
+			while (!feof($target_file)) {
+				print fread($target_file, 1024);
+			}
+
+			fclose($target_file);
+		} else {
+			fclose($target_file);
+			wp_die(__("<strong>Error: Failed to open the file.</strong><br /><br />Path: ", "post2pdf_conv").$file_path);
+		}
+	}
+
+	// Check whether a cached file
+	function post2pdf_conv_cache_exists() {
+		if (!empty($_GET['id'])) {
+			$post_id = intval($_GET['id']);
+		} else {
+			wp_die(__("You are not allowed to access this file.", "post2pdf_conv"));
+		}
+
+		if (file_exists(WP_PLUGIN_DIR."/".dirname(plugin_basename(__FILE__))."/pdfs/".$post_id.".pdf")) {
+			$post_data = get_post($post_id);
+			$last_update = date("U", filemtime(WP_PLUGIN_DIR."/".dirname(plugin_basename(__FILE__))."/pdfs/".$post_id.".pdf") + 3600 * get_option('gmt_offset'));
+			$last_modified = get_post_modified_time("U", null, $post_data, true);
+			if ($last_modified > $last_update) {
+				return false;
+			} else {
+				return true;
+			}
+		} else {
+			return false;
+		}
 	}
 
 	// Callback for ql-xxx-displayed-equation class in QuickLaTeX

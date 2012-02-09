@@ -2,7 +2,7 @@
 /*
 For dashboard
 by Redcocker
-Last modified: 2012/2/1
+Last modified: 2012/2/10
 License: GPL v2
 http://www.near-mint.com/blog/
 */
@@ -42,13 +42,18 @@ if (isset($_POST['POST2PDF_Converter_Setting_Submit']) && $_POST['post2pdf_conv_
 	} else {
 		$this->post2pdf_conv_setting_opt['css'] = 0;
 	}
+	$this->post2pdf_conv_setting_opt['destination'] = $_POST['destination'];
+	$this->post2pdf_conv_setting_opt['access'] = $_POST['access'];
 	if ($_POST['shortcode'] == 1) {
 		$this->post2pdf_conv_setting_opt['shortcode'] = 1;
 	} else {
 		$this->post2pdf_conv_setting_opt['shortcode'] = 0;
 	}
-	$this->post2pdf_conv_setting_opt['destination'] = $_POST['destination'];
-	$this->post2pdf_conv_setting_opt['access'] = $_POST['access'];
+	if ($_POST['cache'] == 1) {
+		$this->post2pdf_conv_setting_opt['cache'] = 1;
+	} else {
+		$this->post2pdf_conv_setting_opt['cache'] = 0;
+	}
 	if ($_POST['nofollow'] == 1) {
 		$this->post2pdf_conv_setting_opt['nofollow'] = 1;
 	} else {
@@ -82,6 +87,11 @@ if (isset($_POST['POST2PDF_Converter_Setting_Submit']) && $_POST['post2pdf_conv_
 	}
 	$this->post2pdf_conv_setting_opt['logo_file'] = stripslashes($_POST['logo_file']);
 	$this->post2pdf_conv_setting_opt['logo_width'] = stripslashes($_POST['logo_width']);
+	if ($_POST['title'] == 1) {
+		$this->post2pdf_conv_setting_opt['title'] = 1;
+	} else {
+		$this->post2pdf_conv_setting_opt['title'] = 0;
+	}
 	if ($_POST['wrap_title'] == 1) {
 		$this->post2pdf_conv_setting_opt['wrap_title'] = 1;
 	} else {
@@ -317,13 +327,6 @@ $languages = array(
 				</td>
 			</tr>
 			<tr valign="top">
-				<th scope="row"><?php _e('Shortcode', 'post2pdf_conv') ?></th>
-				<td>
-					<input type="checkbox" name="shortcode" value="1" <?php if($this->post2pdf_conv_setting_opt['shortcode'] == 1){echo 'checked="checked" ';} ?>/><br />
-					<p><small><?php _e("You can insert the download link into your posts/pages using 'Shortcode'.<br />e.g.: <code>[pdf]Click here to get a PDF[/pdf]</code>", "post2pdf_conv") ?></small></p>
-				</td>
-			</tr>
-			<tr valign="top">
 				<th scope="row"><?php _e("Link action", "post2pdf_conv") ?></th> 
 				<td>
 					<select name="destination">
@@ -342,6 +345,20 @@ $languages = array(
 						<option value="login" <?php if ($this->post2pdf_conv_setting_opt['access'] == "login") {echo 'selected="selected"';} ?>><?php _e("Allow only registered users", "post2pdf_conv") ?></option>
 					</select>
 					<p><small><?php _e("You can restrict access to the download link.<br/>When 'Deny any access with the download URL directly' is chosen, HTTP referrer must contain your WordPress URL.<br />When 'Allow only registered users' is chosen, Only registered users can download a PDF.", "post2pdf_conv") ?></small></p>
+				</td>
+			</tr>
+			<tr valign="top">
+				<th scope="row"><?php _e('Shortcode', 'post2pdf_conv') ?></th>
+				<td>
+					<input type="checkbox" name="shortcode" value="1" <?php if($this->post2pdf_conv_setting_opt['shortcode'] == 1){echo 'checked="checked" ';} ?>/><br />
+					<p><small><?php _e("You can insert the download link into your posts/pages using 'Shortcode'.<br />e.g.: <code>[pdf]Click here to get a PDF[/pdf]</code>", "post2pdf_conv") ?></small></p>
+				</td>
+			</tr>
+			<tr valign="top">
+				<th scope="row"><?php _e('Cache', 'post2pdf_conv') ?></th>
+				<td>
+					<input type="checkbox" name="cache" value="1" <?php if($this->post2pdf_conv_setting_opt['cache'] == 1){echo 'checked="checked" ';} ?>/><br />
+					<p><small><?php _e("Created PDFs will be cached locally.<br />It will improve performance and reduce the server load.", "post2pdf_conv") ?></small></p>
 				</td>
 			</tr>
 			<tr valign="top">
@@ -466,6 +483,13 @@ $languages = array(
 				</td>
 			</tr>
 			<tr valign="top">
+				<th scope="row"><?php _e('Title', 'post2pdf_conv') ?></th>
+				<td>
+					<input type="checkbox" name="title" value="1" <?php if($this->post2pdf_conv_setting_opt['title'] == 1){echo 'checked="checked" ';} ?>/><br />
+					<p><small><?php _e("Show/Hide title.", "post2pdf_conv") ?></small></p>
+				</td>
+			</tr>
+			<tr valign="top">
 				<th scope="row"><?php _e('Wrap title', 'post2pdf_conv') ?></th>
 				<td>
 					<input type="checkbox" name="wrap_title" value="1" <?php if($this->post2pdf_conv_setting_opt['wrap_title'] == 1){echo 'checked="checked" ';} ?>/><br />
@@ -517,12 +541,19 @@ $languages = array(
 		<input type="submit" name="POST2PDF_Converter_Setting_Submit" value="<?php _e("Save Changes", "post2pdf_conv") ?>" />
 		</p>
 	</form>
-	<h3><?php _e("3. Restore all settings to default", "post2pdf_conv") ?></h3>
+	<h3><?php _e("3. Restore all settings to default and Clear Cache", "post2pdf_conv") ?></h3>
 	<form method="post" action="" onsubmit="return confirmreset()">
 	<?php wp_nonce_field("post2pdf_conv_reset_options", "_wpnonce_reset_options"); ?>
 		<p class="submit">
 		<input type="hidden" name="post2pdf_conv_reset" value="true" />
 		<input type="submit" name="POST2PDF_Converter_Reset" value="<?php _e("Reset All Settings", "post2pdf_conv") ?>" />
+		</p>
+	</form>
+	<form method="post" action="<?php echo $this->post2pdf_conv_plugin_url."post2pdf-converter-pdf-delete.php"; ?>" onsubmit="return confirmcache()">
+	<?php wp_nonce_field("post2pdf_conv_clear_cache", "_wpnonce_clear_cache"); ?>
+		<p class="submit">
+		<input type="hidden" name="post2pdf_conv_clear_hidden_value" value="true" />
+		<input type="submit" name="POST2PDF_Converter_Clear" value="<?php _e("Clear Cache", "post2pdf_conv") ?>" />
 		</p>
 	</form>
 	<h3><a href="javascript:showhide('id1');" name="pdf_generater"><?php _e("4. PDF Converter", "post2pdf_conv") ?></a></h3>
@@ -550,7 +581,7 @@ $languages = array(
 		</p>
 	</form>
 	<h4><?php _e("Your created PDF files", "post2pdf_conv") ?></h4>
-	<form method="post" action="<?php echo $this->post2pdf_conv_plugin_url."post2pdf-converter-pdf-delete-pdf.php"; ?>" onsubmit="return confirmdelete()">
+	<form method="post" action="<?php echo $this->post2pdf_conv_plugin_url."post2pdf-converter-pdf-delete.php"; ?>" onsubmit="return confirmdelete()">
 	<?php wp_nonce_field("post2pdf_conv_del_pdf", "_wpnonce_del_pdf"); ?>
 	<input type="hidden" name="post2pdf_conv_del_pdf_hidden_value" value="true" />
 		<table class="form-table">
@@ -574,7 +605,7 @@ $languages = array(
 				echo "				<th scope=\"row\"></th>\n";
 				echo "				<td>\n";	
 				echo "					<input type=\"checkbox\" name=\"".$post_id."\" value=\"delete\" /> <a href=\"".WP_CONTENT_URL."/tcpdf-pdf/".$post_id.".pdf\">".$title."</a>&nbsp;&nbsp;".__("Last update: ", "post2pdf_conv");
-				echo date("Y/m/d H:i", filemtime(WP_CONTENT_DIR."/tcpdf-pdf/".$file_name))."&nbsp;&nbsp;".__("Size: ", "post2pdf_conv").round(filesize(WP_CONTENT_DIR."/tcpdf-pdf/".$file_name)/1024)." KB <br />\n";
+				echo date("Y/m/d H:i", filemtime(WP_CONTENT_DIR."/tcpdf-pdf/".$file_name) + 3600 * get_option('gmt_offset'))."&nbsp;&nbsp;".__("Size: ", "post2pdf_conv").round(filesize(WP_CONTENT_DIR."/tcpdf-pdf/".$file_name)/1024)." KB <br />\n";
 				echo "				</td>\n";
 				echo "			</tr>\n";
 			}
@@ -608,7 +639,7 @@ $languages = array(
 	</div>
 	<h3><a href="javascript:showhide('id2');" name="font_converter"><?php _e("5. Font converter", "post2pdf_conv") ?></a></h3>
 	<div id="id2" style="display:none; margin-left:20px">
-	<form method="post" action="<?php echo $this->post2pdf_conv_plugin_url."post2pdf-converter-pdf-font-maker.php"; ?>">
+	<form method="post" action="<?php echo $this->post2pdf_conv_plugin_url."post2pdf-converter-font-maker.php"; ?>">
 	<?php wp_nonce_field("post2pdf_conv_font_conv", "_wpnonce_font_conv"); ?>
 	<input type="hidden" name="post2pdf_conv_font_conv_hidden_value" value="true" />
 		<table class="form-table">
@@ -644,6 +675,10 @@ $languages = array(
 	<?php _e("Server OS:", "post2pdf_conv") ?> <?php echo php_uname('s').' '.php_uname('r'); ?><br />
 	<?php _e("PHP version:", "post2pdf_conv") ?> <?php echo phpversion(); ?><br />
 	<?php _e("MySQL version:", "post2pdf_conv") ?> <?php echo mysql_get_server_info(); ?><br />
+	<?php _e("Safemode:", "post2pdf_conv") ?> <?php if (ini_get('safe_mode')) { _e("On", "post2pdf_conv"); } else { _e("Off", "post2pdf_conv"); } ?><br />
+	<?php _e("memory_limit:", "post2pdf_conv") ?> <?php echo(ini_get('memory_limit')); ?><br />
+	<?php _e("allow_url_fopen:", "post2pdf_conv") ?> <?php if (ini_get('allow_url_fopen')) { _e("On", "post2pdf_conv"); } else { _e("Off", "post2pdf_conv"); } ?><br />
+	<?php _e("cURL:", "post2pdf_conv") ?> <?php if (function_exists('curl_init')) { _e("Installed", "post2pdf_conv"); } else { _e("No", "post2pdf_conv"); } ?><br />
 	<?php _e("WordPress version:", "post2pdf_conv") ?> <?php bloginfo("version"); ?><br />
 	<?php _e("Site URL:", "post2pdf_conv") ?> <?php if(function_exists("home_url")) { echo home_url(); } else { echo get_option('home'); } ?><br />
 	<?php _e("WordPress URL:", "post2pdf_conv") ?> <?php echo site_url(); ?><br />
@@ -653,6 +688,8 @@ $languages = array(
 	<?php _e("POST2PDF Converter version:", "post2pdf_conv") ?> <?php $post2pdf_conv_plugin_data = get_plugin_data(__FILE__); echo $post2pdf_conv_plugin_data['Version']; ?><br />
 	<?php _e("POST2PDF Converter DB version:", "post2pdf_conv") ?> <?php echo get_option('post2pdf_conv_checkver_stamp'); ?><br />
 	<?php _e("POST2PDF Converter URL:", "post2pdf_conv") ?> <?php echo $this->post2pdf_conv_plugin_url; ?><br />
+	<?php _e("Cache directory:", "post2pdf_conv") ?> <?php if (is_writable(WP_PLUGIN_DIR."/".dirname(plugin_basename(__FILE__))."/tcpdf/cache/")) { _e("Writable", "post2pdf_conv"); } else { _e("Unwritable", "post2pdf_conv"); } ?><br />
+	<?php _e("PDF cache directory:", "post2pdf_conv") ?> <?php if (is_writable(WP_PLUGIN_DIR."/".dirname(plugin_basename(__FILE__))."/pdfs/")) { _e("Writable", "post2pdf_conv"); } else { _e("Unwritable", "post2pdf_conv"); } ?><br />
 	<?php _e("Your browser:", "post2pdf_conv") ?> <?php echo esc_html($_SERVER['HTTP_USER_AGENT']); ?>
 	</p>
 	</div>

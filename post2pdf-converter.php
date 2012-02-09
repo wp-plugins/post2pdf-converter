@@ -3,14 +3,14 @@
 Plugin Name: POST2PDF Converter
 Plugin URI: http://www.near-mint.com/blog/software/post2pdf-converter
 Description: This plugin converts your post/page to PDF for visitors and visitors can download it easily.
-Version: 0.3.3
+Version: 0.4
 Author: redcocker
 Author URI: http://www.near-mint.com/blog/
 Text Domain: post2pdf_conv
 Domain Path: /languages
 */
 /*
-Last modified: 2012/2/1
+Last modified: 2012/2/10
 License: GPL v2(Except "TCPDF" libraries)
 */
 /*  Copyright 2011 M. Sumitomo
@@ -78,9 +78,10 @@ class POST2PDF_Converter {
 			"margin_bottom" => '10',
 			"right_justify" => 1,
 			"css" => 1,
-			"shortcode" => 0,
 			"destination" => 'D',
 			"access" => 'referrer',
+			"shortcode" => 0,
+			"cache" => 0,
 			"nofollow" => 1,
 			"lang" => 'eng',
 			"file" => 'title',
@@ -94,6 +95,7 @@ class POST2PDF_Converter {
 			"logo_enable" => 1,
 			"logo_file" => 'tcpdf_logo.jpg',
 			"logo_width" => '30',
+			"title" => 1,
 			"wrap_title" => 0,
 			"sig_enable" => 0,
 			"sig_border" => 0,
@@ -500,6 +502,15 @@ class POST2PDF_Converter {
 
 				$updated_count = $updated_count + 1;
 			}
+			// For update from ver.0.3.3 or older
+			if ($current_checkver_stamp && version_compare($current_checkver_stamp, "0.2.4", "<=")) {
+				$this->post2pdf_conv_setting_opt['title'] = 1;
+				$this->post2pdf_conv_setting_opt['cache'] = 0;
+				update_option('post2pdf_conv_setting_opt', $this->post2pdf_conv_setting_opt);
+
+				$updated_count = $updated_count + 1;
+			}
+
 			update_option('post2pdf_conv_checkver_stamp', $this->post2pdf_conv_db_ver);
 			// Stamp for showing messages
 			if ($updated_count != 0) {
@@ -544,7 +555,7 @@ class POST2PDF_Converter {
 
 	// Load script in setting panel
 	function post2pdf_conv_load_jscript_for_admin() {
-		wp_enqueue_script('rc_admin_js', $this->post2pdf_conv_plugin_url.'rc-admin-js.js', false, '1.2');
+		wp_enqueue_script('rc_admin_js', $this->post2pdf_conv_plugin_url.'rc-admin-js.js', false, '1.3');
 	}
 
 	// Add download link
@@ -564,10 +575,12 @@ class POST2PDF_Converter {
 			$icon = $this->post2pdf_conv_plugin_url."img/pdf".$this->post2pdf_conv_setting_opt['icon_size'].".png";
 		}
 
+		$anchor = '<a href="'.$this->post2pdf_conv_plugin_url.'post2pdf-converter-pdf-maker.php?id='.$post->ID.'"'.$nofollow.'>';
+
 		if ($this->post2pdf_conv_setting_opt['icon_size'] == "none") {
-			$link = '<div id="downloadpdf"><a href="'.$this->post2pdf_conv_plugin_url.'post2pdf-converter-pdf-maker.php?id='.$post->ID.'"'.$nofollow.'>'.$this->post2pdf_conv_setting_opt['link_text'].'</a></div>';
+			$link = '<div id="downloadpdf">'.$anchor.$this->post2pdf_conv_setting_opt['link_text'].'</a></div>';
 		} else {
-			$link = '<div id="downloadpdf"><a href="'.$this->post2pdf_conv_plugin_url.'post2pdf-converter-pdf-maker.php?id='.$post->ID.'"'.$nofollow.'><img src="'.$icon.'" alt="download as a pdf file" /> '.$this->post2pdf_conv_setting_opt['link_text'].'</a></div>';
+			$link = '<div id="downloadpdf">'.$anchor.'<img src="'.$icon.'" alt="download as a pdf file" /> '.$this->post2pdf_conv_setting_opt['link_text'].'</a></div>';
 		}
 
 		if ($this->post2pdf_conv_setting_opt['access'] == "login" && !is_user_logged_in()) {
@@ -659,6 +672,7 @@ class POST2PDF_Converter {
 			'logo' => $this->post2pdf_conv_setting_opt['logo_enable'],
 			'logo_file' => $this->post2pdf_conv_setting_opt['logo_file'],
 			'logo_width' => $this->post2pdf_conv_setting_opt['logo_width'],
+			'title' => $this->post2pdf_conv_setting_opt['title'],
 			'wrap_title' => $this->post2pdf_conv_setting_opt['wrap_title'],
 			'footer' => $this->post2pdf_conv_setting_opt['header'],
 			'filters' => $this->post2pdf_conv_setting_opt['filters'],
@@ -687,6 +701,9 @@ class POST2PDF_Converter {
 		}
 		$logo_file = esc_html($logo_file);
 		$logo_width = intval($logo_width);
+		if ($title != 1 && $title != 0) {
+			$title = $this->post2pdf_conv_setting_opt['wrap_title'];
+		}
 		if ($wrap_title != 1 && $wrap_title != 0) {
 			$wrap_title = $this->post2pdf_conv_setting_opt['wrap_title'];
 		}
@@ -707,7 +724,8 @@ class POST2PDF_Converter {
 			$nofollow = ' rel="nofollow"';
 		}
 
-		return '<a href="'.$this->post2pdf_conv_plugin_url.'post2pdf-converter-pdf-maker.php?id='.$id.'&file='.$file.'&font='.$font.'&monospaced='.$monospaced.'&fontsize='.$fontsize.'&subsetting='.$subsetting.'&ratio='.$ratio.'&header='.$header.'&wrap_title='.$wrap_title.'&logo='.$logo.'&logo_file='.$logo_file.'&logo_width='.$logo_width.'&footer='.$footer.'&filters='.$filters.'&shortcode='.$shortcode.'&ffamily='.$ffamily.'"'.$nofollow.'>'.$content.'</a>';
+		return '<a href="'.$this->post2pdf_conv_plugin_url.'post2pdf-converter-pdf-maker.php?id='.$id.'&file='.$file.'&font='.$font.'&monospaced='.$monospaced.'&fontsize='.$fontsize.'&subsetting='.$subsetting.'&ratio='.$ratio.'&header='.$header.'&title='.$title.'&wrap_title='.$wrap_title.'&logo='.$logo.'&logo_file='.$logo_file.'&logo_width='.$logo_width.'&footer='.$footer.'&filters='.$filters.'&shortcode='.$shortcode.'&ffamily='.$ffamily.'"'.$nofollow.'>'.$content.'</a>';
+
 	}
 
 	// Validate free style text data

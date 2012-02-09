@@ -1,4 +1,4 @@
-//rc_admin_js ver. 1.2 by redcocker 2012/1/20
+//rc_admin_js ver. 1.3 by redcocker 2012/2/6
 
 function showhide(id){
 	if(document.getElementById){
@@ -12,6 +12,11 @@ function showhide(id){
 
 function confirmreset(){
 	var flag = window.confirm ( 'Click "OK" to restore all settings?');
+	return flag;
+}
+
+function confirmcache(){
+	var flag = window.confirm ( 'Click "OK" to clear cache?');
 	return flag;
 }
 
