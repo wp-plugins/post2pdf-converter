@@ -481,18 +481,18 @@ class POST2PDF_Converter_PDF_Maker {
 			$pdf->MultiCell(0, 0, $this->post2pdf_conv_sig."<br />", $border, 'L', $fill, 2, '', '', true, 0, true, true, 0, 'T', false);
 		}
 
-		// Output pdf document
-		// Clean the output buffer
+		if ($this->post2pdf_conv_setting_opt['cache'] == 1 && $this->target_post_id == 0) {
+			ob_clean();
+			// Create PDF in the serevr
+			$pdf->Output($cached_filename.'.pdf', 'F');
+		}
+
 		ob_clean();
+		// Output pdf document
 		$pdf->Output($filename.'.pdf', $destination);
 
 		if ($this->target_post_id != 0) {
 			wp_die(__("<strong>Generating completed successfully.</strong><br /><br />Post/Page title: ", "post2pdf_conv").$title.__("<br />Output path: ", "post2pdf_conv").WP_CONTENT_DIR."/tcpdf-pdf/".$this->target_post_id.".pdf".__("<br /><br />Go back to ", "post2pdf_conv")."<a href=\"".site_url()."/wp-admin/options-general.php?page=post2pdf-converter-options\">".__("the settig panel</a>.", "post2pdf_conv"), __("POST2PDF Converter", "post2pdf_conv"));
-		}
-
-		if ($this->post2pdf_conv_setting_opt['cache'] == 1) {
-			ob_clean();
-			$pdf->Output($cached_filename.'.pdf', 'F');
 		}
 
 	}
