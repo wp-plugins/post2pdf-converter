@@ -1,7 +1,7 @@
 <?php
 /*
 by Redcocker
-Last modified: 2012/2/10
+Last modified: 2012/2/16
 License: GPL v2
 http://www.near-mint.com/blog/
 */
@@ -245,6 +245,9 @@ class POST2PDF_Converter_PDF_Maker {
 		// Parse shortcode before applied WP default filters
 		if ($shortcode == "parse") {
 			// For WP SyntaxHighlighter
+			if (function_exists('wp_sh_add_extra_bracket')) {
+				$content = wp_sh_add_extra_bracket($content);
+			}
 			if (function_exists('wp_sh_do_shortcode')) {
 				$content = wp_sh_do_shortcode($content);
 			}
@@ -284,7 +287,7 @@ class POST2PDF_Converter_PDF_Maker {
 			}
 		}
 
-		// Apply default filters to title and content
+		// Apply WordPress default filters to title and content
 		if ($filters == 1) {
 			if (has_filter('the_title', 'wptexturize')) {
 				$title = wptexturize($title);

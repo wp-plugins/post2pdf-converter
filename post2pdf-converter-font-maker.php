@@ -1,7 +1,7 @@
 <?php
 /*
 by Redcocker
-Last modified: 2012/2/10
+Last modified: 2012/2/16
 License: GPL v2
 http://www.near-mint.com/blog/
 */
@@ -11,6 +11,7 @@ require_once('post2pdf-converter-bootstrap.php');
 
 if (!class_exists('POST2PDF_Converter') || !is_user_logged_in() || !current_user_can('manage_options'))
 	wp_die(__("You are not allowed to access this file.", "post2pdf_conv"));
+
 class POST2PDF_Converter_Font_Maker {
 
 	var $post2pdf_conv_font_file;

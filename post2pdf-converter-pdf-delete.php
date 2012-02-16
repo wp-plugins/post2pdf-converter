@@ -1,7 +1,7 @@
 <?php
 /*
 by Redcocker
-Last modified: 2012/2/10
+Last modified: 2012/2/16
 License: GPL v2
 http://www.near-mint.com/blog/
 */
@@ -11,6 +11,7 @@ require_once('post2pdf-converter-bootstrap.php');
 
 if (!class_exists('POST2PDF_Converter') || !is_user_logged_in() || !current_user_can('manage_options'))
 	wp_die(__("You are not allowed to access this file.", "post2pdf_conv"));
+
 class POST2PDF_Converter_Del_PDF {
 
 	function __construct() {
@@ -21,15 +22,6 @@ class POST2PDF_Converter_Del_PDF {
 			} else {
 				// Run deleting
 				$this->post2pdf_conv_del_pdf();
-			}
-		} else if (isset($_POST['POST2PDF_Converter_Clear']) && $_POST['post2pdf_conv_clear_hidden_value'] == "true" && check_admin_referer("post2pdf_conv_clear_cache", "_wpnonce_clear_cache")) {
-			$dir_path = WP_PLUGIN_DIR."/".dirname(plugin_basename(__FILE__))."/pdfs/";
-
-			if (!file_exists($dir_path)) {
-				wp_die(__("<strong>Error: Directory not found.</strong><br /><br />Path: ", "post2pdf_conv").$dir_path);
-			} else {
-				// Run deleting
-				$this->post2pdf_conv_clear_cache();
 			}
 		} else {
 			wp_die(__("You are not allowed to access this file.", "post2pdf_conv"));
@@ -65,22 +57,6 @@ class POST2PDF_Converter_Del_PDF {
 		} else {
 			wp_die(__("<strong>Error: Directory not found.</strong><br /><br />Path: ", "post2pdf_conv").WP_CONTENT_DIR."/tcpdf-pdf/");
 		}
-
-	}
-
-	function post2pdf_conv_clear_cache() {
-		$dir_path = WP_PLUGIN_DIR."/".dirname(plugin_basename(__FILE__))."/pdfs/";
-		$cache_dir = opendir($dir_path);
-
-		while($file_name = readdir($cache_dir)){
-			if (strpos($file_name, ".pdf")) {
-				unlink($dir_path.$file_name);
-			}
-		}
-
-		closedir($cache_dir);
-
-		wp_die(__("<strong>Clearing cache completed successfully.</strong><br /><br />Go back to ", "post2pdf_conv")."<a href=\"".site_url()."/wp-admin/options-general.php?page=post2pdf-converter-options\">".__("the settig panel</a>.", "post2pdf_conv"), __("POST2PDF Converter", "post2pdf_conv"));
 
 	}
 

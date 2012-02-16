@@ -1,4 +1,4 @@
-//rc_admin_js ver. 1.3 by redcocker 2012/2/6
+//rc_admin_js ver. 1.3 by redcocker 2012/2/13
 
 function showhide(id){
 	if(document.getElementById){

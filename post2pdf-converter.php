@@ -10,7 +10,7 @@ Text Domain: post2pdf_conv
 Domain Path: /languages
 */
 /*
-Last modified: 2012/2/10
+Last modified: 2012/2/16
 License: GPL v2(Except "TCPDF" libraries)
 */
 /*  Copyright 2011 M. Sumitomo
@@ -38,7 +38,7 @@ TCPDF is licensed under the LGPL 3.
 class POST2PDF_Converter {
 
 	var $post2pdf_conv_plugin_url;
-	var $post2pdf_conv_db_ver = "0.3.3";
+	var $post2pdf_conv_db_ver = "0.4";
 	var $post2pdf_allowed_str = "3";
 	var $post2pdf_conv_setting_opt;
 	var $post2pdf_conv_exc;
@@ -503,7 +503,7 @@ class POST2PDF_Converter {
 				$updated_count = $updated_count + 1;
 			}
 			// For update from ver.0.3.3 or older
-			if ($current_checkver_stamp && version_compare($current_checkver_stamp, "0.2.4", "<=")) {
+			if ($current_checkver_stamp && version_compare($current_checkver_stamp, "0.3.3", "<=")) {
 				$this->post2pdf_conv_setting_opt['title'] = 1;
 				$this->post2pdf_conv_setting_opt['cache'] = 0;
 				update_option('post2pdf_conv_setting_opt', $this->post2pdf_conv_setting_opt);

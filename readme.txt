@@ -4,7 +4,7 @@ Donate link: http://www.near-mint.com/blog/donate
 Tags: pdf, post, page, convert, download, tcpdf
 Requires at least: 2.8
 Tested up to: 3.3.1
-Stable tag: 0.3.3
+Stable tag: 0.4
 
 This plugin converts your post/page to PDF for visitors and visitors can download it easily.
 
@@ -21,6 +21,7 @@ Note: This plugin requires PHP 5.
 * Base on "[TCPDF](http://www.tcpdf.org/ "TCPDF")".
 * Convert your posts/pages to PDF file dynamically or statically.
 * Easy to add a download link into every or specified posts/pages.
+* Support caching created PDFs.
 * Easy to add your TrueType fonts.
 * Easy to configure.
 
@@ -236,6 +237,7 @@ You can also make the download link for other posts/pages using "id" attribute.
 * logo: Set to `1` or `0` to show/hide logo image.
 * logo_file: Set logo file name. e.g. tcpdf_logo.jpg
 * logo_width: Set logo width in millimeters. e.g. 30
+* title: Set to `1` or `0` to show/hide title.
 * wrap_title: Set to `1` or `0`. When set to `1`, long title will be wrapped.
 * filters: Set to `1` or `0`. When set to `1`, WordPress default filtes will be applied to the title/content.
 * footer: Set to `1` or `0` to show/hide footer.
@@ -345,6 +347,16 @@ When "Safe fonts directory" option is enabled, there must be some bundled fonts 
 
 == Changelog ==
 
+= 0.4 =
+* TCPDF is updated to 5.9.147.
+* Support caching created PDFs.
+* Add new setting option to show/hide title in the created PDF.
+* Add a filter to remove own shortcodes([pdf]xxx[/pdf]).
+* Extended shortcode format.
+* Added some items to "6. Your System Info" in the setting panel.
+* Changed some file name.
+* Fix a bug: Applied shortcode parser for WP SyntaxHighlighter in an improper way.
+
 = 0.3.3 =
 * TCPDF is updated to 5.9.145.
 * Added new setting options to add custom icon to the download link.
@@ -423,6 +435,9 @@ When "Safe fonts directory" option is enabled, there must be some bundled fonts 
 * This is the initial release.
 
 == Upgrade Notice ==
+
+= 0.4 =
+This version has new features, changes and bug fix.
 
 = 0.3.3 =
 This version has new features, change and bug fix.

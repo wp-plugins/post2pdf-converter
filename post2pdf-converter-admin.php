@@ -2,18 +2,82 @@
 /*
 For dashboard
 by Redcocker
-Last modified: 2012/2/10
+Last modified: 2012/2/16
 License: GPL v2
 http://www.near-mint.com/blog/
 */
 
 if(!function_exists('current_user_can') || !current_user_can('manage_options')){
 	die(__('Cheatin&#8217; uh?'));
-} 
+}
+
 add_action('in_admin_footer', array(&$this, 'post2pdf_conv_add_admin_footer'));
 
+// Delete all cached PDFs
+if ($this->post2pdf_conv_setting_opt['cache'] == 1 &&
+	((isset($_POST['POST2PDF_Converter_Setting_Submit']) && $_POST['post2pdf_conv_hidden_value'] == "true" && check_admin_referer("post2pdf_conv_update_options", "_wpnonce_update_options")) ||
+	(isset($_POST['POST2PDF_Converter_Reset']) && $_POST['post2pdf_conv_reset'] == "true" && check_admin_referer("post2pdf_conv_reset_options", "_wpnonce_reset_options")) ||
+	(isset($_POST['POST2PDF_Converter_Clear']) && $_POST['post2pdf_conv_clear_hidden_value'] == "true" && check_admin_referer("post2pdf_conv_clear_cache", "_wpnonce_clear_cache")))
+) {
+	if (($_POST['cache'] != 1) ||
+		$this->post2pdf_conv_setting_opt['lang'] != $_POST['lang'] ||
+		$this->post2pdf_conv_setting_opt['font'] != stripslashes($_POST['font']) ||
+		$this->post2pdf_conv_setting_opt['monospaced_font'] != stripslashes($_POST['monospaced_font']) ||
+		($this->post2pdf_conv_setting_opt['font_path'] == 1 && $_POST['font_path'] != 1) ||
+		($this->post2pdf_conv_setting_opt['font_path'] == 0 && $_POST['font_path'] == 1) ||
+		$this->post2pdf_conv_setting_opt['font_size'] != $_POST['font_size'] ||
+		($this->post2pdf_conv_setting_opt['font_subsetting'] == 1 && $_POST['font_subsetting'] != 1) ||
+		($this->post2pdf_conv_setting_opt['font_subsetting'] == 0 && $_POST['font_subsetting'] == 1) ||
+		$this->post2pdf_conv_setting_opt['image_ratio'] != $_POST['image_ratio'] ||
+		($this->post2pdf_conv_setting_opt['header'] == 1 && $_POST['header'] != 1) ||
+		($this->post2pdf_conv_setting_opt['header'] == 0 && $_POST['header'] == 1) ||
+		($this->post2pdf_conv_setting_opt['logo_enable'] == 1 && $_POST['logo_enable'] != 1) ||
+		($this->post2pdf_conv_setting_opt['logo_enable'] == 0 && $_POST['logo_enable'] == 1) ||
+		$this->post2pdf_conv_setting_opt['logo_file'] != stripslashes($_POST['logo_file']) ||
+		$this->post2pdf_conv_setting_opt['logo_width'] != stripslashes($_POST['logo_width']) ||
+		($this->post2pdf_conv_setting_opt['title'] == 1 && $_POST['title'] != 1) ||
+		($this->post2pdf_conv_setting_opt['title'] == 0 && $_POST['title'] == 1) ||
+		($this->post2pdf_conv_setting_opt['wrap_title'] == 1 && $_POST['wrap_title'] != 1) ||
+		($this->post2pdf_conv_setting_opt['wrap_title'] == 0 && $_POST['wrap_title'] == 1) ||
+		($this->post2pdf_conv_setting_opt['sig_enable'] == 1 && $_POST['sig_enable'] != 1) ||
+		($this->post2pdf_conv_setting_opt['sig_enable'] == 0 && $_POST['sig_enable'] == 1) ||
+		$this->post2pdf_conv_sig != stripslashes($_POST['post2pdf_conv_sig']) ||
+		($this->post2pdf_conv_setting_opt['sig_border'] == 1 && $_POST['sig_border'] != 1) ||
+		($this->post2pdf_conv_setting_opt['sig_border'] == 0 && $_POST['sig_border'] == 1) ||
+		($this->post2pdf_conv_setting_opt['sig_fill'] == 1 && $_POST['sig_fill'] != 1) ||
+		($this->post2pdf_conv_setting_opt['sig_fill'] == 0 && $_POST['sig_fill'] == 1) ||
+		($this->post2pdf_conv_setting_opt['footer'] == 1 && $_POST['footer'] != 1) ||
+		($this->post2pdf_conv_setting_opt['footer'] == 0 && $_POST['footer'] == 1) ||
+		($this->post2pdf_conv_setting_opt['filters'] == 1 && $_POST['filters'] != 1) ||
+		($this->post2pdf_conv_setting_opt['filters'] == 0 && $_POST['filters'] == 1) ||
+		$this->post2pdf_conv_setting_opt['shortcode_handling'] != $_POST['shortcode_handling'] ||
+		($this->post2pdf_conv_setting_opt['add_to_font_family'] == 1 && $_POST['add_to_font_family'] != 1) ||
+		($this->post2pdf_conv_setting_opt['add_to_font_family'] == 0 && $_POST['add_to_font_family'] == 1) ||
+		(isset($_POST['POST2PDF_Converter_Reset']) && $_POST['post2pdf_conv_reset'] == "true")
+	) {
+		$dir_path = WP_PLUGIN_DIR."/".dirname(plugin_basename(__FILE__))."/pdfs/";
+
+		if (!file_exists($dir_path)) {
+			wp_die(__("<strong>Error: Directory not found.</strong><br /><br />Path: ", "post2pdf_conv").$dir_path);
+		}
+
+		$cache_dir = opendir($dir_path);
+
+		while($file_name = readdir($cache_dir)){
+			if (strpos($file_name, ".pdf")) {
+				unlink($dir_path.$file_name);
+			}
+		}
+
+		closedir($cache_dir);
+
+		// Show message for admin
+		echo "<div id='setting-error-settings_updated' class='updated fade'><p><strong>".__("All cached PDF files were deleted.", "post2pdf_conv")."</strong></p></div>";
+	}
+}
 // Update setting options
 if (isset($_POST['POST2PDF_Converter_Setting_Submit']) && $_POST['post2pdf_conv_hidden_value'] == "true" && check_admin_referer("post2pdf_conv_update_options", "_wpnonce_update_options")) {
+	// Get new value
 	if ($_POST['post'] == 1) {
 		$this->post2pdf_conv_setting_opt['post'] = 1;
 	} else {
@@ -549,7 +613,7 @@ $languages = array(
 		<input type="submit" name="POST2PDF_Converter_Reset" value="<?php _e("Reset All Settings", "post2pdf_conv") ?>" />
 		</p>
 	</form>
-	<form method="post" action="<?php echo $this->post2pdf_conv_plugin_url."post2pdf-converter-pdf-delete.php"; ?>" onsubmit="return confirmcache()">
+	<form method="post" action="" onsubmit="return confirmcache()">
 	<?php wp_nonce_field("post2pdf_conv_clear_cache", "_wpnonce_clear_cache"); ?>
 		<p class="submit">
 		<input type="hidden" name="post2pdf_conv_clear_hidden_value" value="true" />
