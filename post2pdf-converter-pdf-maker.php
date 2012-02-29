@@ -1,7 +1,7 @@
 <?php
 /*
 by Redcocker
-Last modified: 2012/2/16
+Last modified: 2012/2/29
 License: GPL v2
 http://www.near-mint.com/blog/
 */
@@ -13,11 +13,12 @@ if (!class_exists('POST2PDF_Converter'))
 	wp_die(__("You are not allowed to access this file.", "post2pdf_conv"));
 
 class POST2PDF_Converter_PDF_Maker {
-
+	var $get_by_http_request = 0;
 	var $post2pdf_conv_plugin_url;
 	var $post2pdf_conv_setting_opt;
 	var $post2pdf_conv_sig;
 	var $target_post_id;
+	var $q_config;
 
 	function __construct() {
 		$this->post2pdf_conv_plugin_url = plugin_dir_url(__FILE__);
@@ -31,6 +32,15 @@ class POST2PDF_Converter_PDF_Maker {
 		}
 
 		$this->target_post_id = 0;
+
+		// For qTranslate
+		$this->q_config = array();
+		if (function_exists('qtrans_use') && !empty($_GET['qlang'])) {
+			$this->q_config['language'] = $_GET['qlang'];
+			if (!preg_match('/^[A-Za-z]{2}$/', $this->q_config['language'])) {
+				wp_die(__("Invalid ISO Language Code.", "post2pdf_conv"));
+			}
+		}
 
 		// For static generation
 		if (isset($_POST['POST2PDF_Converter_PDF_Generater']) && $_POST['post2pdf_conv_pdf_generater_hidden_value'] == "true" && check_admin_referer("post2pdf_conv_pdf_generater", "_wpnonce_pdf_generater") && is_user_logged_in() && current_user_can('manage_options')) {
@@ -79,7 +89,12 @@ class POST2PDF_Converter_PDF_Maker {
 			wp_die(__('Post does not exists.', 'post2pdf_conv'));
 		}
 
-		$title = strip_tags($post_data->post_title);
+		$title = $post_data->post_title;
+		// For qTranslate
+		if (function_exists('qtrans_use') && !empty($this->q_config['language'])) {
+			$title = qtrans_use($this->q_config['language'], $title, false);
+		}
+		$title = strip_tags($title);
 
 		$permalink = get_permalink($post_data->ID);
 		$author_data = get_userdata($post_data->post_author);
@@ -100,7 +115,17 @@ class POST2PDF_Converter_PDF_Maker {
 			$tags = implode(' ', $tag);
 		}
 
-		$content = $post_data->post_content;
+		if ($this->get_by_http_request == 1) {
+			$permalink_url = get_permalink($post_id);
+			$response_data = wp_remote_get($permalink_url);
+			$content = preg_replace("|^.*?<!-- post2pdf-converter-begin -->(.*?)<!-- post2pdf-converter-end -->.*?$|is", "$1", $response_data['body']);
+		} else {
+			$content = $post_data->post_content;
+			// For qTranslate
+			if (function_exists('qtrans_use') && !empty($this->q_config['language'])) {
+				$content = qtrans_use($this->q_config['language'], $content, true);
+			}
+		}
 
 		if (!empty($_GET['lang'])) {
 			$config_lang = substr(esc_html($_GET['lang']), 0, 3);
@@ -129,11 +154,20 @@ class POST2PDF_Converter_PDF_Maker {
 				wp_die(__("<strong>Error: Directory not found.</strong><br /><br />Path: ", "post2pdf_conv").$output_path);
 			} else {
 				$cached_filename = $output_path.$post_id;
+				// For qTranslate
+				if (function_exists('qtrans_use') && !empty($this->q_config['language'])) {
+					$cached_filename = $cached_filename."_".$this->q_config['language'];
+				}
 			}
 		}
 
 		if ($this->target_post_id != 0) {
 			$filename = WP_CONTENT_DIR."/tcpdf-pdf/".$filename;
+		}
+
+		// For qTranslate
+		if (function_exists('qtrans_use') && !empty($this->q_config['language'])) {
+			$filename = $filename."_".$this->q_config['language'];
 		}
 
 		if (!empty($_GET['font'])) {
@@ -243,7 +277,7 @@ class POST2PDF_Converter_PDF_Maker {
 		}
 
 		// Parse shortcode before applied WP default filters
-		if ($shortcode == "parse") {
+		if ($shortcode == "parse" && $this->get_by_http_request != 1) {
 			// For WP SyntaxHighlighter
 			if (function_exists('wp_sh_add_extra_bracket')) {
 				$content = wp_sh_add_extra_bracket($content);
@@ -269,7 +303,7 @@ class POST2PDF_Converter_PDF_Maker {
 			if (class_exists('CodeColorerLoader')) {
 				$content = preg_replace_callback("/\[cc[^\]]*?lang=['\"][^\]]*?\](.*?)\[\/cc\]/is", array($this, post2pdf_conv_sourcecode_wrap_pre_and_esc), $content);
 			}
-		} else if ($this->post2pdf_conv_setting_opt['shortcode_handling'] == "remove") {
+		} else if ($this->post2pdf_conv_setting_opt['shortcode_handling'] == "remove" && $this->get_by_http_request != 1) {
 			// For WP SyntaxHighlighter
 			if (function_exists('wp_sh_strip_shortcodes')) {
 				$content = wp_sh_strip_shortcodes($content);
@@ -288,7 +322,7 @@ class POST2PDF_Converter_PDF_Maker {
 		}
 
 		// Apply WordPress default filters to title and content
-		if ($filters == 1) {
+		if ($filters == 1 && $this->get_by_http_request != 1) {
 			if (has_filter('the_title', 'wptexturize')) {
 				$title = wptexturize($title);
 			}
@@ -330,7 +364,25 @@ class POST2PDF_Converter_PDF_Maker {
 		require_once('tcpdf/tcpdf.php');
 
 		// Create a new object
-		$pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false, false);
+		if ($this->post2pdf_conv_setting_opt['temp_cache'] == 1) {
+			// If faied at a previous run, clear temporary cache
+			$temp_cache_path = WP_PLUGIN_DIR."/".dirname(plugin_basename(__FILE__))."/tcpdf/cache/";
+
+			if (file_exists($temp_cache_path)) {
+				$cache_dir = opendir($temp_cache_path);
+
+				while($file_name = readdir($cache_dir)){
+					if (!is_dir($temp_cache_path.$file_name) && $file_name != '..' && $file_name != '.') {
+						unlink($temp_cache_path.$file_name);
+					}
+				}
+
+				closedir($cache_dir);
+			}
+			$pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', true, false);
+		} else {
+			$pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false, false);
+		}
 
 		// Set document information
 		$pdf->SetCreator(PDF_CREATOR);
@@ -410,23 +462,32 @@ class POST2PDF_Converter_PDF_Maker {
 		}
 
 		// Parse shortcode after applied WP default filters
-		if ($shortcode == "parse") {
+		if ($shortcode == "parse" && $this->get_by_http_request != 1) {
 			// For WP QuickLaTeX
 			if (function_exists('quicklatex_parser')) {
 				$content = quicklatex_parser($content);
-				$content = preg_replace_callback("/(<p class=\"ql-(center|left|right)-displayed-equation\" style=\"line-height: )([0-9]+?)(px;)(\">)/i", array($this, post2pdf_conv_qlatex_displayed_equation), $content);
-				$content = str_replace("<p class=\"ql-center-picture\">", "<p class=\"ql-center-picture\" style=\"text-align: center;\"><span class=\"ql-right-eqno\"> &nbsp; <\/span><span class=\"ql-left-eqno\"> &nbsp; <\/span>", $content);
 			}
+			// For WP shortcode API
 			$content = do_shortcode($content);
-		} else if ($this->post2pdf_conv_setting_opt['shortcode_handling'] == "remove") {
+		} else if ($this->post2pdf_conv_setting_opt['shortcode_handling'] == "remove" && $this->get_by_http_request != 1) {
+			// For WP shortcode API
 			$content = strip_shortcodes($content);
 		}
 
 		// Convert relative image path to absolute image path
 		$content = preg_replace("/<img([^>]*?)src=['\"]((?!(http:\/\/|https:\/\/|\/))[^'\"]+?)['\"]([^>]*?)>/i", "<img$1src=\"".site_url()."/$2\"$4>", $content);
 
+		// Set image align to center
+		$content = preg_replace_callback("/(<img[^>]*?class=['\"][^'\"]*?aligncenter[^'\"]*?['\"][^>]*?>)/i", array($this, post2pdf_conv_image_align_center), $content);
+
 		// Add width and height into image tag
 		$content = preg_replace_callback("/(<img[^>]*?src=['\"]((http:\/\/|https:\/\/|\/)[^'\"]*?(jpg|jpeg|gif|png))['\"])([^>]*?>)/i", array($this, post2pdf_conv_img_size), $content);
+
+		// For WP QuickLaTeX
+		if (function_exists('quicklatex_parser')) {
+			$content = preg_replace_callback("/(<p class=\"ql-(center|left|right)-displayed-equation\" style=\"line-height: )([0-9]+?)(px;)(\">)/i", array($this, post2pdf_conv_qlatex_displayed_equation), $content);
+			$content = str_replace("<p class=\"ql-center-picture\">", "<p class=\"ql-center-picture\" style=\"text-align: center;\"><span class=\"ql-right-eqno\"> &nbsp; <\/span><span class=\"ql-left-eqno\"> &nbsp; <\/span>", $content);
+		}
 
 		// For common SyntaxHighlighter
 		$content = preg_replace("/<pre[^>]*?class=['\"][^'\"]*?brush:[^'\"]*?['\"][^>]*?>(.*?)<\/pre>/is", "<pre style=\"word-wrap:break-word; color: #406040; background-color: #F1F1F1; border: 1px solid #9F9F9F;\">$1</pre>", $content);
@@ -513,17 +574,32 @@ class POST2PDF_Converter_PDF_Maker {
 
 		$filename_type = $this->post2pdf_conv_setting_opt['file'];
 
+
 		if ($filename_type == "title") {
 			$filename = $post_data->post_title;
 			$filename = preg_replace('/[\s]+/', '_', $filename);
-			$filename = preg_replace('/[^a-zA-Z0-9_\.-]/', '', $filename).".pdf";
+			$filename = preg_replace('/[^a-zA-Z0-9_\.-]/', '', $filename);
 		} else {
-			$filename = $post_id.".pdf";
+			$filename = $post_id;
 		}
+
+		// For qTranslate
+		if (function_exists('qtrans_use') && !empty($this->q_config['language'])) {
+			$filename = $filename."_".$this->q_config['language'];
+		}
+
+		$filename = $filename.".pdf";
 
 		$filename = substr($filename, 0 ,255);
 
-		$file_path = WP_PLUGIN_DIR."/".dirname(plugin_basename(__FILE__))."/pdfs/".$post_id.".pdf";
+		$file_path = WP_PLUGIN_DIR."/".dirname(plugin_basename(__FILE__))."/pdfs/".$post_id;
+
+		// For qTranslate
+		if (function_exists('qtrans_use') && !empty($this->q_config['language'])) {
+			$file_path = $file_path."_".$this->q_config['language'];
+		}
+
+		$file_path = $file_path.".pdf";
 
 		if (!file_exists($file_path)) {
 			wp_die(__("<strong>Error: File not found.</strong><br /><br />Path: ", "post2pdf_conv").$this->post2pdf_conv_font_file_path);
@@ -560,6 +636,11 @@ class POST2PDF_Converter_PDF_Maker {
 			wp_die(__("You are not allowed to access this file.", "post2pdf_conv"));
 		}
 
+		// For qTranslate
+		if (function_exists('qtrans_use') && !empty($this->q_config['language'])) {
+			$post_id = $post_id."_".$this->q_config['language'];
+		}
+
 		if (file_exists(WP_PLUGIN_DIR."/".dirname(plugin_basename(__FILE__))."/pdfs/".$post_id.".pdf")) {
 			$post_data = get_post($post_id);
 			$last_update = date("U", filemtime(WP_PLUGIN_DIR."/".dirname(plugin_basename(__FILE__))."/pdfs/".$post_id.".pdf") + 3600 * get_option('gmt_offset'));
@@ -578,6 +659,14 @@ class POST2PDF_Converter_PDF_Maker {
 	function post2pdf_conv_qlatex_displayed_equation($matches) {
 		$line_height = "6";
 		return $matches[1].$line_height.$matches[4]." text-align: ".$matches[2].";".$matches[5];
+	}
+
+	// Callback for image align center
+	function post2pdf_conv_image_align_center($matches) {
+		$tag_begin = '<p style="text-align: center;">';
+		$tag_end = '</p>';
+
+		return $tag_begin.$matches[1].$tag_end;
 	}
 
 	// Callback for images without width and height attributes

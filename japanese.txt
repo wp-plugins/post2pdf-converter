@@ -38,6 +38,10 @@
 
 ・WP QuickLaTeX：http://wordpress.org/extend/plugins/wp-quicklatex/
 
+次のプラグインを使用して場合、翻訳されたPDFファイルを生成します。
+
+・qTranslate：http://wordpress.org/extend/plugins/qtranslate/
+
 ※このサポートプラグインリストは、一例です。
 
 
@@ -377,6 +381,14 @@ http://www.near-mint.com/blog/donate
 
 
 13.履歴
+
+2012/2/29　バージョン 0.4.1 リリース
+ ※TCPDFをバージョン5.9.149にアップデート。
+ ※「qTranslate」プラグインをサポート。
+ ※一時ファイルをサーバー上でキャッシュさせるためのオプションを追加。
+ ※一部の画像に「aligin: right;」を追加するためのフィルターを追加。
+ ※隠し設定オプションとして$get_by_http_request変数を追加。
+ ※設定画面の「６．システム情報」で「POST2PDF Converterのバージョン」が表示されない不具合を修正。
 
 2012/2/16　バージョン 0.4.0.1 リリース
  ※「キャッシュ」が有効の場合に、最初のダウンロードで空のPDFがダウンロードされることがある不具合を修正。
