@@ -2,7 +2,7 @@
 /*
 For dashboard
 by Redcocker
-Last modified: 2012/2/29
+Last modified: 2012/3/2
 License: GPL v2
 http://www.near-mint.com/blog/
 */
@@ -656,6 +656,12 @@ $languages = array(
 				</td>
 			</tr>
 		</table>
+		<?php
+		if (function_exists('qtrans_use')) {
+			global $q_config;
+			echo '		<input type="hidden" name="qlang" value="'.$q_config['default_language'].'" />';
+		}
+		?>
 		<p class="submit">
 		<input type="submit" name="POST2PDF_Converter_PDF_Generater" value="<?php _e("Generate ", "post2pdf_conv") ?>" />
 		</p>
@@ -673,7 +679,13 @@ $languages = array(
 		while($file_name = readdir($pdf_dir)){
 			$post_id= basename($file_name, ".pdf");
 			$post_data = get_post($post_id);
-			$title = strip_tags($post_data->post_title);
+			$title = $post_data->post_title;
+			// For qTranslate
+			if (function_exists('qtrans_use')) {
+				global $q_config;
+				$title = qtrans_use($q_config['default_language'], $title, false);
+			}
+			$title = strip_tags($title);
 
 			if (strpos($file_name, ".pdf")) {
 				$count = $count + 1;

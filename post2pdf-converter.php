@@ -10,7 +10,7 @@ Text Domain: post2pdf_conv
 Domain Path: /languages
 */
 /*
-Last modified: 2012/2/29
+Last modified: 2012/3/2
 License: GPL v2(Except "TCPDF" libraries)
 */
 /*  Copyright 2011 M. Sumitomo

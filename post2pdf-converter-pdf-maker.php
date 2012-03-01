@@ -1,7 +1,7 @@
 <?php
 /*
 by Redcocker
-Last modified: 2012/2/29
+Last modified: 2012/3/2
 License: GPL v2
 http://www.near-mint.com/blog/
 */
@@ -37,6 +37,12 @@ class POST2PDF_Converter_PDF_Maker {
 		$this->q_config = array();
 		if (function_exists('qtrans_use') && !empty($_GET['qlang'])) {
 			$this->q_config['language'] = $_GET['qlang'];
+			if (!preg_match('/^[A-Za-z]{2}$/', $this->q_config['language'])) {
+				wp_die(__("Invalid ISO Language Code.", "post2pdf_conv"));
+			}
+		}
+		if (function_exists('qtrans_use') && !empty($_POST['qlang'])) {
+			$this->q_config['language'] = $_POST['qlang'];
 			if (!preg_match('/^[A-Za-z]{2}$/', $this->q_config['language'])) {
 				wp_die(__("Invalid ISO Language Code.", "post2pdf_conv"));
 			}
@@ -140,6 +146,10 @@ class POST2PDF_Converter_PDF_Maker {
 		}
 		if ($filename_type == "title" && $this->target_post_id == 0) {
 			$filename = $post_data->post_title;
+			// For qTranslate
+			if (function_exists('qtrans_use') && !empty($this->q_config['language'])) {
+				$filename = qtrans_use($this->q_config['language'], $filename, false);
+			}
 		} else {
 			$filename = $post_id;
 		}
@@ -577,15 +587,19 @@ class POST2PDF_Converter_PDF_Maker {
 
 		if ($filename_type == "title") {
 			$filename = $post_data->post_title;
+			// For qTranslate
+			if (function_exists('qtrans_use') && !empty($this->q_config['language'])) {
+				$filename = qtrans_use($this->q_config['language'], $filename, false);
+				$filename = $filename."_".$this->q_config['language'];
+			}
 			$filename = preg_replace('/[\s]+/', '_', $filename);
 			$filename = preg_replace('/[^a-zA-Z0-9_\.-]/', '', $filename);
 		} else {
 			$filename = $post_id;
-		}
-
-		// For qTranslate
-		if (function_exists('qtrans_use') && !empty($this->q_config['language'])) {
-			$filename = $filename."_".$this->q_config['language'];
+			// For qTranslate
+			if (function_exists('qtrans_use') && !empty($this->q_config['language'])) {
+				$filename = $filename."_".$this->q_config['language'];
+			}
 		}
 
 		$filename = $filename.".pdf";
