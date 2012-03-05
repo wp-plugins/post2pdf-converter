@@ -4,7 +4,7 @@ Donate link: http://www.near-mint.com/blog/donate
 Tags: pdf, post, page, convert, download, tcpdf
 Requires at least: 2.8
 Tested up to: 3.3.1
-Stable tag: 0.4.0.1
+Stable tag: 0.4.2
 
 This plugin converts your post/page to PDF for visitors and visitors can download it easily.
 
@@ -52,6 +52,10 @@ You can use POST2PDF Converter with following code syntaxhighlighter plugins and
 You can use POST2PDF Converter with following LaTex plugins and convert posts/pages with mathematical formulas, chemical formulae and charts to PDF.
 
 * [WP QuickLaTeX](http://wordpress.org/extend/plugins/wp-quicklatex/ "WP QuickLaTeX")
+
+You can use POST2PDF Converter with following translation plugins and generate translated PDF.
+
+* [qTranslate](http://wordpress.org/extend/plugins/qtranslate/ "qTranslate")
 
 **This list is only one example.**
 
@@ -347,14 +351,22 @@ When "Safe fonts directory" option is enabled, there must be some bundled fonts 
 
 == Changelog ==
 
+= 0.4.2 =
+* TCPDF is updated to 5.9.149.
+* Support qTranslate.
+* Added new setting option to cache temporary data.
+* Added new filter to add "aligin: right;" to some images.
+* Added $get_by_http_request as a hidden setting option.
+* Fix a bug: POST2PDF Converter version doesn't be shown in "6. Your System Info" setting section.
+
 = 0.4.0.1 =
 * Fix a bug: When "Cache" is enabled, the first-time downloaded PDF becomes empty sometime.
 
 = 0.4 =
 * TCPDF is updated to 5.9.147.
 * Support caching created PDFs.
-* Add new setting option to show/hide title in the created PDF.
-* Add a filter to remove own shortcodes([pdf]xxx[/pdf]).
+* Added new setting option to show/hide title in the created PDF.
+* Added a filter to remove own shortcodes([pdf]xxx[/pdf]).
 * Extended shortcode format.
 * Added some items to "6. Your System Info" in the setting panel.
 * Changed some file name.
@@ -438,6 +450,9 @@ When "Safe fonts directory" option is enabled, there must be some bundled fonts 
 * This is the initial release.
 
 == Upgrade Notice ==
+
+= 0.4.2 =
+This version has new features, change and bug fix.
 
 = 0.4.0.1 =
 This version has a bug fix.

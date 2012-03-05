@@ -2,7 +2,7 @@
 /*
 For dashboard
 by Redcocker
-Last modified: 2012/3/2
+Last modified: 2012/3/5
 License: GPL v2
 http://www.near-mint.com/blog/
 */

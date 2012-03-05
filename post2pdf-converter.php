@@ -3,14 +3,14 @@
 Plugin Name: POST2PDF Converter
 Plugin URI: http://www.near-mint.com/blog/software/post2pdf-converter
 Description: This plugin converts your post/page to PDF for visitors and visitors can download it easily.
-Version: 0.4.1
+Version: 0.4.2
 Author: redcocker
 Author URI: http://www.near-mint.com/blog/
 Text Domain: post2pdf_conv
 Domain Path: /languages
 */
 /*
-Last modified: 2012/3/2
+Last modified: 2012/3/5
 License: GPL v2(Except "TCPDF" libraries)
 */
 /*  Copyright 2011 M. Sumitomo
@@ -38,8 +38,8 @@ TCPDF is licensed under the LGPL 3.
 class POST2PDF_Converter {
 	var $get_by_http_request = 0;
 	var $post2pdf_conv_plugin_url;
-	var $post2pdf_conv_ver = "0.4.1";
-	var $post2pdf_conv_db_ver = "0.4.1";
+	var $post2pdf_conv_ver = "0.4.2";
+	var $post2pdf_conv_db_ver = "0.4.2";
 	var $post2pdf_allowed_str = "3";
 	var $post2pdf_conv_setting_opt;
 	var $post2pdf_conv_exc;
