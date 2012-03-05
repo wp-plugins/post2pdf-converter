@@ -1,7 +1,7 @@
 <?php
 /*
 by Redcocker
-Last modified: 2012/3/5
+Last modified: 2012/3/6
 License: GPL v2
 http://www.near-mint.com/blog/
 */
@@ -491,7 +491,7 @@ class POST2PDF_Converter_PDF_Maker {
 		$content = preg_replace_callback("/(<img[^>]*?class=['\"][^'\"]*?aligncenter[^'\"]*?['\"][^>]*?>)/i", array($this, post2pdf_conv_image_align_center), $content);
 
 		// Add width and height into image tag
-		$content = preg_replace_callback("/(<img[^>]*?src=['\"]((http:\/\/|https:\/\/|\/)[^'\"]*?(jpg|jpeg|gif|png))['\"])([^>]*?>)/i", array($this, post2pdf_conv_img_size), $content);
+		$content = preg_replace_callback("/(<img([^>]*?)src=['\"]((http:\/\/|https:\/\/|\/)[^'\"]*?(jpg|jpeg|gif|png))['\"])([^>]*?>)/i", array($this, post2pdf_conv_img_size), $content);
 
 		// For WP QuickLaTeX
 		if (function_exists('quicklatex_parser')) {
@@ -687,18 +687,22 @@ class POST2PDF_Converter_PDF_Maker {
 	function post2pdf_conv_img_size($matches) {
 		$size = NULL;
 
-		if (strpos($matches[2], site_url()) === false) {
-			return $matches[1].$matches[5];
+		if (strpos($matches[3], site_url()) === false) {
+			return $matches[1].$matches[6];
 		}
 
-		$image_path = ABSPATH.str_replace(site_url()."/", "", $matches[2]);
+		if (strpos($matches[2], 'height=') !== false || strpos($matches[2], 'width=') !== false || strpos($matches[6], 'height=') !== false || strpos($matches[6], 'width=') !== false) {
+			return $matches[1].$matches[6];
+		}
+
+		$image_path = ABSPATH.str_replace(site_url()."/", "", $matches[3]);
 		if (file_exists($image_path)) {
 			$size = getimagesize($image_path);
 		} else {
-			return $matches[1].$matches[5];
+			return $matches[1].$matches[6];
 		}
 
-		return $matches[1]." ".$size[3].$matches[5];
+		return $matches[1]." ".$size[3].$matches[6];
 	}
 
 	// Callback for sourcecode
