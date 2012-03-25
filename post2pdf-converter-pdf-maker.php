@@ -1,7 +1,7 @@
 <?php
 /*
 by Redcocker
-Last modified: 2012/3/6
+Last modified: 2012/3/25
 License: GPL v2
 http://www.near-mint.com/blog/
 */
@@ -123,8 +123,15 @@ class POST2PDF_Converter_PDF_Maker {
 
 		if ($this->get_by_http_request == 1) {
 			$permalink_url = get_permalink($post_id);
-			$response_data = wp_remote_get($permalink_url);
-			$content = preg_replace("|^.*?<!-- post2pdf-converter-begin -->(.*?)<!-- post2pdf-converter-end -->.*?$|is", "$1", $response_data['body']);
+			$response_data = (array)wp_remote_get($permalink_url);
+
+			if (is_wp_error($response_data)) {
+				wp_die(__("Variable is a WordPress Error object.", "post2pdf_conv"));
+			} else if ($response_data['response']['code'] !== 200) {
+				wp_die(__("HTTP status code is not 200.", "post2pdf_conv"));
+			} else {
+				$content = preg_replace("|^.*?<!-- post2pdf-converter-begin -->(.*?)<!-- post2pdf-converter-end -->.*?$|is", "$1", $response_data['body']);
+			}
 		} else {
 			$content = $post_data->post_content;
 			// For qTranslate
@@ -687,11 +694,12 @@ class POST2PDF_Converter_PDF_Maker {
 	function post2pdf_conv_img_size($matches) {
 		$size = NULL;
 
-		if (strpos($matches[3], site_url()) === false) {
-			return $matches[1].$matches[6];
-		}
-
-		if (strpos($matches[2], 'height=') !== false || strpos($matches[2], 'width=') !== false || strpos($matches[6], 'height=') !== false || strpos($matches[6], 'width=') !== false) {
+		if (strpos($matches[3], site_url()) === false ||
+			strpos($matches[2], 'height=') !== false ||
+			strpos($matches[2], 'width=') !== false ||
+			strpos($matches[6], 'height=') !== false ||
+			strpos($matches[6], 'width=') !== false
+		) {
 			return $matches[1].$matches[6];
 		}
 
