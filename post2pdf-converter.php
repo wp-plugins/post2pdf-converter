@@ -57,6 +57,7 @@ class POST2PDF_Converter {
 		add_action('admin_menu', array(&$this, 'post2pdf_conv_register_menu_item'));
 		add_filter('plugin_action_links', array(&$this, 'post2pdf_conv_setting_link'), 10, 2);
 		add_filter('the_content', array(&$this, 'post2pdf_conv_add_download_lnk'));
+		add_filter('the_excerpt', array(&$this, 'post2pdf_conv_add_download_lnk'));
 		if ($this->post2pdf_conv_setting_opt['css'] == 1) {
 			add_filter('wp_head', array(&$this, 'post2pdf_conv_add_style'));
 		}
