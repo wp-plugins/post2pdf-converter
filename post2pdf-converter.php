@@ -3,14 +3,14 @@
 Plugin Name: POST2PDF Converter
 Plugin URI: http://www.near-mint.com/blog/software/post2pdf-converter
 Description: This plugin converts your post/page to PDF for visitors and visitors can download it easily.
-Version: 0.4.2.1
+Version: 0.4.4
 Author: redcocker
 Author URI: http://www.near-mint.com/blog/
 Text Domain: post2pdf_conv
 Domain Path: /languages
 */
 /*
-Last modified: 2012/3/6
+Last modified: 2012/3/27
 License: GPL v2(Except "TCPDF" libraries)
 */
 /*  Copyright 2011 M. Sumitomo
@@ -38,8 +38,8 @@ TCPDF is licensed under the LGPL 3.
 class POST2PDF_Converter {
 	var $get_by_http_request = 0;
 	var $post2pdf_conv_plugin_url;
-	var $post2pdf_conv_ver = "0.4.2.1";
-	var $post2pdf_conv_db_ver = "0.4.2";
+	var $post2pdf_conv_ver = "0.4.4";
+	var $post2pdf_conv_db_ver = "0.4.4";
 	var $post2pdf_allowed_str = "3";
 	var $post2pdf_conv_setting_opt;
 	var $post2pdf_conv_exc;
@@ -71,8 +71,11 @@ class POST2PDF_Converter {
 	// Create settings array
 	function post2pdf_conv_setting_array() {
 		$this->post2pdf_conv_setting_opt = array(
+			"home" => 0,
 			"post" => 1,
 			"page" => 1,
+			"categories" => 0,
+			"archives" => 0,
 			"icon_size" => '16',
 			"icon_file" => '',
 			"link_text" => __("Download this page in PDF format", "post2pdf_conv"),
@@ -96,6 +99,9 @@ class POST2PDF_Converter {
 			"font_size" => '10',
 			"font_subsetting" => 1,
 			"header" => 1,
+			"header_title" => 1,
+			"header_author" => 1,
+			"header_url" => 1,
 			"image_ratio" => '1.25',
 			"logo_enable" => 1,
 			"logo_file" => 'tcpdf_logo.jpg',
@@ -147,7 +153,7 @@ class POST2PDF_Converter {
 				$this->post2pdf_conv_setting_opt['file'] = "id";
 				break;
 			case 'bg_BG':
-				$this->post2pdf_conv_setting_opt['lang'] = "ltr";
+				$this->post2pdf_conv_setting_opt['lang'] = "bul";
 				$this->post2pdf_conv_setting_opt['font'] = "dejavusans";
 				$this->post2pdf_conv_setting_opt['monospaced_font'] = "dejavusansmono";
 				$this->post2pdf_conv_setting_opt['file'] = "id";
@@ -522,6 +528,18 @@ class POST2PDF_Converter {
 
 				$updated_count = $updated_count + 1;
 			}
+			// For update from ver.0.4.2 or older
+			if ($current_checkver_stamp && version_compare($current_checkver_stamp, "0.4.2", "<=")) {
+				$this->post2pdf_conv_setting_opt['home'] = 0;
+				$this->post2pdf_conv_setting_opt['categories'] = 0;
+				$this->post2pdf_conv_setting_opt['archives'] = 0;
+				$this->post2pdf_conv_setting_opt['header_title'] = 1;
+				$this->post2pdf_conv_setting_opt['header_author'] = 1;
+				$this->post2pdf_conv_setting_opt['header_url'] = 1;
+				update_option('post2pdf_conv_setting_opt', $this->post2pdf_conv_setting_opt);
+
+				$updated_count = $updated_count + 1;
+			}
 
 			update_option('post2pdf_conv_checkver_stamp', $this->post2pdf_conv_db_ver);
 			// Stamp for showing messages
@@ -619,8 +637,12 @@ class POST2PDF_Converter {
 			}
 		}
 		// Return content
-		if (($this->post2pdf_conv_setting_opt['post'] == 1 && is_single()) || ($this->post2pdf_conv_setting_opt['page'] == 1 && is_page())) {
-
+		if (($this->post2pdf_conv_setting_opt['post'] == 1 && is_single()) ||
+			($this->post2pdf_conv_setting_opt['page'] == 1 && is_page()) ||
+			($this->post2pdf_conv_setting_opt['home'] == 1 && is_home()) ||
+			($this->post2pdf_conv_setting_opt['categories'] == 1 && is_category()) ||
+			($this->post2pdf_conv_setting_opt['archives'] == 1 && is_archive())
+		) {
 			if ($this->post2pdf_conv_setting_opt['position'] == "before") {
 				return $link.$content;
 			} else if ($this->post2pdf_conv_setting_opt['position'] == "after") {
@@ -670,7 +692,12 @@ class POST2PDF_Converter {
 				}
 			}
 			// Return css
-			if (($this->post2pdf_conv_setting_opt['post'] == 1 && is_single()) || ($this->post2pdf_conv_setting_opt['page'] == 1 && is_page())) {
+			if (($this->post2pdf_conv_setting_opt['post'] == 1 && is_single()) ||
+				($this->post2pdf_conv_setting_opt['page'] == 1 && is_page()) ||
+				($this->post2pdf_conv_setting_opt['home'] == 1 && is_home()) ||
+				($this->post2pdf_conv_setting_opt['categories'] == 1 && is_category()) ||
+				($this->post2pdf_conv_setting_opt['archives'] == 1 && is_archive())
+			) {
 				echo $css;
 			} else {
 				return;

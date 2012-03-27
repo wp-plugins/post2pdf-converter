@@ -1,7 +1,7 @@
 <?php
 /*
 by Redcocker
-Last modified: 2012/3/25
+Last modified: 2012/3/27
 License: GPL v2
 http://www.near-mint.com/blog/
 */
@@ -11,7 +11,6 @@ require_once('post2pdf-converter-bootstrap.php');
 
 if (!class_exists('POST2PDF_Converter'))
 	wp_die(__("You are not allowed to access this file.", "post2pdf_conv"));
-
 class POST2PDF_Converter_PDF_Maker {
 	var $get_by_http_request = 0;
 	var $post2pdf_conv_plugin_url;
@@ -126,7 +125,7 @@ class POST2PDF_Converter_PDF_Maker {
 			$response_data = (array)wp_remote_get($permalink_url);
 
 			if (is_wp_error($response_data)) {
-				wp_die(__("Variable is a WordPress Error object.", "post2pdf_conv"));
+				wp_die(__("Variable is a WP_Error object.", "post2pdf_conv"));
 			} else if ($response_data['response']['code'] !== 200) {
 				wp_die(__("HTTP status code is not 200.", "post2pdf_conv"));
 			} else {
@@ -415,11 +414,29 @@ class POST2PDF_Converter_PDF_Maker {
 			$header_title = mb_substr($title, 0, 42, 'UTF-8')."...";
 		}
 
+		if ($this->post2pdf_conv_setting_opt['header_title'] == 0) {
+			$header_title = "";
+		}
+
+		$header_elements = "";
+
+		if ($this->post2pdf_conv_setting_opt['header_author'] == 1) {
+			$header_elements = "by " .$author;
+		}
+
+		if ($this->post2pdf_conv_setting_opt['header_url'] == 1) {
+			if ($header_elements != "") {
+				$header_elements = $header_elements. " - " . $permalink;
+			} else {
+				$header_elements = $header_elements.$permalink;
+			}
+		}
+
 		if ($header_enable == 1) {
 			if ($logo_enable == 1 && $logo_file) {
-				$pdf->SetHeaderData($logo_file, $logo_width, $header_title, "by " .$author. " - ". $permalink);
+				$pdf->SetHeaderData($logo_file, $logo_width, $header_title, $header_elements);
 			} else {
-				$pdf->SetHeaderData('', 0, $header_title, "by " .$author. " - ". $permalink);
+				$pdf->SetHeaderData('', 0, $header_title, $header_elements);
 			}
 		}
 
@@ -493,6 +510,9 @@ class POST2PDF_Converter_PDF_Maker {
 
 		// Convert relative image path to absolute image path
 		$content = preg_replace("/<img([^>]*?)src=['\"]((?!(http:\/\/|https:\/\/|\/))[^'\"]+?)['\"]([^>]*?)>/i", "<img$1src=\"".site_url()."/$2\"$4>", $content);
+
+		// Convert relative link URL to absolute link URL
+		$content = preg_replace_callback("/(<a[^>]*?href=['\"])([^'\"]*?)(['\"][^>]*?>)/i", array($this, post2pdf_conv_relative_link), $content);
 
 		// Set image align to center
 		$content = preg_replace_callback("/(<img[^>]*?class=['\"][^'\"]*?aligncenter[^'\"]*?['\"][^>]*?>)/i", array($this, post2pdf_conv_image_align_center), $content);
@@ -673,6 +693,18 @@ class POST2PDF_Converter_PDF_Maker {
 			}
 		} else {
 			return false;
+		}
+	}
+
+	// Callback for relative link URL
+	function post2pdf_conv_relative_link($matches) {
+		if (preg_match("|^/|i", $matches[2])) {
+			$url = parse_url(site_url());
+			return $matches[1]."http://".$url['host'].$matches[2].$matches[3];
+		} else if (!empty($matches[2]) && !preg_match("@^(http:|https:|ftp:|mailto:|javascript:|rtsp:|file:|tel:|wtai:|ldap:|news:|telnet:|urn:|\.|#)@i", $matches[2])) {
+			return $matches[1].site_url()."/".$matches[2].$matches[3];
+		} else {
+			return $matches[1].$matches[2].$matches[3];
 		}
 	}
 

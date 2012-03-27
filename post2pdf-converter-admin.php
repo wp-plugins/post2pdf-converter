@@ -2,7 +2,7 @@
 /*
 For dashboard
 by Redcocker
-Last modified: 2012/3/5
+Last modified: 2012/3/27
 License: GPL v2
 http://www.near-mint.com/blog/
 */
@@ -79,6 +79,11 @@ if ($this->post2pdf_conv_setting_opt['cache'] == 1 &&
 // Update setting options
 if (isset($_POST['POST2PDF_Converter_Setting_Submit']) && $_POST['post2pdf_conv_hidden_value'] == "true" && check_admin_referer("post2pdf_conv_update_options", "_wpnonce_update_options")) {
 	// Get new value
+	if ($_POST['home'] == 1) {
+		$this->post2pdf_conv_setting_opt['home'] = 1;
+	} else {
+		$this->post2pdf_conv_setting_opt['home'] = 0;
+	}
 	if ($_POST['post'] == 1) {
 		$this->post2pdf_conv_setting_opt['post'] = 1;
 	} else {
@@ -88,6 +93,16 @@ if (isset($_POST['POST2PDF_Converter_Setting_Submit']) && $_POST['post2pdf_conv_
 		$this->post2pdf_conv_setting_opt['page'] = 1;
 	} else {
 		$this->post2pdf_conv_setting_opt['page'] = 0;
+	}
+	if ($_POST['categories'] == 1) {
+		$this->post2pdf_conv_setting_opt['categories'] = 1;
+	} else {
+		$this->post2pdf_conv_setting_opt['categories'] = 0;
+	}
+	if ($_POST['archives'] == 1) {
+		$this->post2pdf_conv_setting_opt['archives'] = 1;
+	} else {
+		$this->post2pdf_conv_setting_opt['archives'] = 0;
 	}
 	$this->post2pdf_conv_exc = stripslashes($_POST['post2pdf_conv_exc']);
 	$this->post2pdf_conv_setting_opt['icon_size'] = $_POST['icon_size'];
@@ -149,6 +164,21 @@ if (isset($_POST['POST2PDF_Converter_Setting_Submit']) && $_POST['post2pdf_conv_
 		$this->post2pdf_conv_setting_opt['header'] = 1;
 	} else {
 		$this->post2pdf_conv_setting_opt['header'] = 0;
+	}
+	if ($_POST['header_title'] == 1) {
+		$this->post2pdf_conv_setting_opt['header_title'] = 1;
+	} else {
+		$this->post2pdf_conv_setting_opt['header_title'] = 0;
+	}
+	if ($_POST['header_author'] == 1) {
+		$this->post2pdf_conv_setting_opt['header_author'] = 1;
+	} else {
+		$this->post2pdf_conv_setting_opt['header_author'] = 0;
+	}
+	if ($_POST['header_url'] == 1) {
+		$this->post2pdf_conv_setting_opt['header_url'] = 1;
+	} else {
+		$this->post2pdf_conv_setting_opt['header_url'] = 0;
 	}
 	if ($_POST['logo_enable'] == 1) {
 		$this->post2pdf_conv_setting_opt['logo_enable'] = 1;
@@ -252,6 +282,7 @@ $languages = array(
 	"eus" => __("Basque", "post2pdf_conv"),
 	"bel" => __("Belarusian", "post2pdf_conv"),
 	"bra" => __("Portuguese(Brazil)", "post2pdf_conv"),
+	"bul" => __("Bulgarian", "post2pdf_conv"),
 	"cat" => __("Catalan", "post2pdf_conv"),
 	"chi" => __("Chinese(Simplified)", "post2pdf_conv"),
 	"zho" => __("Chinese(Traditional)", "post2pdf_conv"),
@@ -309,7 +340,7 @@ $languages = array(
 			<tr valign="top">
 				<th scope="row"><?php _e('Add download link to', 'post2pdf_conv') ?></th>
 				<td>
-					<input type="checkbox" name="post" value="1" <?php if($this->post2pdf_conv_setting_opt['post'] == 1){echo 'checked="checked" ';} ?>/><?php _e("Posts", "post2pdf_conv") ?> <input type="checkbox" name="page" value="1" <?php if($this->post2pdf_conv_setting_opt['page'] == 1){echo 'checked="checked" ';} ?>/><?php _e("Pages", "post2pdf_conv") ?><br />
+					<input type="checkbox" name="home" value="1" <?php if($this->post2pdf_conv_setting_opt['home'] == 1){echo 'checked="checked" ';} ?>/><?php _e("Home", "post2pdf_conv") ?> <input type="checkbox" name="post" value="1" <?php if($this->post2pdf_conv_setting_opt['post'] == 1){echo 'checked="checked" ';} ?>/><?php _e("Posts", "post2pdf_conv") ?> <input type="checkbox" name="page" value="1" <?php if($this->post2pdf_conv_setting_opt['page'] == 1){echo 'checked="checked" ';} ?>/><?php _e("Pages", "post2pdf_conv") ?> <input type="checkbox" name="categories" value="1" <?php if($this->post2pdf_conv_setting_opt['categories'] == 1){echo 'checked="checked" ';} ?>/><?php _e("Categories", "post2pdf_conv") ?> <input type="checkbox" name="archives" value="1" <?php if($this->post2pdf_conv_setting_opt['archives'] == 1){echo 'checked="checked" ';} ?>/><?php _e("Archives", "post2pdf_conv") ?><br />
 					<p><small><?php _e("Put a download link on the posts/pages.", "post2pdf_conv") ?></small></p>
 				</td>
 			</tr>
@@ -552,7 +583,14 @@ $languages = array(
 				<th scope="row"><?php _e('Header', 'post2pdf_conv') ?></th>
 				<td>
 					<input type="checkbox" name="header" value="1" <?php if($this->post2pdf_conv_setting_opt['header'] == 1){echo 'checked="checked" ';} ?>/><br />
-					<p><small><?php _e("Show/Hide header.", "post2pdf_conv") ?></small></p>
+					<p><small><?php _e("Show/Hide whole header.", "post2pdf_conv") ?></small></p>
+				</td>
+			</tr>
+			<tr valign="top">
+				<th scope="row"><?php _e('Header elements', 'post2pdf_conv') ?></th>
+				<td>
+					<input type="checkbox" name="header_title" value="1" <?php if($this->post2pdf_conv_setting_opt['header_title'] == 1){echo 'checked="checked" ';} ?>/><?php _e("Title", "post2pdf_conv") ?> <input type="checkbox" name="header_author" value="1" <?php if($this->post2pdf_conv_setting_opt['header_author'] == 1){echo 'checked="checked" ';} ?>/><?php _e("Author", "post2pdf_conv") ?> <input type="checkbox" name="header_url" value="1" <?php if($this->post2pdf_conv_setting_opt['header_url'] == 1){echo 'checked="checked" ';} ?>/><?php _e("URL", "post2pdf_conv") ?><br />
+					<p><small><?php _e("Choose elements that put in header.", "post2pdf_conv") ?></small></p>
 				</td>
 			</tr>
 			<tr valign="top">
