@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: TinyMCE Backslash Button\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-03-27 16:34+0900\n"
-"PO-Revision-Date: 2012-03-27 16:34+0900\n"
+"POT-Creation-Date: 2012-03-27 20:09+0900\n"
+"PO-Revision-Date: 2012-03-27 20:11+0900\n"
 "Last-Translator: redcocker\n"
 "Language-Team: redcocker\n"
 "MIME-Version: 1.0\n"
@@ -29,7 +29,7 @@ msgstr "間違いましたか？"
 #: ../post2pdf-converter-font-maker.php:41
 #: ../post2pdf-converter-pdf-delete.php:21
 #: ../post2pdf-converter-pdf-delete.php:58
-#: ../post2pdf-converter-pdf-maker.php:171
+#: ../post2pdf-converter-pdf-maker.php:170
 msgid "<strong>Error: Directory not found.</strong><br /><br />Path: "
 msgstr "<strong>エラー：ディレクトリが見つかりません。</strong><br /><br />パス： "
 
@@ -286,8 +286,8 @@ msgid "Archives"
 msgstr "アーカイブ"
 
 #: ../post2pdf-converter-admin.php:344
-msgid "Put a download link on the posts/pages."
-msgstr "ダウンロードリンクを投稿や固定ページに設置します。"
+msgid "Put a download link on the /home/posts/pages/categories/archives."
+msgstr "ダウンロードリンクをホームや投稿、固定ページ、カテゴリ別ページ、アーカイブページに設置します。"
 
 #: ../post2pdf-converter-admin.php:348
 msgid "Exclusion"
@@ -339,16 +339,16 @@ msgid "Position"
 msgstr "位置"
 
 #: ../post2pdf-converter-admin.php:402
-msgid "Before the post/page content block"
-msgstr "投稿、固定ページの先頭"
+msgid "Before each content"
+msgstr "コンテンツの先頭"
 
 #: ../post2pdf-converter-admin.php:403
-msgid "After the post/page content block"
-msgstr "投稿、固定ページの後ろ"
+msgid "After each content"
+msgstr "コンテンツの後ろ"
 
 #: ../post2pdf-converter-admin.php:404
-msgid "Before and After the post/page content block"
-msgstr "投稿、固定ページの先頭と後ろ"
+msgid "Before and After each content"
+msgstr "コンテンツの先頭と後ろ"
 
 #: ../post2pdf-converter-admin.php:406
 msgid "Choose display position of the download link."
@@ -878,10 +878,10 @@ msgstr "wp-load.phpが見つかりません。"
 #: ../post2pdf-converter-pdf-delete.php:13
 #: ../post2pdf-converter-pdf-delete.php:27
 #: ../post2pdf-converter-pdf-maker.php:13
-#: ../post2pdf-converter-pdf-maker.php:63
-#: ../post2pdf-converter-pdf-maker.php:71
-#: ../post2pdf-converter-pdf-maker.php:604
-#: ../post2pdf-converter-pdf-maker.php:678
+#: ../post2pdf-converter-pdf-maker.php:62
+#: ../post2pdf-converter-pdf-maker.php:70
+#: ../post2pdf-converter-pdf-maker.php:603
+#: ../post2pdf-converter-pdf-maker.php:677
 msgid "You are not allowed to access this file."
 msgstr "このファイルへのアクセスは許可されていません。"
 
@@ -915,7 +915,7 @@ msgstr "設定画面</a>へ戻り、このフォントを登録して下さい�
 
 #: ../post2pdf-converter-font-maker.php:63
 #: ../post2pdf-converter-pdf-delete.php:56
-#: ../post2pdf-converter-pdf-maker.php:594
+#: ../post2pdf-converter-pdf-maker.php:593
 msgid "POST2PDF Converter"
 msgstr "POST2PDF Converter"
 
@@ -932,45 +932,45 @@ msgid "<strong>Deleting completed successfully.</strong><br /><br />Go back to "
 msgstr "<strong>PDFの削除が完了しました。</strong><br /><br />"
 
 #: ../post2pdf-converter-pdf-delete.php:56
-#: ../post2pdf-converter-pdf-maker.php:594
+#: ../post2pdf-converter-pdf-maker.php:593
 msgid "the settig panel</a>."
 msgstr "設定画面</a>へ戻る。"
 
-#: ../post2pdf-converter-pdf-maker.php:41
-#: ../post2pdf-converter-pdf-maker.php:47
+#: ../post2pdf-converter-pdf-maker.php:40
+#: ../post2pdf-converter-pdf-maker.php:46
 msgid "Invalid ISO Language Code."
 msgstr "不正なISO言語コードです。"
 
-#: ../post2pdf-converter-pdf-maker.php:95
-#: ../post2pdf-converter-pdf-maker.php:610
+#: ../post2pdf-converter-pdf-maker.php:94
+#: ../post2pdf-converter-pdf-maker.php:609
 msgid "Post does not exists."
 msgstr "投稿は存在しません。"
 
-#: ../post2pdf-converter-pdf-maker.php:129
+#: ../post2pdf-converter-pdf-maker.php:128
 msgid "Variable is a WP_Error object."
 msgstr "変数が、WP_Errorオブジェクトになっています。"
 
-#: ../post2pdf-converter-pdf-maker.php:131
+#: ../post2pdf-converter-pdf-maker.php:130
 msgid "HTTP status code is not 200."
 msgstr "HTTPステータスコードが200ではありません。"
 
-#: ../post2pdf-converter-pdf-maker.php:594
+#: ../post2pdf-converter-pdf-maker.php:593
 msgid "<strong>Generating completed successfully.</strong><br /><br />Post/Page title: "
 msgstr "<strong>PDFファイルの生成が完了しました。</strong><br /><br />タイトル： "
 
-#: ../post2pdf-converter-pdf-maker.php:594
+#: ../post2pdf-converter-pdf-maker.php:593
 msgid "<br />Output path: "
 msgstr "<br />出力先： "
 
-#: ../post2pdf-converter-pdf-maker.php:594
+#: ../post2pdf-converter-pdf-maker.php:593
 msgid "<br /><br />Go back to "
 msgstr "<br /><br />"
 
-#: ../post2pdf-converter-pdf-maker.php:647
+#: ../post2pdf-converter-pdf-maker.php:646
 msgid "<strong>Error: File not found.</strong><br /><br />Path: "
 msgstr "<strong>エラー：ファイルが見つかりません。</strong><br /><br />パス： "
 
-#: ../post2pdf-converter-pdf-maker.php:669
+#: ../post2pdf-converter-pdf-maker.php:668
 msgid "<strong>Error: Failed to open the file.</strong><br /><br />Path: "
 msgstr "<strong>エラー：ファイルをオープンできません。</strong><br /><br />パス： "
 

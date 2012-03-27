@@ -341,7 +341,7 @@ $languages = array(
 				<th scope="row"><?php _e('Add download link to', 'post2pdf_conv') ?></th>
 				<td>
 					<input type="checkbox" name="home" value="1" <?php if($this->post2pdf_conv_setting_opt['home'] == 1){echo 'checked="checked" ';} ?>/><?php _e("Home", "post2pdf_conv") ?> <input type="checkbox" name="post" value="1" <?php if($this->post2pdf_conv_setting_opt['post'] == 1){echo 'checked="checked" ';} ?>/><?php _e("Posts", "post2pdf_conv") ?> <input type="checkbox" name="page" value="1" <?php if($this->post2pdf_conv_setting_opt['page'] == 1){echo 'checked="checked" ';} ?>/><?php _e("Pages", "post2pdf_conv") ?> <input type="checkbox" name="categories" value="1" <?php if($this->post2pdf_conv_setting_opt['categories'] == 1){echo 'checked="checked" ';} ?>/><?php _e("Categories", "post2pdf_conv") ?> <input type="checkbox" name="archives" value="1" <?php if($this->post2pdf_conv_setting_opt['archives'] == 1){echo 'checked="checked" ';} ?>/><?php _e("Archives", "post2pdf_conv") ?><br />
-					<p><small><?php _e("Put a download link on the posts/pages.", "post2pdf_conv") ?></small></p>
+					<p><small><?php _e("Put a download link on the /home/posts/pages/categories/archives.", "post2pdf_conv") ?></small></p>
 				</td>
 			</tr>
 			<tr valign="top">
@@ -399,9 +399,9 @@ $languages = array(
 				<th scope="row"><?php _e("Position", "post2pdf_conv") ?></th> 
 				<td>
 					<select name="position">
-						<option value="before" <?php if ($this->post2pdf_conv_setting_opt['position'] == "before") {echo 'selected="selected"';} ?>><?php _e("Before the post/page content block", "post2pdf_conv") ?></option>
-						<option value="after" <?php if ($this->post2pdf_conv_setting_opt['position'] == "after") {echo 'selected="selected"';} ?>><?php _e("After the post/page content block", "post2pdf_conv") ?></option>
-						<option value="both" <?php if ($this->post2pdf_conv_setting_opt['position'] == "both") {echo 'selected="selected"';} ?>><?php _e("Before and After the post/page content block", "post2pdf_conv") ?></option>
+						<option value="before" <?php if ($this->post2pdf_conv_setting_opt['position'] == "before") {echo 'selected="selected"';} ?>><?php _e("Before each content", "post2pdf_conv") ?></option>
+						<option value="after" <?php if ($this->post2pdf_conv_setting_opt['position'] == "after") {echo 'selected="selected"';} ?>><?php _e("After each content", "post2pdf_conv") ?></option>
+						<option value="both" <?php if ($this->post2pdf_conv_setting_opt['position'] == "both") {echo 'selected="selected"';} ?>><?php _e("Before and After each content", "post2pdf_conv") ?></option>
 					</select>
 					<p><small><?php _e("Choose display position of the download link.", "post2pdf_conv") ?></small></p>
 				</td>
